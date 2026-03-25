@@ -1,0 +1,13 @@
+Here is the
+summary table of the most frequently used LaTeX terms and their primary actions for quick reference.
+Domain	Term (Symbol)	Key Actions (Symbols)
+Arithmetic	x, n, \mathbb{R}	+, -, \times, \div, ^n, \sqrt{}, =, \neq, <, >
+Calculus	f(x), \int, \sum	f', \frac{df}{dx}, \int_{a}^{b}, \sum_{i=1}^{n}, \lim, \nabla, \Delta
+Sets	A, B, \emptyset	\in, \subset, \subseteq, \cup, \cap, \setminus, \times, \complement
+Linear Algebra	\vec{v}, \mathbf{M}	\cdot, \times, \otimes, M^T, M^{-1}, \det, \operatorname{Tr}, |v|
+Logic	P, Q	\neg, \land, \lor, \implies, \iff, \forall, \exists, \therefore
+Geometry	\angle, \triangle	\cong, \sim, \parallel, \perp, \sin, \cos, ^\circ
+Topology	X, \Omega	\partial \Omega, \bar{A}, A^\circ, \pi_n, H_n
+Algebra	G, R, \mathbb{F}	\cong, \rtimes, \oplus, \ker, \operatorname{Im}, G/N
+Tensors	T_{\mu\nu}, g	\otimes, \wedge, \nabla_\mu, \partial_\mu, \delta^\mu_\nu, R^\rho_{\sigma\mu\nu}
+Quantum	`	\psi\rangle, \hat{H}`

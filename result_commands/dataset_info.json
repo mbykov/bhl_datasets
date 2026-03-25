@@ -1,0 +1,10 @@
+{
+  "command_ds": {
+    "file_name": "commands.jsonl",
+    "columns": {
+      "prompt": "rus",
+      "query": "eng",
+      "response": "name"
+    }
+  }
+}

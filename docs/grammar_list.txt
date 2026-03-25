@@ -1,0 +1,211 @@
+области:
+
+Arithmetic and Elementary Algebra (Numbers, basic operators, roots)
+Analysis and Calculus (Functions, limits, derivatives, integrals)
+Set Theory (Sets, elements, subsets, operations)
+Linear Algebra (Vectors, matrices, spaces, norms)
+Mathematical Logic (Statements, quantifiers, proofs)
+Geometry and Trigonometry (Angles, shapes, relations)
+Topology (Boundaries, interiors, closures)
+Abstract Algebra (Groups, rings, fields, morphisms)
+Category Theory (Arrows, diagrams, functors)
+Tensors and Differential Geometry (Indices, metrics, forms)
+Probability and Statistics (Distributions, expectations, variances)
+Physics and Quantum Notation (Dirac brackets, operators, field theory)
+
+
+1. Arithmetic and Elementary Algebra
+x, n, \mathbb{R} — Scalar / Number:
+= + — Addition
+= - — Subtraction
+= \pm — Plus-minus
+= \times — Multiplication (Cross)
+= \cdot — Multiplication (Dot)
+= \div — Division
+= / — Slash division
+= = — Equality
+= \neq — Inequality
+= < — Strictly less than
+= > — Strictly greater than
+= \le — Less than or equal
+= \ge — Greater than or equal
+= \approx — Approximation
+= \sim — Proportionality / Tilde
+= x^n — Exponentiation
+= \sqrt{x} — Square root extraction
+= \sqrt[n]{x} — N-th root extraction
+= |x| — Absolute value / Modulo
+= n! — Factorial
+
+2. Analysis and Calculus
+f(x) — Function:
+= f' — Lagrange's notation derivative
+= \frac{df}{dx} — Leibniz's notation derivative
+= \frac{\partial f}{\partial x} — Partial differentiation
+= \dot{x} — Newton's notation (time) derivative
+= \nabla f — Gradient operation
+= \Delta f — Laplacian operation
+= \square f — D'Alembertian operation
+= (f \circ g) — Composition
+= (f \ast g) — Convolution
+\lim — Limit:
+= \lim_{x \to a} — Standard limit
+= \limsup — Limit superior
+= \liminf — Limit inferior
+\int — Integral:
+= \int_{a}^{b} — Definite integration
+= \oint — Contour integration
+= \iint — Double integration
+= \iiint — Triple integration
+= \int \dots dx — Indefinite integration
+\sum — Summation:
+= \sum_{i=1}^{n} — Finite summation
+= \sum_{i=0}^{\infty} — Infinite series summation
+\prod — Product:
+= \prod_{i=1}^{n} — Finite product
+= \coprod — Coproduct operation
+
+3. Set Theory
+A, B, \emptyset — Set:
+= \in — Element membership
+= \notin — Non-membership
+= \subset — Strict subset
+= \subseteq — Subset or equal
+= \supset — Strict superset
+= \supseteq — Superset or equal
+= \cup — Union
+= \cap — Intersection
+= \setminus — Set difference
+= \triangle — Symmetric difference
+= A \times B — Cartesian product
+= \mathcal{P}(A) — Power set operation
+= |A| — Cardinality
+
+4. Linear Algebra
+\mathbf{v}, \vec{a}, \mathbf{M} — Vector / Matrix:
+= \cdot — Dot product
+= \times — Cross product
+= \otimes — Tensor product
+= \oplus — Direct sum
+= \parallel — Parallelism
+= \perp — Orthogonality
+= \det(M) — Determinant calculation
+= \operatorname{Tr}(M) — Trace operation
+= M^T — Transposition
+= M^\dagger — Hermitian conjugation
+= M^* — Complex conjugation
+= M^{-1} — Inversion
+= \operatorname{rank}(M) — Rank calculation
+= \|v\| — Norm calculation
+= \langle a, b \rangle — Inner product
+
+5. Mathematical Logic
+P, Q — Logical Statement:
+= \neg — Negation (NOT)
+= \land — Conjunction (AND)
+= \lor — Disjunction (OR)
+= \veebar — Exclusive OR (XOR)
+= \implies — Material implication (IF-THEN)
+= \impliedby — Converse implication
+= \iff — Logical equivalence (IFF)
+= \forall — Universal quantification
+= \exists — Existential quantification
+= \exists! — Uniqueness quantification
+= \therefore — Logical consequence (Therefore)
+= \because — Reasoning (Because)
+= \vdash — Syntactic entailment
+= \vDash — Semantic entailment
+
+6. Geometry and Trigonometry
+\angle, \triangle, \square — Geometric Object:
+= \cong — Congruence
+= \sim — Similarity
+= \parallel — Parallelism
+= \perp — Perpendicularity
+= \angle — Angle measurement
+= \measuredangle — Measured angle
+= \sphericalangle — Spherical angle
+= \sin, \cos, \tan — Trigonometric projection
+= \arcsin, \arccos — Inverse projection
+= \deg, ^\circ — Degree measurement
+
+7. Topology
+X, \tau, \Omega — Topological Space / Open Set:
+= \partial \Omega — Boundary operation
+= \bar{A} — Closure operation
+= A^\circ — Interior operation
+= A^c — Complement operation
+= \cong — Homeomorphism
+= \approx — Homotopy equivalence
+= \pi_n(X) — Fundamental group / Homotopy group calculation
+= H_n(X) — Homology group calculation
+= \mathcal{B} — Borel / Base generation
+
+8. Abstract Algebra
+G, R, \mathbb{F} — Group / Ring / Field:
+= \times — Direct product
+= \oplus — Direct sum
+= \otimes — Tensor product
+= \rtimes — Semidirect product
+= \cong — Isomorphism
+= \approx — Homomorphism
+= \trianglelefteq — Normal subgroup relation
+= \ker — Kernel identification
+= \operatorname{Im} — Image identification
+= \operatorname{Aut} — Automorphism group generation
+= G/N — Quotient operation
+= [g, h] — Commutator operation
+
+9. Category Theory
+C, D, \mathcal{A} — Category:
+= \to — Morphism / Arrow
+= \hookrightarrow — Monomorphism (Inclusion)
+= \twoheadrightarrow — Epimorphism
+= \cong — Isomorphism of objects
+= \circ — Composition of morphisms
+= F: C \to D — Functor mapping
+= \eta: F \Rightarrow G — Natural transformation
+= \dashv — Adjunction
+= \lim — Limit of diagram
+= \operatorname{colim} — Colimit of diagram
+= \operatorname{Hom}(A, B) — Hom-set identification
+
+10. Tensors and Differential Geometry
+T_{\mu\nu}, g, \mathcal{M} — Tensor / Manifold:
+= \otimes — Tensor product
+= \wedge — Exterior (wedge) product
+= \nabla_\mu — Covariant derivative
+= \partial_\mu — Partial derivative (comma notation)
+= \mathcal{L}_\mathbf{v} — Lie derivative
+= d\omega — Exterior derivative
+= \Gamma^\alpha_{\beta\gamma} — Christoffel symbol (connection)
+= R^\rho_{\sigma\mu\nu} — Riemann curvature mapping
+= \delta^\mu_\nu — Kronecker delta (contraction)
+= \epsilon_{\alpha\beta\gamma} — Levi-Civita permutation
+= [\,,\,] — Lie bracket / Commutator
+
+11. Probability and Statistics
+X, P, \Omega — Random Variable / Probability:
+= P(A) — Probability measure
+= P(A|B) — Conditional probability
+= E[X] — Expected value
+= \operatorname{Var}(X) — Variance calculation
+= \operatorname{Cov}(X, Y) — Covariance calculation
+= \sigma — Standard deviation
+= \sim — Distribution assignment (is distributed as)
+= \bar{x} — Sample mean
+= \hat{\theta} — Parameter estimation
+= \Phi(x) — Cumulative distribution
+
+12. Physics and Quantum Notation
+|\psi\rangle, \hat{H} — Quantum State / Operator:
+= \langle \psi | — Bra construction (dual vector)
+= |\psi \rangle — Ket construction (state vector)
+= \langle \phi | \psi \rangle — Inner product (bracket)
+= \hat{A}^\dagger — Hermitian adjoint (creation operator)
+= \hat{A} — Operator action (annihilation operator)
+= [\hat{A}, \hat{B}] — Commutator (uncertainty)
+= \{\hat{A}, \hat{B}\} — Anti-commutator
+= \langle \hat{A} \rangle — Expectation value
+= \hbar — Reduced Planck constant (scaling)
+= \psi^* — Complex conjugation
