@@ -1,7 +1,6 @@
 import json
 import random
 import os
-import re
 
 class MathFactory:
     def __init__(self, data_dir='data'):
@@ -83,10 +82,10 @@ class MathFactory:
             res['r'] = t_r.format(**fmt_r)
             res['e'] = t_e.format(**fmt_e)
             res['l'] = atom['latex'].format(**fmt_l)
-            if depth > 0:
-                res['l'] = f"({res['l']})"
+            if depth > 0: res['l'] = f"({res['l']})"
         else:
             # Обработка prefix/functional/suffix
+            # Если режима nouns нет в шаблонах или словаре, используем verb
             use_noun = (mode == 'nouns')
             t_r = self.templates['rus']['prefix_noun' if use_noun else 'prefix_verb']
             t_e = self.templates['eng']['prefix_noun' if use_noun else 'prefix_verb']
@@ -100,32 +99,20 @@ class MathFactory:
     def produce_structured(self, target_sec, n_base=2, n_nested=15, n_eq=10):
         output = []
         section_atoms = [k for k, v in self.atoms.items() if v.get('sec') == target_sec]
-        if not section_atoms:
-            return []
+        if not section_atoms: return []
 
         for key in section_atoms:
             entry = self.dict.get(key)
-            if not entry:
-                continue
+            if not entry: continue
             for mode in entry['rus'].keys():
                 for _ in range(n_base):
                     sample = self.generate_unit(key, depth=10, force_mode=mode)
-                    output.append({
-                        "sec": target_sec,
-                        "rus": sample['r'],
-                        "eng": sample['e'],
-                        "latex": f"${sample['l']}$"
-                    })
+                    output.append({"sec": target_sec, "rus": sample['r'], "eng": sample['e'], "latex": f"${sample['l']}$"})
 
         for _ in range(n_nested):
             key = random.choice(section_atoms)
             sample = self.generate_unit(key, depth=0)
-            output.append({
-                "sec": target_sec,
-                "rus": sample['r'],
-                "eng": sample['e'],
-                "latex": f"${sample['l']}$"
-            })
+            output.append({"sec": target_sec, "rus": sample['r'], "eng": sample['e'], "latex": f"${sample['l']}$"})
 
         for _ in range(n_eq // 2):
             k1 = random.choice(section_atoms)
@@ -149,98 +136,28 @@ class MathFactory:
 
         return output
 
-
-def extract_meaningful_words(text, min_length=3):
-    """Извлекает осмысленные слова (длиннее min_length букв)"""
-    # Ищем слова из букв (русских или английских) длиной >= min_length
-    words = re.findall(r'\b[a-zA-Zа-яА-Я]{' + str(min_length) + r',}\b', text.lower())
-    return set(words)
-
-
-def generate_keywords(data, output_path):
-    """Генерирует keywords.txt из сгенерированных данных"""
-    keywords = set()
-
-    # Извлекаем слова из русских и английских описаний
-    for item in data:
-        keywords.update(extract_meaningful_words(item.get("rus", "")))
-        keywords.update(extract_meaningful_words(item.get("eng", "")))
-
-    # Добавляем несколько служебных слов для детекции LaTeX-запросов
-    # (они могут не встречаться в описаниях, но важны для определения типа задачи)
-    extra_words = {
-        # Русские
-        "преобразуй", "формулу", "латех", "скрипт", "напиши", "создай", "получи",
-        # Английские
-        "convert", "formula", "latex", "script", "write", "create", "get"
-    }
-    keywords.update(extra_words)
-
-    # Фильтруем и сортируем
-    filtered = sorted(keywords)
-
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write("\n".join(filtered))
-
-    return len(filtered)
-
-
 if __name__ == "__main__":
     factory = MathFactory()
-
-    # Параметры генерации
-    N_BASE = 5      # базовых примеров на атом и режим
-    N_NESTED = 10   # вложенных примеров
-    N_EQ = 10       # уравнений
-
-    # Получаем все секции из atoms.json
+    N_BASE, N_NESTED, N_EQ = 5, 10, 10
+    # N_BASE, N_NESTED, N_EQ = 5, 100, 100
     all_sections = sorted(list(set(v.get('sec') for v in factory.atoms.values() if v.get('sec'))))
-    print(f"Найдено секций: {all_sections}")
-
     all_new_data = []
     for sec in all_sections:
         data = factory.produce_structured(sec, n_base=N_BASE, n_nested=N_NESTED, n_eq=N_EQ)
         print(f"[{sec}] Generated {len(data)} samples")
         all_new_data.extend(data)
 
-    # Сохраняем в result_latex/latex.jsonl
-    output_dir = 'result_latex'
-    file_path = os.path.join(output_dir, 'latex.jsonl')
-    os.makedirs(output_dir, exist_ok=True)
-
+    file_path = 'result_latex/latex.jsonl'
+    os.makedirs('result_latex', exist_ok=True)
     with open(file_path, 'a', encoding='utf-8') as f:
         for entry in all_new_data:
             f.write(json.dumps(entry, ensure_ascii=False) + '\n')
 
-    # Считаем строки
     if os.path.exists(file_path):
         with open(file_path, 'r', encoding='utf-8') as f:
             total_lines = sum(1 for _ in f)
-        print(f"\nTotal lines in {file_path}: {total_lines}")
-
-    # Создаем dataset_info.json для LLaMA-Factory
-    info = {
-        "latex_ds": {
-            "file_name": "latex.jsonl",
-            "columns": {
-                "prompt": "rus",
-                "query": "eng",
-                "response": "latex"
-            }
-        }
-    }
-    info_path = os.path.join(output_dir, "dataset_info.json")
-    with open(info_path, 'w', encoding='utf-8') as f:
+        print(f"Total lines in {file_path}: {total_lines}")
+    info = {"latex_ds": {"file_name": "latex.jsonl", "columns": {"prompt": "rus", "query": "eng", "response": "latex"}}}
+    with open("./result_latex/dataset_info.json", 'w', encoding='utf-8') as f:
         json.dump(info, f, ensure_ascii=False, indent=2)
-
-    # Генерируем keywords.txt
-    keywords_path = os.path.join(output_dir, "keywords.txt")
-    keywords_count = generate_keywords(all_new_data, keywords_path)
-
-    print(f"\n✅ Готово!")
-    print(f"   Датасет: {file_path} ({total_lines} строк)")
-    print(f"   Конфиг: {info_path}")
-    print(f"   Ключевые слова: {keywords_path} ({keywords_count} слов)")
-    print(f"\nПример записи:")
-    if all_new_data:
-        print(json.dumps(all_new_data[0], ensure_ascii=False, indent=2))
+    print(f"Готово. {len(all_new_data)} строк.")

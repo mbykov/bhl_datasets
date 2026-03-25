@@ -6,6 +6,7 @@ audio
 begin
 block
 cancel
+change
 clear
 command
 content
@@ -65,6 +66,7 @@ track
 turn off
 turn on
 undo
+update
 wipe
 абзац
 активируй
@@ -94,6 +96,7 @@ wipe
 запрос
 запусти
 избавься
+измени
 инструкцию
 инфу
 исправь
@@ -120,6 +123,7 @@ wipe
 параграф
 подсвети
 подчеркни
+поправь
 предложение
 прекрати
 протокол

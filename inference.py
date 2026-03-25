@@ -19,8 +19,8 @@ def load_config():
 
 def load_keywords():
     """Загружает ключевые слова для команд и LaTeX"""
-    cmd_path = "./data/keywords.txt"
-    latex_path = "./data/latex_keywords.txt"
+    cmd_path = "./result_command/keywords.txt"
+    latex_path = "./result_latex/keywords.txt"
 
     cmd_keywords = []
     latex_keywords = []

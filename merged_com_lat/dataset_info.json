@@ -1,0 +1,10 @@
+{
+  "merged_ds": {
+    "file_name": "dataset.jsonl",
+    "columns": {
+      "prompt": "instruction",
+      "query": "input",
+      "response": "output"
+    }
+  }
+}
