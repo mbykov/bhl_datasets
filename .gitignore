@@ -3,6 +3,7 @@
 *.exe
 bhl
 *saves*
+result*
 voice-assistant
 .DS_Store
 *.log

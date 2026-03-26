@@ -1,9 +1,12 @@
 import json
 import os
 import random
-import shutil
 import re
 
+# Инструкции для разных типов задач
+COMMAND_INSTRUCTION = "Определи команду в тексте"
+LATEX_INSTRUCTION = "Преобразуй текст в формулу LaTeX"
+GARBAGE_INSTRUCTION = "Это не команда и не формула"
 
 def load_jsonl(path):
     """Загружает JSONL файл"""
@@ -31,22 +34,11 @@ def save_jsonl(data, path):
 def merge_and_balance(
     command_path="result_command/commands.jsonl",
     latex_path="result_latex/latex.jsonl",
-    output_dir="merged_com_lat",
-    balance_ratio=2,  # сколько LaTeX примеров на 1 команду
-    max_latex=None,   # максимальное количество LaTeX примеров (None = без ограничения)
+    output_dir="result_com_lat",
+    balance_ratio=2,
+    max_latex=None,
     shuffle=True
 ):
-    """
-    Объединяет командный и LaTeX датасеты с балансировкой
-
-    Args:
-        command_path: путь к файлу команд
-        latex_path: путь к файлу LaTeX
-        output_dir: выходная директория
-        balance_ratio: сколько LaTeX примеров на 1 команду (1 = 1:1, 2 = 1:2, 3 = 1:3)
-        max_latex: максимальное количество LaTeX примеров (для ограничения)
-        shuffle: перемешивать ли датасет
-    """
     print("=" * 60)
     print("Объединение командного и LaTeX датасетов")
     print("=" * 60)
@@ -59,13 +51,24 @@ def merge_and_balance(
     print(f"   Команды: {len(commands)}")
     print(f"   LaTeX: {len(latex)}")
 
-    # Фильтруем команды: оставляем только реальные (не none)
-    real_commands = [c for c in commands if c.get("name") != "none"]
-    garbage_commands = [c for c in commands if c.get("name") == "none"]
+    # Фильтруем команды
+    real_commands = []
+    for c in commands:
+        if c.get("name") != "none":
+            text = c.get("rus", "")
+            if text and text.strip():
+                real_commands.append(c)
+
+    garbage_commands = []
+    for c in commands:
+        if c.get("name") == "none":
+            text = c.get("rus", "")
+            if text and text.strip():
+                garbage_commands.append(c)
 
     print(f"\n📊 Команды:")
-    print(f"   Реальных: {len(real_commands)}")
-    print(f"   Garbage: {len(garbage_commands)}")
+    print(f"   Реальных (с текстом): {len(real_commands)}")
+    print(f"   Garbage (с текстом): {len(garbage_commands)}")
 
     # Балансируем LaTeX
     target_latex_count = len(real_commands) * balance_ratio
@@ -82,36 +85,43 @@ def merge_and_balance(
     # Объединяем
     merged = []
 
-    # Добавляем реальные команды
+    # Добавляем реальные команды (с явной инструкцией)
     for cmd in real_commands:
-        merged.append({
-            "instruction": "",  # Для команд instruction пустой
-            "input": cmd.get("rus", ""),
-            "output": cmd.get("name", "")
-        })
+        text = cmd.get("rus", "").strip()
+        if text:
+            merged.append({
+                "instruction": COMMAND_INSTRUCTION,
+                "input": text,
+                "output": cmd.get("name", "")
+            })
 
     # Добавляем LaTeX примеры
     for lat in latex:
+        input_text = lat.get("input", lat.get("rus", lat.get("eng", ""))).strip()
+        if not input_text:
+            continue
+
         merged.append({
-            "instruction": lat.get("instruction", "Преобразуй текст в формулу LaTeX"),
-            "input": lat.get("input", lat.get("rus", lat.get("eng", ""))),
+            "instruction": LATEX_INSTRUCTION,
+            "input": input_text,
             "output": lat.get("output", lat.get("latex", ""))
         })
 
-    # Добавляем garbage (none команды) как отвлекающие примеры
-    # Пропорция: garbage не должен превышать 10-20% от общего числа
-    max_garbage = int(len(merged) * 0.15)  # 15% garbage
+    # Добавляем garbage (none команды) — тоже с инструкцией
+    max_garbage = int(len(merged) * 0.15)
     if len(garbage_commands) > max_garbage:
         garbage_commands = random.sample(garbage_commands, max_garbage)
 
     for garbage in garbage_commands:
-        merged.append({
-            "instruction": "",
-            "input": garbage.get("rus", ""),
-            "output": "none"
-        })
+        text = garbage.get("rus", "").strip()
+        if text:
+            merged.append({
+                "instruction": GARBAGE_INSTRUCTION,
+                "input": text,
+                "output": "none"
+            })
 
-    print(f"\n📊 После добавления garbage: +{len(garbage_commands)}")
+    print(f"\n📊 После добавления garbage: +{len([g for g in merged if g['output'] == 'none'])}")
 
     # Перемешиваем
     if shuffle:
@@ -151,12 +161,16 @@ def merge_and_balance(
         words = re.findall(r'\b[a-zA-Zа-яА-Я]{3,}\b', text.lower())
         keywords.update(words)
 
-    # Добавляем служебные слова
+    # Добавляем служебные слова (включая слова из инструкций)
     extra_words = {
-        "преобразуй", "формулу", "латех", "скрипт", "напиши", "создай",
-        "удали", "выдели", "начни", "останови", "отмени",
+        # Русские
+        "определи", "команду", "тексте", "преобразуй", "формулу", "латех",
+        "скрипт", "напиши", "создай", "удали", "выдели", "начни",
+        "останови", "отмени", "распознай", "найди", "выдели",
+        # Английские
         "convert", "formula", "latex", "script", "write", "create",
-        "remove", "highlight", "start", "stop", "undo"
+        "remove", "highlight", "start", "stop", "undo", "command",
+        "identify", "find", "detect", "recognize"
     }
     keywords.update(extra_words)
 
@@ -166,18 +180,20 @@ def merge_and_balance(
         f.write("\n".join(sorted(keywords)))
 
     # Статистика
-    cmd_in_merged = sum(1 for item in merged if item["output"] not in ["none", ""] and not item["instruction"])
-    latex_in_merged = sum(1 for item in merged if item["instruction"] != "")
+    cmd_in_merged = sum(1 for item in merged if item["output"] not in ["none", ""] and "команду" in item.get("instruction", ""))
+    latex_in_merged = sum(1 for item in merged if "формулу" in item.get("instruction", ""))
     garbage_in_merged = sum(1 for item in merged if item["output"] == "none")
+    empty_input = sum(1 for item in merged if not item["input"])
 
     print("\n" + "=" * 60)
     print("✅ Готово!")
     print("=" * 60)
     print(f"\n📊 Итоговый датасет:")
     print(f"   Всего примеров: {len(merged)}")
-    print(f"   Команды: {cmd_in_merged}")
-    print(f"   LaTeX: {latex_in_merged}")
-    print(f"   Garbage: {garbage_in_merged}")
+    print(f"   Команды (inst: {COMMAND_INSTRUCTION}): {cmd_in_merged}")
+    print(f"   LaTeX (inst: {LATEX_INSTRUCTION}): {latex_in_merged}")
+    print(f"   Garbage (inst: {GARBAGE_INSTRUCTION}): {garbage_in_merged}")
+    print(f"   Пустой input: {empty_input} (должно быть 0)")
     print(f"\n📁 Файлы сохранены в: {output_dir}/")
     print(f"   - dataset.jsonl ({len(merged)} строк)")
     print(f"   - dataset_info.json")
@@ -185,18 +201,15 @@ def merge_and_balance(
 
     # Показываем примеры
     print("\n📝 Примеры из объединенного датасета:")
-    for item in merged[:3]:
+    for item in merged[:5]:
         print(f"   {json.dumps(item, ensure_ascii=False)}")
 
 def main():
     import sys
-    import re  # для извлечения слов
 
-    # Параметры можно передать через аргументы
-    balance_ratio = 2  # 1 команда : 2 LaTeX
-    max_latex = None   # без ограничения
+    balance_ratio = 2
+    max_latex = None
 
-    # Разбор аргументов
     for arg in sys.argv[1:]:
         if arg.startswith("--ratio="):
             balance_ratio = int(arg.split("=")[1])
@@ -211,7 +224,7 @@ def main():
     merge_and_balance(
         command_path="result_command/commands.jsonl",
         latex_path="result_latex/latex.jsonl",
-        output_dir="merged_com_lat",
+        output_dir="result_com_lat",
         balance_ratio=balance_ratio,
         max_latex=max_latex,
         shuffle=True
