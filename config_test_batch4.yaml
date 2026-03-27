@@ -1,0 +1,41 @@
+
+model_name_or_path: ../bhl/Models/Qwen2.5-1.5B-Instruct
+trust_remote_code: True
+
+stage: sft
+do_train: True
+finetuning_type: lora
+lora_target: all
+lora_rank: 8
+lora_alpha: 16
+
+dataset: merged_ds
+dataset_dir: result_com_lat
+template: qwen
+cutoff_len: 256
+overwrite_cache: True
+preprocessing_num_workers: 4
+packing: False
+
+output_dir: ./saves/test_batch4
+logging_steps: 5
+save_steps: 1000
+overwrite_output_dir: True
+
+per_device_train_batch_size: 4
+gradient_accumulation_steps: 4
+learning_rate: 1.5e-4
+num_train_epochs: 0.01
+max_steps: 100  # Всего 100 шагов для теста
+
+bf16: True
+gradient_checkpointing: True
+flash_attn: sdpa
+
+quantization_bit: 4
+quantization_method: bitsandbytes
+
+val_size: 0.05
+per_device_eval_batch_size: 4
+eval_strategy: steps
+eval_steps: 1000

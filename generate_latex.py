@@ -30,42 +30,35 @@ class MathFactory:
         atom = self.atoms.get(atom_key)
         entry = self.dict.get(atom_key)
 
-        # Если атом не найден в словаре, возвращаем просто переменную
         if not atom or not entry:
             return self.get_random_var()
 
-        # Рекурсия для v1
         if depth < 1 and random.random() < 0.4:
             inner_key = random.choice(list(self.atoms.keys()))
             v1_data = self.generate_unit(inner_key, depth + 1)
         else:
             v1_data = self.get_random_var()
 
-        # Генерируем дополнительные переменные v2, v3, v4
         v2_d = self.get_random_var()
         v3_d = self.get_random_var()
         v4_d = self.get_random_var()
 
         res = {"r": "", "e": "", "l": ""}
 
-        # Безопасный выбор режима
         available_modes = list(entry['rus'].keys())
         if force_mode and force_mode in available_modes:
             mode = force_mode
         elif depth > 0 and 'short' in available_modes:
             mode = 'short'
         else:
-            # Пытаемся не выбирать 'short' для верхнего уровня, если есть другие
             if len(available_modes) > 1 and 'short' in available_modes:
                 available_modes.remove('short')
             mode = random.choice(available_modes)
 
         w_r = random.choice(entry['rus'][mode])
-        # Защита для английского: если режима нет, берем первый попавшийся
         eng_modes = list(entry['eng'].keys())
         w_e = random.choice(entry['eng'][mode] if mode in eng_modes else entry['eng'][eng_modes[0]])
 
-        # Подготовка аргументов для форматирования
         fmt_l = {'v1': v1_data['l'], 'v2': v2_d['l'], 'v3': v3_d['l'], 'v4': v4_d['l']}
         fmt_r = {'v1': v1_data['r'], 'v2': v2_d['r'], 'v3': v3_d['r'], 'v4': v4_d['r'], 'action': w_r, 'noun': w_r}
         fmt_e = {'v1': v1_data['e'], 'v2': v2_d['e'], 'v3': v3_d['e'], 'v4': v4_d['e'], 'action': w_e, 'noun': w_e}
@@ -86,7 +79,6 @@ class MathFactory:
             if depth > 0:
                 res['l'] = f"({res['l']})"
         else:
-            # Обработка prefix/functional/suffix
             use_noun = (mode == 'nouns')
             t_r = self.templates['rus']['prefix_noun' if use_noun else 'prefix_verb']
             t_e = self.templates['eng']['prefix_noun' if use_noun else 'prefix_verb']
@@ -151,32 +143,23 @@ class MathFactory:
 
 
 def extract_meaningful_words(text, min_length=3):
-    """Извлекает осмысленные слова (длиннее min_length букв)"""
-    # Ищем слова из букв (русских или английских) длиной >= min_length
     words = re.findall(r'\b[a-zA-Zа-яА-Я]{' + str(min_length) + r',}\b', text.lower())
     return set(words)
 
 
 def generate_keywords(data, output_path):
-    """Генерирует keywords.txt из сгенерированных данных"""
     keywords = set()
 
-    # Извлекаем слова из русских и английских описаний
     for item in data:
         keywords.update(extract_meaningful_words(item.get("rus", "")))
         keywords.update(extract_meaningful_words(item.get("eng", "")))
 
-    # Добавляем несколько служебных слов для детекции LaTeX-запросов
-    # (они могут не встречаться в описаниях, но важны для определения типа задачи)
     extra_words = {
-        # Русские
         "преобразуй", "формулу", "латех", "скрипт", "напиши", "создай", "получи",
-        # Английские
         "convert", "formula", "latex", "script", "write", "create", "get"
     }
     keywords.update(extra_words)
 
-    # Фильтруем и сортируем
     filtered = sorted(keywords)
 
     with open(output_path, "w", encoding="utf-8") as f:
@@ -185,15 +168,15 @@ def generate_keywords(data, output_path):
     return len(filtered)
 
 
-if __name__ == "__main__":
+def generate_dataset():
+    """Генерация датасета - НИКАКОГО РУЧНОГО ЭКРАНИРОВАНИЯ!"""
+
     factory = MathFactory()
 
-    # Параметры генерации
-    N_BASE = 5      # базовых примеров на атом и режим
-    N_NESTED = 10   # вложенных примеров
-    N_EQ = 10       # уравнений
+    N_BASE = 5
+    N_NESTED = 10
+    N_EQ = 10
 
-    # Получаем все секции из atoms.json
     all_sections = sorted(list(set(v.get('sec') for v in factory.atoms.values() if v.get('sec'))))
     print(f"Найдено секций: {all_sections}")
 
@@ -203,22 +186,40 @@ if __name__ == "__main__":
         print(f"[{sec}] Generated {len(data)} samples")
         all_new_data.extend(data)
 
-    # Сохраняем в result_latex/latex.jsonl
     output_dir = 'result_latex'
     file_path = os.path.join(output_dir, 'latex.jsonl')
     os.makedirs(output_dir, exist_ok=True)
 
-    with open(file_path, 'a', encoding='utf-8') as f:
+    total_count = 0
+
+    # Просто записываем, json.dumps() сам сделает правильное экранирование
+    with open(file_path, 'w', encoding='utf-8') as f:
         for entry in all_new_data:
+            total_count += 1
+            # json.dumps() автоматически экранирует все специальные символы
             f.write(json.dumps(entry, ensure_ascii=False) + '\n')
 
-    # Считаем строки
-    if os.path.exists(file_path):
-        with open(file_path, 'r', encoding='utf-8') as f:
-            total_lines = sum(1 for _ in f)
-        print(f"\nTotal lines in {file_path}: {total_lines}")
+    print(f"\n📊 Генерация завершена:")
+    print(f"   Всего записей: {total_count}")
 
-    # Создаем dataset_info.json для LLaMA-Factory
+    # Проверка валидности
+    print("\n🔍 Проверка валидности JSON...")
+    invalid_count = 0
+    with open(file_path, 'r', encoding='utf-8') as f:
+        for line_num, line in enumerate(f, 1):
+            try:
+                data = json.loads(line)
+                # Дополнительно проверяем, что LaTeX содержит \ а не \\
+                if 'latex' in data and '\\\\' in data['latex']:
+                    print(f"   ⚠️ Строка {line_num}: найдено двойное экранирование")
+            except json.JSONDecodeError as e:
+                invalid_count += 1
+                print(f"   ❌ Ошибка в строке {line_num}: {e}")
+
+    if invalid_count == 0:
+        print(f"   ✅ Все {total_count} строк валидны!")
+
+    # Создаем dataset_info.json
     info = {
         "latex_ds": {
             "file_name": "latex.jsonl",
@@ -233,14 +234,17 @@ if __name__ == "__main__":
     with open(info_path, 'w', encoding='utf-8') as f:
         json.dump(info, f, ensure_ascii=False, indent=2)
 
-    # Генерируем keywords.txt
     keywords_path = os.path.join(output_dir, "keywords.txt")
     keywords_count = generate_keywords(all_new_data, keywords_path)
 
     print(f"\n✅ Готово!")
-    print(f"   Датасет: {file_path} ({total_lines} строк)")
+    print(f"   Датасет: {file_path} ({total_count} строк)")
     print(f"   Конфиг: {info_path}")
     print(f"   Ключевые слова: {keywords_path} ({keywords_count} слов)")
-    print(f"\nПример записи:")
+    print(f"\n📝 Пример записи:")
     if all_new_data:
         print(json.dumps(all_new_data[0], ensure_ascii=False, indent=2))
+
+
+if __name__ == "__main__":
+    generate_dataset()

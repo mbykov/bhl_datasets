@@ -1,0 +1,2 @@
+{"sec": "abstract_algebra", "rus": "изоморфизм игрек и игрек", "eng": "isomorphism of y and y", "latex": "$(y \\cong y)$"}
+{"instruction": "", "input": "уничтожь заметку быстро", "output": "removeText"}

@@ -1,0 +1,44 @@
+# config_rtx_balanced.yaml
+model_name_or_path: ../bhl/Models/Qwen2.5-1.5B-Instruct
+trust_remote_code: True
+
+stage: sft
+do_train: True
+finetuning_type: lora
+lora_target: all
+lora_rank: 8
+lora_alpha: 16
+
+dataset: merged_ds
+dataset_dir: result_com_lat
+template: qwen
+cutoff_len: 256
+overwrite_cache: True
+preprocessing_num_workers: 4
+packing: True # ВКЛЮЧАЕМ УПАКОВКУ!
+
+output_dir: ./saves/qwen_com_lat_lora
+logging_steps: 10
+save_steps: 100
+save_total_limit: 2
+overwrite_output_dir: True
+
+# БАЛАНСНЫЙ ВАРИАНТ
+per_device_train_batch_size: 2  # Пробуем 2 вместо 1
+gradient_accumulation_steps: 8   # Эффективный batch = 16 (как и было)
+learning_rate: 1.5e-4
+num_train_epochs: 5.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.1
+
+bf16: True
+gradient_checkpointing: True
+flash_attn: sdpa
+
+quantization_bit: 4
+quantization_method: bitsandbytes
+
+val_size: 0.05
+per_device_eval_batch_size: 2
+eval_strategy: steps
+eval_steps: 100
