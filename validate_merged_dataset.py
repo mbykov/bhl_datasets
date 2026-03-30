@@ -119,7 +119,7 @@ def show_sample(filepath, line_num=61):
                 break
 
 if __name__ == "__main__":
-    validate_dataset("result_com_lat/dataset.jsonl")
+    validate_dataset("result/merged/dataset.jsonl")
 
     # Показываем пример строки 61
-    show_sample("result_com_lat/dataset.jsonl", 61)
+    show_sample("result/merged/dataset.jsonl", 61)

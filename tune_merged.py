@@ -17,8 +17,8 @@ import time
 # Пути (используем абсолютные для надежности)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(BASE_DIR, "config_merged.yaml")
-DATASET_PATH = os.path.join(BASE_DIR, "result_com_lat", "dataset.jsonl")
-OUTPUT_DIR = os.path.join(BASE_DIR, "saves", "qwen_com_lat_lora")
+DATASET_PATH = os.path.join(BASE_DIR, "result/merged", "dataset.jsonl")
+OUTPUT_DIR = os.path.join(BASE_DIR, "saves", "qwen_merged_lora")
 
 # GPU настройки
 GPU_ID = "1"  # RTX 5060 Ti

@@ -4,8 +4,27 @@ import random
 import re
 
 # Инструкции для разных типов задач
-COMMAND_INSTRUCTION = "Определи команду в тексте"
-LATEX_INSTRUCTION = "Преобразуй текст в формулу LaTeX"
+# Вариативные инструкции для команд
+COMMAND_INSTRUCTIONS = [
+    "Определи команду в тексте",
+    "Распознай команду",
+    "Найди команду в тексте",
+    "Идентифицируй команду",
+    "Какая это команда"
+]
+
+# Вариативные инструкции для LaTeX
+LATEX_INSTRUCTIONS = [
+    "Преобразуй текст в формулу LaTeX",
+    "Запиши формулу в LaTeX",
+    "Переведи текст в LaTeX",
+    "Создай формулу LaTeX",
+    "Вырази формулу в LaTeX",
+    "Получи формулу LaTeX",
+    "Напиши формулу в LaTeX",
+    "Сгенерируй LaTeX формулу"
+]
+
 GARBAGE_INSTRUCTION = "Это не команда и не формула"
 
 def load_jsonl(path):
@@ -32,9 +51,9 @@ def save_jsonl(data, path):
             f.write(json.dumps(item, ensure_ascii=False) + '\n')
 
 def merge_and_balance(
-    command_path="result_command/commands.jsonl",
-    latex_path="result_latex/latex.jsonl",
-    output_dir="result_com_lat",
+    command_path="result/command/dataset.jsonl",
+    latex_path="result/latex/dataset.jsonl",
+    output_dir="result/merged",
     balance_ratio=2,
     max_latex=None,
     shuffle=True
@@ -90,7 +109,7 @@ def merge_and_balance(
         text = cmd.get("rus", "").strip()
         if text:
             merged.append({
-                "instruction": COMMAND_INSTRUCTION,
+                "instruction": random.choice(COMMAND_INSTRUCTIONS),
                 "input": text,
                 "output": cmd.get("name", "")
             })
@@ -102,7 +121,7 @@ def merge_and_balance(
             continue
 
         merged.append({
-            "instruction": LATEX_INSTRUCTION,
+            "instruction": random.choice(LATEX_INSTRUCTIONS),
             "input": input_text,
             "output": lat.get("output", lat.get("latex", ""))
         })
@@ -190,8 +209,8 @@ def merge_and_balance(
     print("=" * 60)
     print(f"\n📊 Итоговый датасет:")
     print(f"   Всего примеров: {len(merged)}")
-    print(f"   Команды (inst: {COMMAND_INSTRUCTION}): {cmd_in_merged}")
-    print(f"   LaTeX (inst: {LATEX_INSTRUCTION}): {latex_in_merged}")
+    print(f"   Команды (inst: {COMMAND_INSTRUCTIONS[0]}): {cmd_in_merged}")
+    print(f"   LaTeX (inst: {LATEX_INSTRUCTIONS[0]}): {latex_in_merged}")
     print(f"   Garbage (inst: {GARBAGE_INSTRUCTION}): {garbage_in_merged}")
     print(f"   Пустой input: {empty_input} (должно быть 0)")
     print(f"\n📁 Файлы сохранены в: {output_dir}/")
@@ -222,13 +241,74 @@ def main():
     print()
 
     merge_and_balance(
-        command_path="result_command/commands.jsonl",
-        latex_path="result_latex/latex.jsonl",
-        output_dir="result_com_lat",
+        command_path="result/command/dataset.jsonl",
+        latex_path="result/latex/dataset.jsonl",
+        output_dir="result/merged",
         balance_ratio=balance_ratio,
         max_latex=max_latex,
         shuffle=True
     )
 
+def create_test_dataset(command_path, latex_path, output_dir, balance_ratio=2, max_latex=None):
+    """Создает тестовый датасет"""
+    # Загружаем тестовые данные
+    commands_test = load_jsonl(os.path.join(os.path.dirname(command_path), "test.jsonl"))
+    latex_test = load_jsonl(os.path.join(os.path.dirname(latex_path), "test.jsonl"))
+
+    # Балансируем
+    target_latex_count = len(commands_test) * balance_ratio
+    if max_latex and max_latex < target_latex_count:
+        target_latex_count = max_latex
+
+    if len(latex_test) > target_latex_count:
+        latex_test = random.sample(latex_test, target_latex_count)
+
+    # Объединяем
+    test_merged = []
+
+    for cmd in commands_test:
+        if cmd.get("name") != "none":
+            test_merged.append({
+                "instruction": random.choice(COMMAND_INSTRUCTIONS),
+                "input": cmd.get("rus", "").strip(),
+                "output": cmd.get("name", "")
+            })
+
+    for lat in latex_test:
+        input_text = lat.get("input", lat.get("rus", lat.get("eng", ""))).strip()
+        if input_text:
+            test_merged.append({
+                "instruction": random.choice(LATEX_INSTRUCTIONS),
+                "input": input_text,
+                "output": lat.get("output", lat.get("latex", ""))
+            })
+
+    # Добавляем garbage
+    garbage = [cmd for cmd in commands_test if cmd.get("name") == "none"]
+    max_garbage = int(len(test_merged) * 0.15)
+    if len(garbage) > max_garbage:
+        garbage = random.sample(garbage, max_garbage)
+
+    for g in garbage:
+        text = g.get("rus", "").strip()
+        if text:
+            test_merged.append({
+                "instruction": GARBAGE_INSTRUCTION,
+                "input": text,
+                "output": "none"
+            })
+
+    # Сохраняем
+    output_path = os.path.join(output_dir, "test.jsonl")
+    save_jsonl(test_merged, output_path)
+
+    return test_merged
+
 if __name__ == "__main__":
     main()
+    test_data = create_test_dataset(
+      command_path="result/command/dataset.jsonl",
+      latex_path="result/latex/dataset.jsonl",
+      output_dir="result/merged"
+    )
+    print(f"✅ Тестовый датасет: {len(test_data)} примеров")

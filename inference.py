@@ -19,8 +19,8 @@ def load_config():
 
 def load_keywords():
     """Загружает ключевые слова для команд и LaTeX"""
-    cmd_path = "./result_command/keywords.txt"
-    latex_path = "./result_latex/keywords.txt"
+    cmd_path = "./result/command/keywords.txt"
+    latex_path = "./result/latex/keywords.txt"
 
     cmd_keywords = []
     latex_keywords = []
@@ -193,9 +193,9 @@ def main():
     lora_path = args.model
     if lora_path is None:
         # Проверяем наличие обученных моделей
-        if os.path.exists("./saves/qwen_latex_lora"):
-            lora_path = "./saves/qwen_latex_lora"
-            print("✅ Найден адаптер qwen_latex_lora (команды + LaTeX)")
+        if os.path.exists("./saves/qwen_merged_lora"):
+            lora_path = "./saves/qwen_merged_lora"
+            print("✅ Найден адаптер qwen_merged_lora (команды + LaTeX)")
         elif os.path.exists("./saves/qwen_command_lora"):
             lora_path = "./saves/qwen_command_lora"
             print("✅ Найден адаптер qwen_command_lora (только команды)")

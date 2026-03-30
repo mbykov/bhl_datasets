@@ -79,8 +79,8 @@ def tune_latex():
 if __name__ == "__main__":
     os.makedirs("./saves", exist_ok=True)
 
-    if not os.path.exists("./result_latex/latex.jsonl"):
-        print("⚠️  Внимание: файл result_latex/latex.jsonl не найден")
+    if not os.path.exists("./result/latex/dataset.jsonl"):
+        print("⚠️  Внимание: файл result/latex/dataset.jsonl не найден")
         print("   Сначала запустите generate_latex.py")
         response = input("   Продолжить? (y/n): ")
         if response.lower() != 'y':

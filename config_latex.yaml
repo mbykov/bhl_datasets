@@ -9,7 +9,7 @@ lora_rank: 16
 lora_alpha: 32
 
 dataset: latex_ds  # Используем новый датасет
-dataset_dir: ./result_latex
+dataset_dir: ./result/latex
 template: qwen
 cutoff_len: 512  # Для LaTeX нужно больше токенов
 overwrite_cache: True

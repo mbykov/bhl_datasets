@@ -1,4 +1,4 @@
-# config_merged_optimized.yaml
+# config_merged.yaml
 model_name_or_path: ../bhl/Models/Qwen2.5-1.5B-Instruct
 trust_remote_code: True
 
@@ -10,14 +10,14 @@ lora_rank: 8
 lora_alpha: 16
 
 dataset: merged_ds
-dataset_dir: result_com_lat
+dataset_dir: result/merged
 template: qwen
 cutoff_len: 256
 overwrite_cache: True
 preprocessing_num_workers: 4
 packing: True  # ВКЛЮЧАЕМ!
 
-output_dir: ./saves/qwen_com_lat_lora
+output_dir: ./saves/qwen_merged_lora
 logging_steps: 10
 save_steps: 25  # Сохраняем каждые 25 шагов вместо 100
 save_total_limit: 2

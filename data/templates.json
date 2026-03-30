@@ -1,5 +1,20 @@
 {
   "rus": {
+    "command_verbs": [
+      "запиши",
+      "переведи в латех",
+      "получи",
+      "создай формулу",
+      "вырази в latex",
+      "дай формулу",
+      "напиши уравнение",
+      "запиши формулу",
+      "переведи формулу",
+      "сгенерируй latex",
+      "представь в виде",
+      "построй формулу",
+      "выведи формулу"
+    ],
     "simple_verb": "{action} {v1} и {v2}",
     "directed_verb": "{action} {v1} к {v2}",
     "simple_noun": "{noun} {v1} и {v2}",
@@ -8,6 +23,20 @@
     "equation": "{expr} равно {v3}"
   },
   "eng": {
+    "command_verbs": [
+      "write",
+      "convert to latex",
+      "get",
+      "create formula",
+      "express in latex",
+      "give formula",
+      "write equation",
+      "translate formula",
+      "generate latex",
+      "represent as",
+      "build formula",
+      "output formula"
+    ],
     "simple_verb": "{action} {v1} and {v2}",
     "directed_verb": "{action} {v1} to {v2}",
     "simple_noun": "{noun} of {v1} and {v2}",

@@ -10,7 +10,7 @@ lora_rank: 16
 lora_alpha: 32
 
 dataset: command_ds
-dataset_dir: ./result_command
+dataset_dir: ./result/command
 template: qwen
 cutoff_len: 128
 overwrite_cache: True

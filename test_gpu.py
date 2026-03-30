@@ -1,7 +1,7 @@
 import os
 import torch
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 print(f"CUDA_VISIBLE_DEVICES = {os.environ.get('CUDA_VISIBLE_DEVICES')}")
 print(f"CUDA available: {torch.cuda.is_available()}")

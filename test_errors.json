@@ -1,0 +1,812 @@
+[
+  {
+    "index": 9,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "removeText",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 24,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "removePhrase",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 30,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "removeText",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 45,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "hlPhrase",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 52,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "editLatex",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 95,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "removePar",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 127,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "removeText",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 131,
+    "instruction": "Определи команду в тексте",
+    "input": "пожалуйста сделай кусок пожалуйста",
+    "expected": "newPar",
+    "predicted": "selectPar",
+    "full_response": "selectPar",
+    "type": "command"
+  },
+  {
+    "index": 138,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "removeText",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 140,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "createLatex",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 141,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "removePhrase",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 150,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "stopRecord",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 152,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "hlPhrase",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 167,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "hlPhrase",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 170,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "createLatex",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 181,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "hlPar",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 194,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "hlPhrase",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 198,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "editLatex",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 239,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "hlPar",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 262,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "hlPar",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 279,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "stopRecord",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 282,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "undoCommand",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 283,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "newPar",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 295,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "newPar",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 298,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "hlPar",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 317,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "removeText",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 318,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "hlPar",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 319,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "newPar",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 321,
+    "instruction": "Определи команду в тексте",
+    "input": "начни кусок пожалуйста",
+    "expected": "newPar",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 331,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "undoCommand",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 337,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "newPar",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 344,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "stopRecord",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 347,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "undoCommand",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 359,
+    "instruction": "Определи команду в тексте",
+    "input": "срочно запили кусок",
+    "expected": "newPar",
+    "predicted": "createPar",
+    "full_response": "createPar",
+    "type": "command"
+  },
+  {
+    "index": 375,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "newPar",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 389,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "removePhrase",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 397,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "removeText",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 426,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "stopRecord",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 432,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "hlPhrase",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 435,
+    "instruction": "Определи команду в тексте",
+    "input": "",
+    "expected": "removePhrase",
+    "predicted": "startRecord",
+    "full_response": "startRecord",
+    "type": "command"
+  },
+  {
+    "index": 440,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "для любого альфа",
+    "expected": "$\\forall \\alpha$",
+    "predicted": "$\\alpha \\in f$",
+    "full_response": "$\\alpha \\in f$",
+    "type": "latex"
+  },
+  {
+    "index": 443,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "игрек композиция с игрек",
+    "expected": "$((y \\circ y))$",
+    "predicted": "$(y \\circ y)$",
+    "full_response": "$(y \\circ y)$",
+    "type": "latex"
+  },
+  {
+    "index": 444,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "естественное преобразование из эф",
+    "expected": "$f: f \\Rightarrow \\alpha$",
+    "predicted": "$f: f \\Rightarrow y$",
+    "full_response": "$f: f \\Rightarrow y$",
+    "type": "latex"
+  },
+  {
+    "index": 448,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "замыкание из альфа и эф",
+    "expected": "$\\bar{\\alpha} \\land f$",
+    "predicted": "$\\bar{\\alpha}f$",
+    "full_response": "$\\bar{\\alpha}f$",
+    "type": "latex"
+  },
+  {
+    "index": 450,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "факториал из эф",
+    "expected": "$f!$",
+    "predicted": "$|f|$",
+    "full_response": "$|f|$",
+    "type": "latex"
+  },
+  {
+    "index": 455,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "граница из альфа тогда и только тогда игрек равно внутренность из игрек выводит эф",
+    "expected": "$\\partial (\\alpha \\iff y = y \\vdash f)^\\circ$",
+    "predicted": "$\\partial \\alpha = f \\Rightarrow y$",
+    "full_response": "$\\partial \\alpha = f \\Rightarrow y$",
+    "type": "latex"
+  },
+  {
+    "index": 460,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "произведение икс и эф",
+    "expected": "$(x \\cdot f)$",
+    "predicted": "$(x \\times f)$",
+    "full_response": "$(x \\times f)$",
+    "type": "latex"
+  },
+  {
+    "index": 465,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "выводимость игрек и икс равно отрицание из эф",
+    "expected": "$y \\vdash x = \\neg f$",
+    "predicted": "$(y \\vdash x = f) = 0$",
+    "full_response": "$(y \\vdash x = f) = 0$",
+    "type": "latex"
+  },
+  {
+    "index": 466,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "след матрицы из эф равно пять",
+    "expected": "$\\operatorname{Tr}(f = 5$",
+    "predicted": "$\\operatorname{Tr}(f = 5)$",
+    "full_response": "$\\operatorname{Tr}(f = 5)$",
+    "type": "latex"
+  },
+  {
+    "index": 470,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "так как взять частную производную эф",
+    "expected": "$\\because \\frac{\\partial f}{\\partial x}$",
+    "predicted": "$\\frac{\\partial f}{\\partial y}$",
+    "full_response": "$\\frac{\\partial f}{\\partial y}$",
+    "type": "latex"
+  },
+  {
+    "index": 472,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "найти предел альфа равно ноль",
+    "expected": "$\\lim_{x \\to a} \\alpha = 0$",
+    "predicted": "$\\lim_{\\alpha \\to 0} \\alpha = 0$",
+    "full_response": "$\\lim_{\\alpha \\to 0} \\alpha = 0$",
+    "type": "latex"
+  },
+  {
+    "index": 475,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "тензор Римана из булеан из икс",
+    "expected": "$R^{\\mathcal{P}(x)}_{fyf}$",
+    "predicted": "$R^{y}_{yy}$",
+    "full_response": "$R^{y}_{yy}$",
+    "type": "latex"
+  },
+  {
+    "index": 476,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "градусов игрек",
+    "expected": "$y^\\circ$",
+    "predicted": "$\\sphericalangle y$",
+    "full_response": "$\\sphericalangle y$",
+    "type": "latex"
+  },
+  {
+    "index": 477,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "альфа исключающее или альфа равно существует игрек",
+    "expected": "$\\alpha \\veebar \\alpha = \\exists y$",
+    "predicted": "$(\\alpha \\veebar y = \\exists y)$",
+    "full_response": "$(\\alpha \\veebar y = \\exists y)$",
+    "type": "latex"
+  },
+  {
+    "index": 479,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "альфа больше либо равно альфа равно ноль",
+    "expected": "$\\alpha \\ge \\alpha = 0$",
+    "predicted": "$(\\alpha \\geq \\alpha = 0)$",
+    "full_response": "$(\\alpha \\geq \\alpha = 0)$",
+    "type": "latex"
+  },
+  {
+    "index": 480,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "оператор из альфа свертка с эф равно ноль",
+    "expected": "$\\hat{((\\alpha \\ast f))} = 0$",
+    "predicted": "$\\hat{\\alpha} \\ast f = 0$",
+    "full_response": "$\\hat{\\alpha} \\ast f = 0$",
+    "type": "latex"
+  },
+  {
+    "index": 482,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "степень икс и икс равно ноль",
+    "expected": "$x^{x} = 0$",
+    "predicted": "$(x^{x} = 0)$",
+    "full_response": "$(x^{x} = 0)$",
+    "type": "latex"
+  },
+  {
+    "index": 483,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "дисперсия из альфа",
+    "expected": "$\\operatorname{Var}(\\alpha)$",
+    "predicted": "$\\sigma^2_\\alpha$",
+    "full_response": "$\\sigma^2_\\alpha$",
+    "type": "latex"
+  },
+  {
+    "index": 484,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "частная производная тензора из игрек тильда игрек",
+    "expected": "$(y \\sim y)_{,f}$",
+    "predicted": "$\\frac{\\delta \\tilde{y}}{\\partial y}$",
+    "full_response": "$\\frac{\\delta \\tilde{y}}{\\partial y}$",
+    "type": "latex"
+  },
+  {
+    "index": 485,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "икс стрелка в альфа равно копредел из икс",
+    "expected": "$x \\to \\alpha = \\operatorname{colim} x$",
+    "predicted": "$(x \\to \\alpha = \\operatorname{colim} x)$",
+    "full_response": "$(x \\to \\alpha = \\operatorname{colim} x)$",
+    "type": "latex"
+  },
+  {
+    "index": 493,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "содержит или равно альфа и икс",
+    "expected": "$(\\alpha \\supseteq x)$",
+    "predicted": "$\\alpha \\supseteq x$",
+    "full_response": "$\\alpha \\supseteq x$",
+    "type": "latex"
+  },
+  {
+    "index": 496,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "строгое надмножество альфа и игрек равно пять",
+    "expected": "$\\alpha \\supset y = 5$",
+    "predicted": "$\\alpha \\supseteq y = 5$",
+    "full_response": "$\\alpha \\supseteq y = 5$",
+    "type": "latex"
+  },
+  {
+    "index": 498,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "сумма тензорное произведение альфа и эф и альфа равно модуль из контурный интеграл из игрек",
+    "expected": "$\\alpha \\otimes f) + \\alpha = |\\oint y d\\alpha|$",
+    "predicted": "$\\alpha \\otimes f = |\\partial y|$",
+    "full_response": "$\\alpha \\otimes f = |\\partial y|$",
+    "type": "latex"
+  },
+  {
+    "index": 499,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "модуль эф",
+    "expected": "$|f|$",
+    "predicted": "$\\|f\\|$",
+    "full_response": "$\\|f\\|$",
+    "type": "latex"
+  },
+  {
+    "index": 501,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "конгруэнтность икс и игрек",
+    "expected": "$(x \\cong y)$",
+    "predicted": "$(x \\equiv y \\pmod{m})$",
+    "full_response": "$(x \\equiv y \\pmod{m})$",
+    "type": "latex"
+  },
+  {
+    "index": 502,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "симметрическая разность альфа и альфа",
+    "expected": "$\\alpha \\triangle \\alpha$",
+    "predicted": "$(\\alpha \\triangle \\alpha)$",
+    "full_response": "$(\\alpha \\triangle \\alpha)$",
+    "type": "latex"
+  },
+  {
+    "index": 503,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "альфа тогда и только тогда икс",
+    "expected": "$(\\alpha \\iff x)$",
+    "predicted": "$(\\alpha \\impliedby x)$",
+    "full_response": "$(\\alpha \\impliedby x)$",
+    "type": "latex"
+  },
+  {
+    "index": 507,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "эф нормальная подгруппа игрек равно гомологии из икс нормальная подгруппа игрек",
+    "expected": "$f \\trianglelefteq y = H_{n}(x) \\trianglelefteq y$",
+    "predicted": "$(f \\trianglelefteq y = H_{n}(x))$",
+    "full_response": "$(f \\trianglelefteq y = H_{n}(x))$",
+    "type": "latex"
+  },
+  {
+    "index": 509,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "символ Кристоффеля из икс",
+    "expected": "$\\Gamma^{x}_{fy}$",
+    "predicted": "$y_{x|\\alpha}$",
+    "full_response": "$y_{x|\\alpha}$",
+    "type": "latex"
+  },
+  {
+    "index": 511,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "математическое ожидание из эф",
+    "expected": "$E[f]$",
+    "predicted": "$\\langle f \\rangle$",
+    "full_response": "$\\langle f \\rangle$",
+    "type": "latex"
+  },
+  {
+    "index": 512,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "полупрямое произведение эф и альфа",
+    "expected": "$(f \\rtimes \\alpha)$",
+    "predicted": "$(f \\approx \\alpha)$",
+    "full_response": "$(f \\approx \\alpha)$",
+    "type": "latex"
+  },
+  {
+    "index": 516,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "не принадлежит эф и альфа",
+    "expected": "$(f \\notin \\alpha)$",
+    "predicted": "$f \\notin \\alpha$",
+    "full_response": "$f \\notin \\alpha$",
+    "type": "latex"
+  },
+  {
+    "index": 517,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "контурный интеграл из эф",
+    "expected": "$\\oint f df$",
+    "predicted": "$\\oint f dy$",
+    "full_response": "$\\oint f dy$",
+    "type": "latex"
+  },
+  {
+    "index": 519,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "кет-вектор из икс",
+    "expected": "$| x \\rangle$",
+    "predicted": "$|xrangle|$",
+    "full_response": "$|xrangle|$",
+    "type": "latex"
+  },
+  {
+    "index": 521,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "частное альфа и икс",
+    "expected": "$(\\alpha \\div x)$",
+    "predicted": "$(\\alpha / x)$",
+    "full_response": "$(\\alpha / x)$",
+    "type": "latex"
+  },
+  {
+    "index": 522,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "предел из альфа",
+    "expected": "$\\lim_{y \\to a} \\alpha$",
+    "predicted": "$\\lim_{\\alpha \\to a} f(\\alpha)$",
+    "full_response": "$\\lim_{\\alpha \\to a} f(\\alpha)$",
+    "type": "latex"
+  },
+  {
+    "index": 525,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "выводимость альфа минус множество игрек и эф равно игрек тогда и только тогда альфа исключающее или икс",
+    "expected": "$\\alpha \\setminus y) \\vdash f = y \\iff \\alpha) \\veebar x$",
+    "predicted": "$(\\alpha \\setminus y = x) \\therefore (\\alpha \\veebar x)$",
+    "full_response": "$(\\alpha \\setminus y = x) \\therefore (\\alpha \\veebar x)$",
+    "type": "latex"
+  },
+  {
+    "index": 527,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "функтор из икс",
+    "expected": "$x: y \\to y$",
+    "predicted": "$x: y \\to f$",
+    "full_response": "$x: y \\to f$",
+    "type": "latex"
+  },
+  {
+    "index": 529,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "существует единственный игрек",
+    "expected": "$\\exists! y$",
+    "predicted": "$\\exists! y f(y = 0$",
+    "full_response": "$\\exists! y f(y = 0$",
+    "type": "latex"
+  },
+  {
+    "index": 533,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "икс делить на альфа",
+    "expected": "$(x \\div \\alpha)$",
+    "predicted": "$(x / \\alpha)$",
+    "full_response": "$(x / \\alpha)$",
+    "type": "latex"
+  },
+  {
+    "index": 539,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "стандартное отклонение из для любого игрек равно функция распределения из кет-вектор из эф",
+    "expected": "$\\sigma = \\Phi(| f \\rangle$",
+    "predicted": "$\\sigma = \\sqrt{\\mathcal{N}(\\alpha)}$",
+    "full_response": "$\\sigma = \\sqrt{\\mathcal{N}(\\alpha)}$",
+    "type": "latex"
+  },
+  {
+    "index": 540,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "симметрическая разность альфа подобно игрек и икс",
+    "expected": "$(\\alpha \\sim y) \\triangle x$",
+    "predicted": "$(\\alpha \\symdiff x \\sim y)$",
+    "full_response": "$(\\alpha \\symdiff x \\sim y)$",
+    "type": "latex"
+  },
+  {
+    "index": 543,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "скалярное произведение из альфа",
+    "expected": "$\\langle \\alpha, y \\rangle$",
+    "predicted": "$\\alpha \\cdot f$",
+    "full_response": "$\\alpha \\cdot f$",
+    "type": "latex"
+  },
+  {
+    "index": 544,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "тензор Римана из игрек",
+    "expected": "$R^{y}_{\\alphaxx}$",
+    "predicted": "$R^{y}_{yy}$",
+    "full_response": "$R^{y}_{yy}$",
+    "type": "latex"
+  },
+  {
+    "index": 547,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "объединение игрек и икс равно ноль",
+    "expected": "$y \\cup x = 0$",
+    "predicted": "$(y \\cup x = 0)$",
+    "full_response": "$(y \\cup x = 0)$",
+    "type": "latex"
+  },
+  {
+    "index": 548,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "не принадлежит игрек и альфа",
+    "expected": "$(y \\notin \\alpha)$",
+    "predicted": "$(y \\notin y)$",
+    "full_response": "$(y \\notin y)$",
+    "type": "latex"
+  },
+  {
+    "index": 551,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "разность множеств икс и альфа равно строгое подмножество эф и игрек",
+    "expected": "$x \\setminus \\alpha = f \\subset y$",
+    "predicted": "$(x \\setminus \\alpha) \\subset f$",
+    "full_response": "$(x \\setminus \\alpha) \\subset f$",
+    "type": "latex"
+  },
+  {
+    "index": 552,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "принадлежит альфа и эф равно пять",
+    "expected": "$\\alpha \\in f = 5$",
+    "predicted": "$(\\alpha \\in f = 5)$",
+    "full_response": "$(\\alpha \\in f = 5)$",
+    "type": "latex"
+  },
+  {
+    "index": 555,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "следовательно ядро из альфа",
+    "expected": "$\\therefore \\ker(\\alpha)$",
+    "predicted": "$\\ker(\\alpha)$",
+    "full_response": "$\\ker(\\alpha)$",
+    "type": "latex"
+  },
+  {
+    "index": 558,
+    "instruction": "Преобразуй текст в формулу LaTeX",
+    "input": "взять интеграл альфа",
+    "expected": "$\\int \\alpha df$",
+    "predicted": "$\\int \\alpha dV$",
+    "full_response": "$\\int \\alpha dV$",
+    "type": "latex"
+  }
+]

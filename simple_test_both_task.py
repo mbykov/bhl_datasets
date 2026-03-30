@@ -6,11 +6,11 @@ import glob
 
 def find_latest_adapter():
     """Находит последний чекпоинт"""
-    checkpoints = glob.glob("./saves/qwen_com_lat_lora/checkpoint-*")
+    checkpoints = glob.glob("./saves/qwen_merged_lora/checkpoint-*")
     if checkpoints:
         checkpoints.sort(key=lambda x: int(x.split('-')[-1]))
         return checkpoints[-1]
-    return "./saves/qwen_com_lat_lora"
+    return "./saves/qwen_merged_lora"
 
 def test_model():
     print("="*60)
