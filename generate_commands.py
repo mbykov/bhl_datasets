@@ -64,32 +64,47 @@ COMMAND_MAPPING = {
 # Префиксы для аугментации (русские)
 RUS_PREFIXES = [
     # Вежливые
-    "пожалуйста", "будь добр", "если не сложно", "будьте добры",
+    "пожалуйста", "будь добр", "если не сложно", "будьте добры", "будь любезен",
+    "не сочти за труд", "если можно", "прошу тебя", "очень прошу",
     # Срочные/эмоциональные
-    "срочно", "немедленно", "быстро", "сейчас же", "немедленно же",
+    "срочно", "немедленно", "быстро", "сейчас же", "немедленно же", "поскорее",
+    "торопись", "живо", "мигом", "сию секунду",
     # Разговорные
-    "а ну-ка", "давай-ка", "слушай", "эй", "ну-ка",
+    "а ну-ка", "давай-ка", "слушай", "эй", "ну-ка", "слушай-ка", "эх",
     # Усилители
-    "я тебе говорю", "сделай", "давай",
+    "я тебе говорю", "сделай", "давай", "вот", "на", "ну",
     # Вопросительные
-    "можешь", "не мог бы ты", "будь так добр",
+    "можешь", "не мог бы ты", "будь так добр", "не мог бы ты",
+    # Грубые/эмоциональные (для разнообразия)
+    "гад ты этакий", "безобразник", "ну ты и", "чтоб тебя", "что за",
+    "какого черта", "тьфу ты", "вот гад", "ну и дела", "идиот",
+    # Ласковые
+    "милый", "дорогой", "родной", "любимый", "good boy", "умница",
 ]
 
 # Суффиксы для аугментации (русские)
 RUS_SUFFIXES = [
-    "пожалуйста", "срочно", "быстро", "немедленно", "сейчас же",
+    "пожалуйста", "срочно", "быстро", "немедленно", "сейчас же", "поскорее",
+    "очень прошу", "умоляю", "очень нужно", "кстати", "к слову", "вот",
+    "наконец-то", "уже", "надоел", "задолбал", "uff", "pls", "plz",
 ]
 
 # Префиксы для аугментации (английские)
 ENG_PREFIXES = [
     "please", "could you", "would you", "kindly", "if you don't mind",
-    "urgently", "quickly", "right now", "immediately", "now",
-    "hey", "listen", "come on", "go ahead",
-    "I told you", "just", "go",
+    "urgently", "quickly", "right now", "immediately", "now", "ASAP",
+    "hey", "listen", "come on", "go ahead", "look here",
+    "I told you", "just", "go", "for God's sake", "for pity's sake",
+    # Emotional
+    "dammit", "goddamn", "damn", "bloody hell", "what the hell",
+    # Nice
+    "dear", "darling", "sweetheart", "my dear",
 ]
 
 ENG_SUFFIXES = [
-    "please", "urgently", "quickly", "now", "immediately",
+    "please", "urgently", "quickly", "now", "immediately", "ASAP",
+    "will you", "won't you", "would you", "can you", "please do",
+    "for me", "now", "already", "already will ya",
 ]
 
 def augment_command(text, lang="rus", max_variants=5):
@@ -206,7 +221,7 @@ def generate_garbage(lang="rus", count=800):
 
     return result
 
-def generate_commands(augment=True, augment_factor=3, garbage_count=500, test_ratio=0.1, seed=42):
+def generate_commands(augment=True, augment_factor=15, garbage_count=800, test_ratio=0.1, seed=42):
     """
     Генерирует датасет команд с аугментацией и train/test разделением
     """
@@ -350,7 +365,7 @@ def print_samples(data, count=5, name="Примеры"):
             if shown >= count:
                 break
 
-def generate_dataset(augment=True, augment_factor=3, garbage_count=500, test_ratio=0.1):
+def generate_dataset(augment=True, augment_factor=15, garbage_count=800, test_ratio=0.1):
     """
     Основная функция генерации датасета
     """
@@ -430,7 +445,7 @@ def generate_dataset_with_custom_params(augment=True, augment_factor=3, garbage_
 if __name__ == "__main__":
     # Парсим аргументы командной строки
     augment = True
-    augment_factor = 3
+    augment_factor = 15
     garbage_count = 500
     test_ratio = 0.1
 

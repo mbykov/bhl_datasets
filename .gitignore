@@ -4,8 +4,9 @@
 bhl
 *saves*
 result*
-voice-assistant
+models
 .DS_Store
+llama.cpp
 *.log
 .env
 *.pem
