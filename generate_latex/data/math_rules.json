@@ -1,0 +1,37 @@
+{
+  "addition": {
+    "sec": "arithmetic",
+    "rus": "сумма",
+    "eng": "sum",
+    "op": "+",
+    "type": "simple_noun"
+  },
+  "subtraction": {
+    "sec": "arithmetic",
+    "rus": "разность",
+    "eng": "difference",
+    "op": "-",
+    "type": "simple_noun"
+  },
+  "multiplication": {
+    "sec": "arithmetic",
+    "rus": "произведение",
+    "eng": "product",
+    "op": "\\cdot",
+    "type": "simple_noun"
+  },
+  "division": {
+    "sec": "arithmetic",
+    "rus": "частное",
+    "eng": "quotient",
+    "op": "/",
+    "type": "simple_noun"
+  },
+  "sine": {
+    "sec": "calculus",
+    "rus": "синус",
+    "eng": "sine",
+    "op": "\\sin",
+    "type": "prefix_noun"
+  }
+}

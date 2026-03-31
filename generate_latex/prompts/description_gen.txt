@@ -1,0 +1,4 @@
+Task: Generate a natural language description for the following math concept.
+Concept: {skeleton}
+Category: {category}
+Style: {style} (e.g., textbook, casual, formal)
