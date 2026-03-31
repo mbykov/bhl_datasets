@@ -1,47 +1,69 @@
 {
   "rus": {
-    "command_verbs": [
-      "запиши",
-      "переведи в латех",
-      "получи",
-      "создай формулу",
-      "вырази в latex",
-      "дай формулу",
-      "напиши уравнение",
-      "запиши формулу",
-      "переведи формулу",
-      "сгенерируй latex",
-      "представь в виде",
-      "построй формулу",
-      "выведи формулу"
+    "simple_noun": [
+      "{noun} {v1} и {v2}",
+      "результат {noun} {v1} и {v2}",
+      "посчитай {noun} {v1} и {v2}",
+      "{v1} {op_word} {v2}"
     ],
-    "simple_verb": "{action} {v1} и {v2}",
-    "directed_verb": "{action} {v1} к {v2}",
-    "simple_noun": "{noun} {v1} и {v2}",
-    "prefix_verb": "{action} {v1}",
-    "prefix_noun": "{noun} из {v1}",
-    "equation": "{expr} равно {v3}"
+    "prefix_pattern": [
+      "{noun} из {v1}",
+      "возьми {noun} от {v1}",
+      "вычисли {noun} выражения {v1}"
+    ],
+    "fraction_pattern": [
+      "{noun} {v1} на {v2}",
+      "раздели {v1} на {v2}",
+      "{v1} деленное на {v2}"
+    ],
+    "power_pattern": [
+      "{v1} в степени {v2}",
+      "{v1} в {v2}-й степени",
+      "возведи {v1} в степень {v2}"
+    ],
+    "log_pattern": [
+      "{noun} {v2} по основанию {v1}",
+      "логарифм числа {v2} по базе {v1}"
+    ],
+    "limit_pattern": [
+      "{noun} {v3} при {v1} стремящемся к {v2}",
+      "найди предел {v3} если {v1} стремится к {v2}"
+    ],
+    "integral_pattern": [
+      "{noun} {v3} по переменной {v1}",
+      "интеграл от {v3} по дэ {v1}"
+    ]
   },
   "eng": {
-    "command_verbs": [
-      "write",
-      "convert to latex",
-      "get",
-      "create formula",
-      "express in latex",
-      "give formula",
-      "write equation",
-      "translate formula",
-      "generate latex",
-      "represent as",
-      "build formula",
-      "output formula"
+    "simple_noun": [
+      "{noun} of {v1} and {v2}",
+      "calculate the {noun} of {v1} and {v2}",
+      "{v1} {op_word} {v2}"
     ],
-    "simple_verb": "{action} {v1} and {v2}",
-    "directed_verb": "{action} {v1} to {v2}",
-    "simple_noun": "{noun} of {v1} and {v2}",
-    "prefix_verb": "{action} {v1}",
-    "prefix_noun": "{noun} of {v1}",
-    "equation": "{expr} equals {v3}"
+    "prefix_pattern": [
+      "{noun} of {v1}",
+      "take the {noun} of {v1}"
+    ],
+    "fraction_pattern": [
+      "{noun} of {v1} over {v2}",
+      "divide {v1} by {v2}",
+      "{v1} divided by {v2}"
+    ],
+    "power_pattern": [
+      "{v1} to the power of {v2}",
+      "{v1} raised to {v2}"
+    ],
+    "log_pattern": [
+      "{noun} of {v2} base {v1}",
+      "log base {v1} of {v2}"
+    ],
+    "limit_pattern": [
+      "{noun} of {v3} as {v1} approaches {v2}",
+      "limit of {v3} when {v1} goes to {v2}"
+    ],
+    "integral_pattern": [
+      "{noun} of {v3} with respect to {v1}",
+      "integral of {v3} d {v1}"
+    ]
   }
 }
