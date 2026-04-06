@@ -1,0 +1,55 @@
+{"sym": "a", "rus": ["эй"], "eng": ["ay"]}
+{"sym": "b", "rus": ["би"], "eng": ["bee"]}
+{"sym": "c", "rus": ["си"], "eng": ["cee"]}
+{"sym": "d", "rus": ["ди"], "eng": ["dee"]}
+{"sym": "e", "rus": ["и"], "eng": ["ee"]}
+{"sym": "f", "rus": ["эф"], "eng": ["ef"]}
+{"sym": "g", "rus": ["джи"], "eng": ["gee"]}
+{"sym": "h", "rus": ["эйч", "хэйч"], "eng": ["aitch", "haitch"]}
+{"sym": "i", "rus": ["ай"], "eng": ["eye"]}
+{"sym": "j", "rus": ["джей"], "eng": ["jay"]}
+{"sym": "k", "rus": ["кей"], "eng": ["kay"]}
+{"sym": "l", "rus": ["эл"], "eng": ["el"]}
+{"sym": "m", "rus": ["эм"], "eng": ["em"]}
+{"sym": "n", "rus": ["эн"], "eng": ["en"]}
+{"sym": "o", "rus": ["оу"], "eng": ["oh"]}
+{"sym": "p", "rus": ["пи"], "eng": ["pee"]}
+{"sym": "q", "rus": ["кью"], "eng": ["cue"]}
+{"sym": "r", "rus": ["а", "ар"], "eng": ["ar"]}
+{"sym": "s", "rus": ["эс"], "eng": ["ess"]}
+{"sym": "t", "rus": ["ти"], "eng": ["tee"]}
+{"sym": "u", "rus": ["ю"], "eng": ["u"]}
+{"sym": "v", "rus": ["ви"], "eng": ["vee"]}
+{"sym": "w", "rus": ["дабл-ю"], "eng": ["double-u"]}
+{"sym": "x", "rus": ["икс", "экс"], "eng": ["ex"]}
+{"sym": "y", "rus": ["игрек", "уай"], "eng": ["wy"]}
+{"sym": "z", "rus": ["зет", "зи"], "eng": ["zed", "zee"]}
+{"sym": "@", "rus": ["эт"], "eng": ["at"]}
+
+{"sym": "A", "rus": ["эй заглавная", "а заглавная"], "eng": ["capital A", "big A"]}
+{"sym": "B", "rus": ["би заглавная", "бэ заглавная"], "eng": ["capital B", "big B"]}
+{"sym": "C", "rus": ["си заглавная", "цэ заглавная"], "eng": ["capital C", "big C"]}
+{"sym": "D", "rus": ["ди заглавная", "дэ заглавная"], "eng": ["capital D", "big D"]}
+{"sym": "E", "rus": ["и заглавная", "е заглавная"], "eng": ["capital E", "big E"]}
+{"sym": "F", "rus": ["эф заглавная"], "eng": ["capital F", "big F"]}
+{"sym": "G", "rus": ["джи заглавная", "гэ заглавная"], "eng": ["capital G", "big G"]}
+{"sym": "H", "rus": ["эйч заглавная", "хэйч заглавная"], "eng": ["capital H", "big H"]}
+{"sym": "I", "rus": ["ай заглавная", "и заглавная"], "eng": ["capital I", "big I"]}
+{"sym": "J", "rus": ["джей заглавная"], "eng": ["capital J", "big J"]}
+{"sym": "K", "rus": ["кей заглавная", "ка заглавная"], "eng": ["capital K", "big K"]}
+{"sym": "L", "rus": ["эль заглавная"], "eng": ["capital L", "big L"]}
+{"sym": "M", "rus": ["эм заглавная"], "eng": ["capital M", "big M"]}
+{"sym": "N", "rus": ["эн заглавная"], "eng": ["capital N", "big N"]}
+{"sym": "O", "rus": ["оу заглавная", "о заглавная"], "eng": ["capital O", "big O"]}
+{"sym": "P", "rus": ["пи заглавная", "пэ заглавная"], "eng": ["capital P", "big P"]}
+{"sym": "Q", "rus": ["кью заглавная"], "eng": ["capital Q", "big Q"]}
+{"sym": "R", "rus": ["ар заглавная", "эр заглавная"], "eng": ["capital R", "big R"]}
+{"sym": "S", "rus": ["эс заглавная"], "eng": ["capital S", "big S"]}
+{"sym": "T", "rus": ["ти заглавная", "тэ заглавная"], "eng": ["capital T", "big T"]}
+{"sym": "U", "rus": ["ю заглавная", "у заглавная"], "eng": ["capital U", "big U"]}
+{"sym": "V", "rus": ["ви заглавная", "вэ заглавная"], "eng": ["capital V", "big V"]}
+{"sym": "W", "rus": ["дабл-ю заглавная"], "eng": ["capital W", "big W"]}
+{"sym": "X", "rus": ["икс заглавная", "экс заглавная"], "eng": ["capital X", "big X"]}
+{"sym": "Y", "rus": ["игрек заглавная", "уай заглавная"], "eng": ["capital Y", "big Y"]}
+{"sym": "Z", "rus": ["зет заглавная", "зи заглавная"], "eng": ["capital Z", "big Z"]}
+

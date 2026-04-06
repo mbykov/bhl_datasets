@@ -1,0 +1,58 @@
+{
+  "styles": [
+    {
+      "name": "разговорный",
+      "formality": 0,
+      "verbosity": 0,
+      "rules_rus": "Максимально кратко. Использовать 'плюс', 'минус', 'на'. Опускать 'переменная', 'функция'.",
+      "rules_eng": "Very concise. Use 'plus', 'minus', 'over'. Omit 'variable', 'function'.",
+      "example_rus": "а плюс бэ",
+      "example_eng": "a plus b"
+    },
+    {
+      "name": "профессиональный",
+      "formality": 1,
+      "verbosity": 0,
+      "rules_rus": "Сленговый, максимально сжатый. Использовать сокращения. Пример: 'интеграл эфки'.",
+      "rules_eng": "Slang, very concise. Use abbreviations. Example: 'integral of f'.",
+      "example_rus": "интеграл эфки дэ икс",
+      "example_eng": "integral f dx"
+    },
+    {
+      "name": "академический",
+      "formality": 2,
+      "verbosity": 1,
+      "rules_rus": "Правильные термины: 'сумма', 'произведение', 'неопределенный интеграл'. Соблюдать падежи.",
+      "rules_eng": "Proper terms: 'sum', 'product', 'indefinite integral'. Use full forms.",
+      "example_rus": "сумма а и бэ",
+      "example_eng": "sum of a and b"
+    },
+    {
+      "name": "формальный",
+      "formality": 2,
+      "verbosity": 2,
+      "rules_rus": "Проговаривать структуру: 'открывается скобка', 'в числителе', 'под интегралом'.",
+      "rules_eng": "Articulate structure: 'open parenthesis', 'in numerator', 'under integral'.",
+      "example_rus": "дробь: в числителе сумма икс и игрек, в знаменателе зет",
+      "example_eng": "fraction: numerator sum of x and y, denominator z"
+    },
+    {
+      "name": "логический",
+      "formality": 3,
+      "verbosity": 2,
+      "rules_rus": "Максимальная точность. Уточнять: 'переменная икс', 'функция эф'.",
+      "rules_eng": "Maximum precision. Specify: 'variable x', 'function f'.",
+      "example_rus": "сумма переменной икс и переменной игрек",
+      "example_eng": "sum of variable x and variable y"
+    },
+    {
+      "name": "концептуальный",
+      "formality": 2,
+      "verbosity": 2,
+      "rules_rus": "Акцент на смысле. Использовать 'равно', 'дает', 'составляет'.",
+      "rules_eng": "Focus on meaning. Use 'equals', 'gives', 'represents'.",
+      "example_rus": "дробь, значение которой определяется отношением икса к игреку",
+      "example_eng": "fraction whose value is determined by the ratio of x to y"
+    }
+  ]
+}
