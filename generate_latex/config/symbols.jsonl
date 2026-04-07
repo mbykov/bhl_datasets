@@ -16,8 +16,10 @@
 {"sym": "\\oslash", "rus_a": "частное", "rus_t": "деление в кружке", "eng_a": "quotient", "eng_t": "oslash", "sec": "binary_operations"}
 {"sym": "\\odot", "rus_a": "поточечное произведение", "rus_t": "точка в кружке", "eng_a": "Hadamard product", "eng_t": "odot", "sec": "binary_operations"}
 
-{"sym": "\\frac", "rus_a": "дробь", "rus_t": "дробь", "eng_a": "fraction", "eng_t": "fraction", "sec": "structures"}
+{"sym": "\\frac", "rus_a": "дробь", "rus_t": "дробь", "eng_a": "fraction", "eng_t": "fraction", "sec": "binary_operations"}
 {"sym": "\\Box", "rus_a": "оператор д'Аламбера", "rus_t": "бокс", "eng_a": "d'Alembert operator", "eng_t": "box", "sec": "operators"}
+
+
 
 {"sym": "\\sin", "rus_a": "синус", "rus_t": "синус", "eng_a": "sine", "eng_t": "sine", "sec": "trigonometry"}
 {"sym": "\\cos", "rus_a": "косинус", "rus_t": "косинус", "eng_a": "cosine", "eng_t": "cosine", "sec": "trigonometry"}
@@ -95,8 +97,8 @@
 {"sym": "\\exists", "rus_a": "квантор существования", "rus_t": "существует", "eng_a": "existential quantifier", "eng_t": "there exists", "sec": "misc_symbols"}
 {"sym": "\\neg", "rus_a": "логическое отрицание", "rus_t": "не", "eng_a": "logical negation", "eng_t": "not", "sec": "misc_symbols"}
 {"sym": "\\emptyset", "rus_a": "пустое множество", "rus_t": "пустое множество", "eng_a": "empty set", "eng_t": "empty set", "sec": "misc_symbols"}
-{"sym": "\\nabla", "rus_a": "оператор набла", "rus_t": "набла", "eng_a": "nabla operator", "eng_t": "nabla", "sec": "misc_symbols"}
-{"sym": "\\partial", "rus_a": "частная производная", "rus_t": "дэ круглое", "eng_a": "partial derivative", "eng_t": "partial", "sec": "misc_symbols"}
+{"sym": "\\nabla", "rus_a": "оператор набла", "rus_t": "набла", "eng_a": "nabla operator", "eng_t": "nabla", "sec": "operators"}
+{"sym": "\\partial", "rus_a": "частная производная", "rus_t": "дэ круглое", "eng_a": "partial derivative", "eng_t": "partial", "sec": "operators"}
 {"sym": "\\ell", "rus_a": "рукописная эль", "rus_t": "эль рукописная", "eng_a": "cursive ell", "eng_t": "ell", "sec": "misc_symbols"}
 {"sym": "\\angle", "rus_a": "угол", "rus_t": "угол", "eng_a": "angle", "eng_t": "angle", "sec": "misc_symbols"}
 

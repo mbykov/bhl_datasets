@@ -1,0 +1,129 @@
+{
+  "arithmetic_comparison": {
+    "operators": ["+", "-", "=", "\\neq", "\\approx", "\\cdot"],
+    "structures": {
+      "pm": {"sym": "\\pm @", "name": "Плюс-минус"},
+      "infty": {"sym": "\\infty", "name": "Бесконечность"},
+      "equiv": {"sym": "@ \\equiv @", "name": "Тождество"},
+      "approx": {"sym": "@ \\approx @", "name": "Приблизительно равно"}
+    }
+  },
+  "trigonometry_functions": {
+    "operators": ["+", "=", "\\to", "\\sin", "\\cos"],
+    "structures": {
+      "sin": {"sym": "\\sin(@)", "name": "Синус"},
+      "cos": {"sym": "\\cos(@)", "name": "Косинус"},
+      "tan": {"sym": "\\tan(@)", "name": "Тангенс"},
+      "cot": {"sym": "\\cot(@)", "name": "Котангенс"},
+      "arccos": {"sym": "\\arccos(@)", "name": "Арккосинус"},
+      "arctan": {"sym": "\\arctan(@)", "name": "Арктангенс"}
+    }
+  },
+  "calculus_analysis": {
+    "operators": ["dx", "dt", "\\to", "\\nabla", "\\partial"],
+    "structures": {
+      "int": {"sym": "\\int_{@}^{@} @", "name": "Интеграл"},
+      "iint": {"sym": "\\iint_{@} @", "name": "Двойной интеграл"},
+      "iiint": {"sym": "\\iiint_{@} @", "name": "Тройной интеграл"},
+      "oint": {"sym": "\\oint_{@} @", "name": "Контурный интеграл"},
+      "partial": {"sym": "\\frac{\\partial @}{\\partial @}", "name": "Частная производная"},
+      "nabla": {"sym": "\\nabla @", "name": "Градиент"},
+      "rot": {"sym": "\\text{rot } @", "name": "Ротор"},
+      "div": {"sym": "\\text{div } @", "name": "Дивергенция"},
+      "delta": {"sym": "\\Delta @", "name": "Лапласиан"},
+      "box": {"sym": "\\Box @", "name": "Даламбертиан"}
+    }
+  },
+  "set_theory_logic": {
+    "operators": ["\\cup", "\\cap", "\\in", "\\implies", "\\iff"],
+    "structures": {
+      "empty": {"sym": "\\emptyset", "name": "Пустое множество"},
+      "isin": {"sym": "@ \\in @", "name": "Принадлежность"},
+      "union": {"sym": "@ \\cup @", "name": "Объединение множеств"},
+      "intersect": {"sym": "@ \\cap @", "name": "Пересечение множеств"},
+      "and": {"sym": "@ \\land @", "name": "Логическое И"},
+      "or": {"sym": "@ \\lor @", "name": "Логическое ИЛИ"},
+      "implies": {"sym": "@ \\implies @", "name": "Следование"},
+      "iff": {"sym": "@ \\iff @", "name": "Эквивалентность"},
+      "forall": {"sym": "\\forall @", "name": "Квантор всеобщности"},
+      "exists": {"sym": "\\exists @", "name": "Квантор существования"}
+    }
+  },
+  "geometry": {
+    "operators": ["\\perp", "\\parallel", "\\cong", "\\sim"],
+    "structures": {
+      "perp": {"sym": "@ \\perp @", "name": "Перпендикуляр"},
+      "parallel": {"sym": "@ \\parallel @", "name": "Параллельность"},
+      "angle": {"sym": "\\angle @", "name": "Угол"},
+      "circle": {"sym": "\\circ @", "name": "Окружность"}
+    }
+  },
+  "linear_algebra_physics": {
+    "operators": ["\\otimes", "\\cdot", "\\times", "\\wedge"],
+    "structures": {
+      "tensor": {"sym": "@ \\otimes @", "name": "Тензорное произведение"},
+      "hermitian": {"sym": "{@}^{\\dagger}", "name": "Эрмитово сопряжение"},
+      "transpose": {"sym": "{@}^{T}", "name": "Транспонирование"},
+      "trace": {"sym": "\\text{Tr}(@)", "name": "След матрицы"},
+      "wedge": {"sym": "@ \\wedge @", "name": "Внешнее произведение"},
+      "factorial": {"sym": "@!", "name": "Факториал"},
+      "metric": {"sym": "g_{\\mu\\nu}", "name": "Метрический тензор"},
+      "levicivita": {"sym": "\\epsilon_{ijk}", "name": "Символ Леви-Чивиты"},
+      "kronecker": {"sym": "\\delta_{ij}", "name": "Символ Кронекера"}
+    }
+  },
+  "quantum_mechanics": {
+    "operators": ["\\dagger", "\\hbar", "\\hat{H}"],
+    "structures": {
+      "hbar": {"sym": "\\hbar", "name": "Постоянная Планка"},
+      "bra": {"sym": "\\langle @ |", "name": "Бра-вектор"},
+      "ket": {"sym": "| @ \\rangle", "name": "Кет-вектор"},
+      "hamiltonian": {"sym": "\\hat{H}", "name": "Гамильтониан"},
+      "commutator": {"sym": "[@, @]", "name": "Коммутатор"},
+      "anticommutator": {"sym": "\\{ @, @ \\}", "name": "Антикоммутатор"},
+      "wavefunc": {"sym": "\\Psi(@)", "name": "Волновая функция"}
+    }
+  },
+  "field_theory_particles": {
+    "operators": ["\\mu", "\\nu", "\\gamma", "\\sigma"],
+    "structures": {
+      "annihilate": {"sym": "a_{@}", "name": "Оператор уничтожения"},
+      "create": {"sym": "a_{@}^{\\dagger}", "name": "Оператор рождения"},
+      "num_op": {"sym": "\\hat{N}", "name": "Оператор числа частиц"},
+      "propagator": {"sym": "D_{F}(@)", "name": "Пропагатор"},
+      "s_matrix": {"sym": "\\hat{S}", "name": "S-матрица"},
+      "pauli": {"sym": "\\sigma_{@}", "name": "Спин-матрицы Паули"},
+      "dirac_gamma": {"sym": "\\gamma^{\\mu}", "name": "Матрицы Дирака"},
+      "dirac_slash": {"sym": "\\cancel{@}", "name": "Слэш-нотация Дирака"}
+    }
+  },
+  "advanced_mechanics_relativity": {
+    "operators": ["\\partial", "d", "\\Gamma", "R"],
+    "structures": {
+      "lagrangian": {"sym": "\\mathcal{L}", "name": "Лагранжиан"},
+      "action": {"sym": "\\mathcal{S}", "name": "Действие"},
+      "energy_momentum": {"sym": "T^{\\mu\\nu}", "name": "Тензор энергии-импульса"},
+      "ricci_tensor": {"sym": "R_{\\mu\\nu}", "name": "Тензор Риччи"},
+      "scalar_curvature": {"sym": "R", "name": "Скалярная кривизна"},
+      "cov_deriv": {"sym": "D_{\\mu} @", "name": "Ковариантная производная"},
+      "christoffel": {"sym": "\\Gamma^{\\alpha}_{\\beta\\gamma}", "name": "Символы Кристоффеля"},
+      "em_tensor": {"sym": "F_{\\mu\\nu}", "name": "Тензор электромагнитного поля"}
+    }
+  },
+  "statistical_physics": {
+    "operators": ["k_B", "\\beta", "T"],
+    "structures": {
+      "boltzmann": {"sym": "k_B", "name": "Постоянная Больцмана"},
+      "thermo_beta": {"sym": "\\beta", "name": "Бета термодинамическая"},
+      "average": {"sym": "\\langle @ \\rangle", "name": "Среднее значение"},
+      "partition_func": {"sym": "Z = \\sum e^{-\\beta E_i}", "name": "Статсумма"}
+    }
+  },
+  "specific_functions": {
+    "operators": ["x", "t", "\\omega"],
+    "structures": {
+      "dirac_delta": {"sym": "\\delta(@)", "name": "Дельта-функция Дирака"},
+      "heaviside": {"sym": "\\theta(@)", "name": "Ступенчатая функция Хевисайда"}
+    }
+  }
+}
