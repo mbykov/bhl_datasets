@@ -1,0 +1,12 @@
+{"sec": "physics_constants", "sym": "c", "rus": "скорость света", "eng": "speed of light", "scheme": "E = m c^2"}
+{"sec": "physics_constants", "sym": "G", "rus": "гравитационная постоянная", "eng": "gravitational constant", "scheme": "F = G \\frac{m_1 m_2}{r^2}"}
+{"sec": "physics_constants", "sym": "h", "rus": "постоянная Планка", "eng": "planck constant", "scheme": "E = h \\nu"}
+{"sec": "physics_constants", "sym": "\\hbar", "rus": "постоянная Дирака (аш с чертой)", "eng": "reduced planck constant", "scheme": "\\Delta x \\Delta p \\ge \\frac{\\hbar}{2}"}
+{"sec": "physics_constants", "sym": "k_B", "rus": "постоянная Больцмана", "eng": "boltzmann constant", "scheme": "E = \\frac{3}{2} k_B T"}
+{"sec": "physics_constants", "sym": "\\sigma", "rus": "постоянная Стефана — Больцмана", "eng": "stefan-boltzmann constant", "scheme": "P = \\sigma A T^4"}
+{"sec": "physics_constants", "sym": "\\varepsilon_0", "rus": "электрическая постоянная", "eng": "vacuum permittivity", "scheme": "F = \\frac{1}{4\\pi\\varepsilon_0} \\dots"}
+{"sec": "physics_constants", "sym": "\\mu_0", "rus": "магнитная постоянная", "eng": "vacuum permeability", "scheme": "c = \\frac{1}{\\sqrt{\\varepsilon_0 \\mu_0}}"}
+{"sec": "physics_constants", "sym": "e", "rus": "элементарный заряд", "eng": "elementary charge", "scheme": "q = n e"}
+{"sec": "physics_constants", "sym": "N_A", "rus": "число Авогадро", "eng": "avogadro constant", "scheme": "n = \\frac{N}{N_A}"}
+{"sec": "physics_constants", "sym": "R", "rus": "газовая постоянная", "eng": "gas constant", "scheme": "PV = nRT"}
+{"sec": "physics_constants", "sym": "g", "rus": "ускорение свободного падения", "eng": "standard gravity", "scheme": "P = m g"}

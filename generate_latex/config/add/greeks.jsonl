@@ -1,0 +1,36 @@
+{"sym": "\\alpha", "rus": "альфа", "eng": "alpha"}
+{"sym": "\\beta", "rus": "бета", "eng": "beta"}
+{"sym": "\\gamma", "rus": "гамма", "eng": "gamma"}
+{"sym": "\\delta", "rus": "дельта", "eng": "delta"}
+{"sym": "\\epsilon", "rus": "эпсилон", "eng": "epsilon"}
+{"sym": "\\zeta", "rus": "дзета", "eng": "zeta"}
+{"sym": "\\eta", "rus": "эта", "eng": "eta"}
+{"sym": "\\theta", "rus": "тета", "eng": "theta"}
+{"sym": "\\iota", "rus": "йота", "eng": "iota"}
+{"sym": "\\kappa", "rus": "каппа", "eng": "kappa"}
+{"sym": "\\lambda", "rus": "лямбда", "eng": "lambda"}
+{"sym": "\\mu", "rus": "мю", "eng": "mu"}
+{"sym": "\\nu", "rus": "ню", "eng": "nu"}
+{"sym": "\\xi", "rus": "кси", "eng": "xi"}
+{"sym": "\\pi", "rus": "пи", "eng": "pi"}
+{"sym": "\\rho", "rus": "ро", "eng": "rho"}
+{"sym": "\\sigma", "rus": "сигма", "eng": "sigma"}
+{"sym": "\\tau", "rus": "тау", "eng": "tau"}
+{"sym": "\\upsilon", "rus": "ипсилон", "eng": "upsilon"}
+{"sym": "\\phi", "rus": "фи", "eng": "phi"}
+{"sym": "\\chi", "rus": "хи", "eng": "chi"}
+{"sym": "\\psi", "rus": "пси", "eng": "psi"}
+{"sym": "\\omega", "rus": "омега", "eng": "omega"}
+
+{"sym": "\\Gamma", "rus": "гамма заглавная", "eng": "Gamma"}
+{"sym": "\\Delta", "rus": "дельта заглавная", "eng": "Delta"}
+{"sym": "\\Theta", "rus": "тета заглавная", "eng": "Theta"}
+{"sym": "\\Lambda", "rus": "лямбда заглавная", "eng": "Lambda"}
+{"sym": "\\Xi", "rus": "кси заглавная", "eng": "Xi"}
+{"sym": "\\Pi", "rus": "пи заглавная", "eng": "Pi"}
+{"sym": "\\Sigma", "rus": "сигма заглавная", "eng": "Sigma"}
+{"sym": "\\Upsilon", "rus": "ипсилон заглавная", "eng": "Upsilon"}
+{"sym": "\\Phi", "rus": "фи заглавная", "eng": "Phi"}
+{"sym": "\\Psi", "rus": "пси заглавная", "eng": "Psi"}
+{"sym": "\\Omega", "rus": "омега заглавная", "eng": "Omega"}
+

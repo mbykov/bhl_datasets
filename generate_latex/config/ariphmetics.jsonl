@@ -1,0 +1,5 @@
+{"sec": "arithmetic", "sym": "+", "rus": "плюс", "eng": "plus", "scheme": "@ + @"}
+{"sec": "arithmetic", "sym": "-", "rus": "минус", "eng": "minus", "scheme": "@ - @"}
+{"sec": "relations", "sym": ">", "rus": "больше", "eng": "greater than", "scheme": "@ > @"}
+{"sec": "relations", "sym": "<", "rus": "меньше", "eng": "less than", "scheme": "@ < @"}
+{"sec": "relations", "sym": "=", "rus": "равно", "eng": "equals", "scheme": "@ = @"}

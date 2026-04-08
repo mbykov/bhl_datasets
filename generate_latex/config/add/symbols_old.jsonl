@@ -1,0 +1,105 @@
+{"sym": "\\pm", "rus_a": "плюс-минус", "rus_t": "плюс-минус", "eng_a": "plus minus", "eng_t": "plus minus", "sec": "binary_operations"}
+{"sym": "\\mp", "rus_a": "минус-плюс", "rus_t": "минус-плюс", "eng_a": "minus plus", "eng_t": "minus plus", "sec": "binary_operations"}
+{"sym": "\\times", "rus_a": "умножение крест", "rus_t": "крестик", "eng_a": "multiplication cross", "eng_t": "times", "sec": "binary_operations"}
+{"sym": "\\div", "rus_a": "деление", "rus_t": "двоеточие с чертой", "eng_a": "division", "eng_t": "divided by", "sec": "binary_operations"}
+{"sym": "\\cdot", "rus_a": "умножение точкой", "rus_t": "точка", "eng_a": "dot multiplication", "eng_t": "dot", "sec": "binary_operations"}
+{"sym": "\\ast", "rus_a": "свертка", "rus_t": "астериск", "eng_a": "asterisk convolution", "eng_t": "asterisk", "sec": "binary_operations"}
+{"sym": "\\star", "rus_a": "звездочка оператор", "rus_t": "звездочка", "eng_a": "star operator", "eng_t": "star", "sec": "binary_operations"}
+{"sym": "\\circ", "rus_a": "композиция", "rus_t": "кружок", "eng_a": "composition", "eng_t": "circle", "sec": "binary_operations"}
+{"sym": "\\bullet", "rus_a": "оператор точка", "rus_t": "жирная точка", "eng_a": "bullet operator", "eng_t": "bullet", "sec": "binary_operations"}
+{"sym": "\\cap", "rus_a": "пересечение", "rus_t": "пересечение", "eng_a": "intersection", "eng_t": "cap", "sec": "binary_operations"}
+{"sym": "\\cup", "rus_a": "объединение", "rus_t": "объединение", "eng_a": "union", "eng_t": "cup", "sec": "binary_operations"}
+{"sym": "\\setminus", "rus_a": "разность множеств", "rus_t": "без", "eng_a": "set difference", "eng_t": "setminus", "sec": "binary_operations"}
+{"sym": "\\oplus", "rus_a": "прямая сумма", "rus_t": "плюс в кружке", "eng_a": "direct sum", "eng_t": "oplus", "sec": "binary_operations"}
+{"sym": "\\ominus", "rus_a": "прямая разность", "rus_t": "минус в кружке", "eng_a": "direct difference", "eng_t": "ominus", "sec": "binary_operations"}
+{"sym": "\\otimes", "rus_a": "тензорное произведение", "rus_t": "крестик в кружке", "eng_a": "tensor product", "eng_t": "otimes", "sec": "binary_operations"}
+{"sym": "\\oslash", "rus_a": "частное", "rus_t": "деление в кружке", "eng_a": "quotient", "eng_t": "oslash", "sec": "binary_operations"}
+{"sym": "\\odot", "rus_a": "поточечное произведение", "rus_t": "точка в кружке", "eng_a": "Hadamard product", "eng_t": "odot", "sec": "binary_operations"}
+
+{"sym": "\\frac", "rus_a": "дробь", "rus_t": "дробь", "eng_a": "fraction", "eng_t": "fraction", "sec": "binary_operations"}
+{"sym": "\\Box", "rus_a": "оператор д'Аламбера", "rus_t": "бокс", "eng_a": "d'Alembert operator", "eng_t": "box", "sec": "operators"}
+
+
+
+{"sym": "\\sin", "rus_a": "синус", "rus_t": "синус", "eng_a": "sine", "eng_t": "sine", "sec": "trigonometry"}
+{"sym": "\\cos", "rus_a": "косинус", "rus_t": "косинус", "eng_a": "cosine", "eng_t": "cosine", "sec": "trigonometry"}
+{"sym": "\\tan", "rus_a": "тангенс", "rus_t": "тангенс", "eng_a": "tangent", "eng_t": "tan", "sec": "trigonometry"}
+{"sym": "\\cot", "rus_a": "котангенс", "rus_t": "котангенс", "eng_a": "cotangent", "eng_t": "cot", "sec": "trigonometry"}
+{"sym": "\\sec", "rus_a": "секанс", "rus_t": "секанс", "eng_a": "secant", "eng_t": "sec", "sec": "trigonometry"}
+{"sym": "\\csc", "rus_a": "косеканс", "rus_t": "косеканс", "eng_a": "cosecant", "eng_t": "csc", "sec": "trigonometry"}
+{"sym": "\\arcsin", "rus_a": "арксинус", "rus_t": "арксинус", "eng_a": "arcsine", "eng_t": "arcsin", "sec": "trigonometry"}
+{"sym": "\\arccos", "rus_a": "арккосинус", "rus_t": "арккосинус", "eng_a": "arccosine", "eng_t": "arccos", "sec": "trigonometry"}
+{"sym": "\\arctan", "rus_a": "арктангенс", "rus_t": "арктангенс", "eng_a": "arctangent", "eng_t": "arctan", "sec": "trigonometry"}
+{"sym": "\\sinh", "rus_a": "гиперболический синус", "rus_t": "шин", "eng_a": "hyperbolic sine", "eng_t": "sinch", "sec": "trigonometry"}
+{"sym": "\\cosh", "rus_a": "гиперболический косинус", "rus_t": "кош", "eng_a": "hyperbolic cosine", "eng_t": "cosh", "sec": "trigonometry"}
+{"sym": "\\tanh", "rus_a": "гиперболический тангенс", "rus_t": "танш", "eng_a": "hyperbolic tangent", "eng_t": "tanh", "sec": "trigonometry"}
+{"sym": "\\log", "rus_a": "логарифм", "rus_t": "лог", "eng_a": "logarithm", "eng_t": "log", "sec": "functions"}
+{"sym": "\\ln", "rus_a": "натуральный логарифм", "rus_t": "эль-эн", "eng_a": "natural logarithm", "eng_t": "ln", "sec": "functions"}
+{"sym": "\\exp", "rus_a": "экспонента", "rus_t": "экспонента", "eng_a": "exponential", "eng_t": "exp", "sec": "functions"}
+{"sym": "\\lim", "rus_a": "предел", "rus_t": "лим", "eng_a": "limit", "eng_t": "lim", "sec": "functions"}
+
+
+{"sym": "\\leq", "rus_a": "меньше или равно", "rus_t": "меньше или равно", "eng_a": "less than or equal", "eng_t": "less or equal", "sec": "relations"}
+{"sym": "\\ge", "rus_a": "больше или равно", "rus_t": "больше или равно", "eng_a": "greater than or equal", "eng_t": "greater or equal", "sec": "relations"}
+{"sym": "\\neq", "rus_a": "не равно", "rus_t": "не равно", "eng_a": "not equal", "eng_t": "not equal", "sec": "relations"}
+{"sym": "\\approx", "rus_a": "приближенно равно", "rus_t": "примерно равно", "eng_a": "approximately equal", "eng_t": "approx", "sec": "relations"}
+{"sym": "\\sim", "rus_a": "эквивалентно", "rus_t": "тильда", "eng_a": "equivalent", "eng_t": "sim", "sec": "relations"}
+{"sym": "\\simeq", "rus_a": "изоморфно", "rus_t": "приблизительно тильда", "eng_a": "isomorphic", "eng_t": "simeq", "sec": "relations"}
+{"sym": "\\cong", "rus_a": "конгруэнтно", "rus_t": "конгруэнтно", "eng_a": "congruent", "eng_t": "cong", "sec": "relations"}
+{"sym": "\\equiv", "rus_a": "тождественно", "rus_t": "тождественно", "eng_a": "identical", "eng_t": "equiv", "sec": "relations"}
+{"sym": "\\propto", "rus_a": "пропорционально", "rus_t": "пропорционально", "eng_a": "proportional", "eng_t": "propto", "sec": "relations"}
+{"sym": "\\subset", "rus_a": "строгое подмножество", "rus_t": "подмножество", "eng_a": "proper subset", "eng_t": "subset", "sec": "relations"}
+{"sym": "\\subseteq", "rus_a": "нестрогое подмножество", "rus_t": "подмножество или равно", "eng_a": "subset or equal", "eng_t": "subseteq", "sec": "relations"}
+{"sym": "\\supset", "rus_a": "строгое надмножество", "rus_t": "надмножество", "eng_a": "proper superset", "eng_t": "superset", "sec": "relations"}
+{"sym": "\\supseteq", "rus_a": "нестрогое надмножество", "rus_t": "надмножество или равно", "eng_a": "superset or equal", "eng_t": "supseteq", "sec": "relations"}
+{"sym": "\\in", "rus_a": "принадлежит", "rus_t": "принадлежит", "eng_a": "belongs to", "eng_t": "in", "sec": "relations"}
+{"sym": "\\ni", "rus_a": "содержит элемент", "rus_t": "содержит", "eng_a": "contains as member", "eng_t": "ni", "sec": "relations"}
+{"sym": "\\notin", "rus_a": "не принадлежит", "rus_t": "не принадлежит", "eng_a": "not member of", "eng_t": "not in", "sec": "relations"}
+{"sym": "\\perp", "rus_a": "перпендикулярно", "rus_t": "перпендикулярно", "eng_a": "perpendicular", "eng_t": "perp", "sec": "relations"}
+{"sym": "\\parallel", "rus_a": "параллельно", "rus_t": "параллельно", "eng_a": "parallel", "eng_t": "parallel", "sec": "relations"}
+
+{"sym": "\\leftarrow", "rus_a": "левый переход", "rus_t": "стрелка влево", "eng_a": "left arrow", "eng_t": "left arrow", "sec": "arrows"}
+{"sym": "\\gets", "rus_a": "присвоение слева", "rus_t": "стрелка влево", "eng_a": "assignment left", "eng_t": "gets", "sec": "arrows"}
+{"sym": "\\rightarrow", "rus_a": "правый переход", "rus_t": "стрелка вправо", "eng_a": "right arrow", "eng_t": "right arrow", "sec": "arrows"}
+{"sym": "\\to", "rus_a": "отображение в", "rus_t": "стремится к", "eng_a": "maps to", "eng_t": "to", "sec": "arrows"}
+{"sym": "\\leftrightarrow", "rus_a": "двусторонний переход", "rus_t": "стрелка в обе стороны", "eng_a": "bidirectional arrow", "eng_t": "left right arrow", "sec": "arrows"}
+{"sym": "\\Leftarrow", "rus_a": "обратное следование", "rus_t": "следует из", "eng_a": "reverse implication", "eng_t": "Leftarrow", "sec": "arrows"}
+{"sym": "\\Rightarrow", "rus_a": "логическое следование", "rus_t": "следовательно", "eng_a": "logical implication", "eng_t": "Rightarrow", "sec": "arrows"}
+{"sym": "\\Leftrightarrow", "rus_a": "логическая эквивалентность", "rus_t": "тогда и только тогда", "eng_a": "logical equivalence", "eng_t": "iff", "sec": "arrows"}
+{"sym": "\\uparrow", "rus_a": "вертикальная стрелка вверх", "rus_t": "стрелка вверх", "eng_a": "up arrow", "eng_t": "up arrow", "sec": "arrows"}
+{"sym": "\\downarrow", "rus_a": "вертикальная стрелка вниз", "rus_t": "стрелка вниз", "eng_a": "down arrow", "eng_t": "down arrow", "sec": "arrows"}
+{"sym": "\\updownarrow", "rus_a": "вертикальная двусторонняя стрелка", "rus_t": "стрелка вверх-вниз", "eng_a": "vertical bidirectional arrow", "eng_t": "up down arrow", "sec": "arrows"}
+{"sym": "\\nearrow", "rus_a": "диагональная стрелка северо-восток", "rus_t": "стрелка вправо вверх", "eng_a": "north east arrow", "eng_t": "nearrow", "sec": "arrows"}
+{"sym": "\\searrow", "rus_a": "диагональная стрелка юго-восток", "rus_t": "стрелка вправо вниз", "eng_a": "south east arrow", "eng_t": "searrow", "sec": "arrows"}
+{"sym": "\\swarrow", "rus_a": "диагональная стрелка юго-запад", "rus_t": "стрелка влево вниз", "eng_a": "south west arrow", "eng_t": "swarrow", "sec": "arrows"}
+{"sym": "\\nwarrow", "rus_a": "диагональная стрелка северо-запад", "rus_t": "стрелка влево вверх", "eng_a": "north west arrow", "eng_t": "nwarrow", "sec": "arrows"}
+
+{"sym": "\\sum", "rus_a": "сумма", "rus_t": "сумма", "eng_a": "summation", "eng_t": "sum", "sec": "large_operators"}
+{"sym": "\\prod", "rus_a": "произведение", "rus_t": "произведение", "eng_a": "product", "eng_t": "prod", "sec": "large_operators"}
+{"sym": "\\coprod", "rus_a": "копроизведение", "rus_t": "копроизведение", "eng_a": "coproduct", "eng_t": "coprod", "sec": "large_operators"}
+{"sym": "\\int", "rus_a": "интеграл", "rus_t": "интеграл", "eng_a": "integral", "eng_t": "integral", "sec": "large_operators"}
+
+{"sym": "\\bigcap", "rus_a": "большое пересечение", "rus_t": "большое пересечение", "eng_a": "big intersection", "eng_t": "big cap", "sec": "large_operators"}
+{"sym": "\\bigcup", "rus_a": "большое объединение", "rus_t": "большое объединение", "eng_a": "big union", "eng_t": "big cup", "sec": "large_operators"}
+
+
+{"sym": "\\iint", "rus_a": "двойной интеграл", "rus_t": "двойной интеграл", "eng_a": "double integral", "eng_t": "double integral", "sec": "large_operators"}
+{"sym": "\\iiint", "rus_a": "тройной интеграл", "rus_t": "тройной интеграл", "eng_a": "triple integral", "eng_t": "triple integral", "sec": "large_operators"}
+{"sym": "\\iiiint", "rus_a": "четверной интеграл", "rus_t": "четверной интеграл", "eng_a": "quadruple integral", "eng_t": "quadruple integral", "sec": "large_operators"}
+{"sym": "\\idotsint", "rus_a": "многомерный интеграл", "rus_t": "многомерный интеграл", "eng_a": "multiple integral", "eng_t": "multiple integral", "sec": "large_operators"}
+{"sym": "\\oint", "rus_a": "контурный интеграл", "rus_t": "интеграл с кружком", "eng_a": "contour integral", "eng_t": "oint", "sec": "large_operators"}
+{"sym": "\\oiint", "rus_a": "поверхностный интеграл", "rus_t": "двойной интеграл с кружком", "eng_a": "surface integral", "eng_t": "oiint", "sec": "large_operators"}
+{"sym": "\\oiiint", "rus_a": "объемный интеграл", "rus_t": "тройной интеграл с кружком", "eng_a": "volume integral", "eng_t": "oiiint", "sec": "large_operators"}
+
+
+{"sym": "\\infty", "rus_a": "бесконечность", "rus_t": "бесконечность", "eng_a": "infinity", "eng_t": "infinity", "sec": "misc_symbols"}
+{"sym": "\\forall", "rus_a": "квантор всеобщности", "rus_t": "для любого", "eng_a": "universal quantifier", "eng_t": "for all", "sec": "misc_symbols"}
+{"sym": "\\exists", "rus_a": "квантор существования", "rus_t": "существует", "eng_a": "existential quantifier", "eng_t": "there exists", "sec": "misc_symbols"}
+{"sym": "\\neg", "rus_a": "логическое отрицание", "rus_t": "не", "eng_a": "logical negation", "eng_t": "not", "sec": "misc_symbols"}
+{"sym": "\\emptyset", "rus_a": "пустое множество", "rus_t": "пустое множество", "eng_a": "empty set", "eng_t": "empty set", "sec": "misc_symbols"}
+{"sym": "\\nabla", "rus_a": "оператор набла", "rus_t": "набла", "eng_a": "nabla operator", "eng_t": "nabla", "sec": "operators"}
+{"sym": "\\partial", "rus_a": "частная производная", "rus_t": "дэ круглое", "eng_a": "partial derivative", "eng_t": "partial", "sec": "operators"}
+{"sym": "\\ell", "rus_a": "рукописная эль", "rus_t": "эль рукописная", "eng_a": "cursive ell", "eng_t": "ell", "sec": "misc_symbols"}
+{"sym": "\\angle", "rus_a": "угол", "rus_t": "угол", "eng_a": "angle", "eng_t": "angle", "sec": "misc_symbols"}
+
+{"sym": "\\text", "rus_a": "текст", "rus_t": "текст", "eng_a": "text", "eng_t": "text", "sec": "special_symbols"}
