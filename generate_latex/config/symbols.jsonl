@@ -1,7 +1,7 @@
 {"sec": "arithmetic", "sym": "\\cdot", "rus": "умножение (точка)", "eng": "dot product", "scheme": "@ \\cdot @"}
 {"sec": "arithmetic", "sym": "\\times", "rus": "умножение (крестик)", "eng": "cross product", "scheme": "@ \\times @"}
 {"sec": "arithmetic", "sym": "\\div", "rus": "деление", "eng": "division sign", "scheme": "@ \\div @"}
-{"sec": "arithmetic", "sym": "\\frac{}{}", "rus": "дробь", "eng": "fraction", "scheme": "\\frac{@}{@}"}
+{"sec": "arithmetic", "sym": "\\frac", "rus": "дробь", "eng": "fraction", "scheme": "\\frac{@}{@}"}
 {"sec": "arithmetic", "sym": "\\pm", "rus": "плюс-минус", "eng": "plus-minus", "scheme": "@ \\pm @"}
 {"sec": "arithmetic", "sym": "\\mp", "rus": "минус-плюс", "eng": "minus-plus", "scheme": "@ \\mp @"}
 {"sec": "binary_ops", "sym": "\\ast", "rus": "астериск", "eng": "asterisk", "scheme": "@ \\ast @"}
@@ -15,8 +15,9 @@
 {"sec": "binary_ops", "sym": "\\otimes", "rus": "тензорное произведение", "eng": "tensor product", "scheme": "@ \\otimes @"}
 {"sec": "powers_roots", "sym": "^", "rus": "степень", "eng": "power", "scheme": "@^{@}"}
 {"sec": "powers_roots", "sym": "_", "rus": "нижний индекс", "eng": "subscript", "scheme": "@_{@}"}
-{"sec": "powers_roots", "sym": "\\sqrt{}", "rus": "квадратный корень", "eng": "square root", "scheme": "\\sqrt{@}"}
-{"sec": "powers_roots", "sym": "\\sqrt[n]{}", "rus": "корень n-й степени", "eng": "n-th root", "scheme": "\\sqrt[@]{@}"}
+
+{"sec": "powers_roots", "sym": "\\sqrt", "rus": "квадратный корень", "eng": "square root", "scheme": "\\sqrt{@}"}
+{"sec": "powers_roots", "sym": "\\sqrt[n]", "rus": "корень n-й степени", "eng": "n-th root", "scheme": "\\sqrt[@]{@}"}
 {"sec": "powers_roots", "sym": "\\exp", "rus": "экспонента", "eng": "exponential", "scheme": "\\exp(@)"}
 {"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "scheme": "\\sin @, \\sin(@)"}
 {"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "scheme": "\\cos @, \\cos(@)"}
@@ -50,7 +51,7 @@
 {"sec": "logic", "sym": "\\lor", "rus": "логическое или", "eng": "or", "scheme": "@ \\lor @"}
 {"sec": "logic", "sym": "\\implies", "rus": "следовательно", "eng": "implies", "scheme": "@ \\implies @"}
 {"sec": "logic", "sym": "\\iff", "rus": "эквивалентно", "eng": "if and only if", "scheme": "@ \\iff @"}
-{"sec": "logic", "sym": "\\therefore", "rus": "следовательно (вывод)", "eng": "therefore", "scheme": "\\therefore @"}
+{"sec": "logic", "sym": "\\therefore", "rus": "следовательно", "eng": "therefore", "scheme": "\\therefore @"}
 {"sec": "logic", "sym": "\\in", "rus": "принадлежит", "eng": "belongs to", "scheme": "@ \\in @"}
 {"sec": "logic", "sym": "\\subset", "rus": "подмножество", "eng": "subset", "scheme": "@ \\subset @"}
 {"sec": "arrows", "sym": "\\to", "rus": "стремится к", "eng": "tends to", "scheme": "@ \\to @"}
@@ -77,11 +78,11 @@
 {"sec": "geometry", "sym": "\\angle", "rus": "угол", "eng": "angle", "scheme": "\\angle @"}
 {"sec": "geometry", "sym": "\\perp", "rus": "перпендикуляр", "eng": "perpendicular", "scheme": "@ \\perp @"}
 {"sec": "geometry", "sym": "\\parallel", "rus": "параллель", "eng": "parallel", "scheme": "@ \\parallel @"}
-{"sec": "accents", "sym": "\\dot{}", "rus": "точка (производная)", "eng": "dot", "scheme": "\\dot{@}"}
-{"sec": "accents", "sym": "\\ddot{}", "rus": "две точки", "eng": "double dot", "scheme": "\\ddot{@}"}
-{"sec": "accents", "sym": "\\bar{}", "rus": "черта сверху", "eng": "bar", "scheme": "\\bar{@}"}
-{"sec": "accents", "sym": "\\hat{}", "rus": "крышка", "eng": "hat", "scheme": "\\hat{@}"}
-{"sec": "accents", "sym": "\\tilde{}", "rus": "тильда", "eng": "tilde", "scheme": "\\tilde{@}"}
+{"sec": "accents", "sym": "\\dot", "rus": "точка / производная", "eng": "dot", "scheme": "\\dot{@}"}
+{"sec": "accents", "sym": "\\ddot", "rus": "две точки", "eng": "double dot", "scheme": "\\ddot{@}"}
+{"sec": "accents", "sym": "\\bar", "rus": "черта сверху", "eng": "bar", "scheme": "\\bar{@}"}
+{"sec": "accents", "sym": "\\hat", "rus": "крышка", "eng": "hat", "scheme": "\\hat{@}"}
+{"sec": "accents", "sym": "\\tilde", "rus": "тильда", "eng": "tilde", "scheme": "\\tilde{@}"}
 {"sec": "misc", "sym": "!", "rus": "факториал", "eng": "factorial", "scheme": "@!"}
 {"sec": "misc", "sym": "\\ell", "rus": "эль", "eng": "ell", "scheme": "\\ell"}
 {"sec": "misc", "sym": "\\Re", "rus": "действительная часть", "eng": "real part", "scheme": "\\Re(@)"}

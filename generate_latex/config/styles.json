@@ -1,0 +1,46 @@
+{
+  "styles": [
+    {
+      "name": "разговорный",
+      "rules_rus": "Максимально кратко. Использовать 'плюс', 'минус', 'на'.",
+      "rules_eng": "Very concise. Use 'plus', 'minus', 'over'.",
+      "example_rus": "а плюс бэ",
+      "example_eng": "a plus b"
+    },
+    {
+      "name": "профессиональный",
+      "rules_rus": "Сленговый, максимально сжатый.",
+      "rules_eng": "Slang, very concise.",
+      "example_rus": "интеграл эфки",
+      "example_eng": "integral of f"
+    },
+    {
+      "name": "академический",
+      "rules_rus": "Правильные термины: 'сумма', 'произведение'.",
+      "rules_eng": "Proper terms: 'sum', 'product'.",
+      "example_rus": "сумма а и бэ",
+      "example_eng": "sum of a and b"
+    },
+    {
+      "name": "формальный",
+      "rules_rus": "Проговаривать структуру: 'открывается скобка'.",
+      "rules_eng": "Articulate structure: 'open parenthesis'.",
+      "example_rus": "открывается скобка а плюс бэ закрывается скобка",
+      "example_eng": "open parenthesis a plus b close parenthesis"
+    },
+    {
+      "name": "логический",
+      "rules_rus": "Уточнять: 'переменная икс', 'функция эф'.",
+      "rules_eng": "Specify: 'variable x', 'function f'.",
+      "example_rus": "сумма переменной а и переменной бэ",
+      "example_eng": "sum of variable a and variable b"
+    },
+    {
+      "name": "концептуальный",
+      "rules_rus": "Акцент на смысле. Использовать 'равно', 'дает'.",
+      "rules_eng": "Focus on meaning. Use 'equals', 'gives'.",
+      "example_rus": "сумма а и бэ дает значение",
+      "example_eng": "sum of a and b gives the value"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3 -u
 """
 Генератор естественных прочтений LaTeX-скриптов
-Гибридный вариант с многопоточностью и контролем памяти
+Сначала нормализация (замена символов из config), затем стилизация (LLM)
 """
 
 import json
@@ -20,9 +20,12 @@ from datetime import datetime
 from dataclasses import dataclass
 from typing import List, Dict, Optional, Tuple
 
+print(f"\n🖥️ CUDA_VISIBLE_DEVICES = {os.environ.get('CUDA_VISIBLE_DEVICES', 'не задана')}", flush=True)
+
+result = subprocess.run(['nvidia-smi', '--query-gpu=name', '--format=csv,noheader'], capture_output=True, text=True); gpus = result.stdout.strip().split('\n'); active = os.environ.get('CUDA_VISIBLE_DEVICES', '0'); idx = int(active) if active.isdigit() else 0; print(f"\n🖥️ Активная GPU: {gpus[idx] if idx < len(gpus) else 'не определена'}", flush=True)
+
 # ========== БЕЗОПАСНОСТЬ ==========
 def setup_safety():
-    """Настройка безопасности для предотвращения зависаний"""
     try:
         resource.setrlimit(resource.RLIMIT_AS, (12 * 1024 * 1024 * 1024, 12 * 1024 * 1024 * 1024))
         print("✅ Ограничение памяти: 12 GB", flush=True)
@@ -40,27 +43,22 @@ def timeout_handler(signum, frame):
     sys.exit(1)
 
 signal.signal(signal.SIGALRM, timeout_handler)
-signal.alarm(1800)  # 30 минут
+signal.alarm(1800)
 
 setup_safety()
-
-# Ограничения через переменные окружения
 os.environ['OMP_NUM_THREADS'] = '2'
 os.environ['MKL_NUM_THREADS'] = '2'
-
 sys.stdout.reconfigure(line_buffering=True)
 
-# ========== ДАТАКЛАССЫ ==========
 @dataclass
 class ProcessedExample:
-    """Результат обработки примера"""
     example: Dict
     result: Dict
     memory_used: int
     worker_id: int
     duration: float
 
-# ========== ОСНОВНОЙ КЛАСС ==========
+
 class HybridGenerator:
     def __init__(self, model="qwen2.5:7b", ollama_url="http://localhost:11434",
                  config_dir='config', max_workers=2, batch_size=30,
@@ -73,49 +71,127 @@ class HybridGenerator:
         self.memory_threshold = memory_threshold
         self.request_delay = request_delay
 
-        # Очереди для пайплайна
         self.input_queue = queue.Queue()
         self.output_queue = queue.Queue()
 
-        # Статистика
         self.processed_count = 0
         self.failed_count = 0
         self.peak_memory = 0
         self.lock = threading.Lock()
+        self.session = requests.Session()
 
-        # Загружаем словари
         self._load_dictionaries(config_dir)
 
         print(f"✅ Гибридный генератор инициализирован", flush=True)
         print(f"   Потоков: {max_workers}, Батч: {batch_size}, Порог памяти: {memory_threshold} MB", flush=True)
 
-    def _load_dictionaries(self, config_dir):
+    def _load_dictionaries_(self, config_dir):
         """Загружает словари из config файлов"""
+        # Загружаем греческие буквы
         self.greeks = self._load_jsonl(os.path.join(config_dir, 'greeks.jsonl'))
-        self.latins = self._load_jsonl(os.path.join(config_dir, 'latins.jsonl'))
-        self.symbols = self._load_jsonl(os.path.join(config_dir, 'symbols.jsonl'))
-        self.styles_config = self._load_json(os.path.join(config_dir, 'styles.json'))
+        self.greek_rus = {}
+        self.greek_eng = {}
+        for g in self.greeks:
+            self.greek_rus[g['sym']] = g.get('rus', g['sym'])
+            self.greek_eng[g['sym']] = g.get('eng', g['sym'])
 
-        # Создаем словари замены
+        # Загружаем латинские буквы
+        self.latins = self._load_jsonl(os.path.join(config_dir, 'latins.jsonl'))
+        self.latin_rus = {}
+        self.latin_eng = {}
+        for l in self.latins:
+            sym = l['sym']
+            rus_list = l.get('rus', [''])
+            eng_list = l.get('eng', [''])
+            self.latin_rus[sym] = rus_list[0] if rus_list else sym
+            self.latin_eng[sym] = eng_list[0] if eng_list else sym
+
+        # Загружаем символы (операторы, функции)
+        self.symbols = self._load_jsonl(os.path.join(config_dir, 'symbols.jsonl'))
         self.rus_map = {}
         self.eng_map = {}
-
-        for g in self.greeks:
-            self.rus_map[g['sym']] = g['rus']
-            self.eng_map[g['sym']] = g['eng']
-
         for s in self.symbols:
-            self.rus_map[s['sym']] = s.get('rus_a', s['sym'])
-            self.eng_map[s['sym']] = s.get('eng_a', s['sym'])
+            # Для русского: сначала rus_a, если нет - rus_t
+            rus_val = s.get('rus_a')
+            if not rus_val:
+                rus_val = s.get('rus_t', s['sym'])
+            # Для английского: сначала eng_a, если нет - eng_t
+            eng_val = s.get('eng_a')
+            if not eng_val:
+                eng_val = s.get('eng_t', s['sym'])
+            self.rus_map[s['sym']] = rus_val
+            self.eng_map[s['sym']] = eng_val
 
-        self.latin_rus = {l['sym']: l['rus'][0] for l in self.latins}
-        self.latin_eng = {l['sym']: l['eng'][0] for l in self.latins}
-
+        # Загружаем стили
+        self.styles_config = self._load_json(os.path.join(config_dir, 'styles.json'))
         self.styles = {}
-        for s in self.styles_config.get('styles', []):
-            self.styles[s['name']] = s
+        if self.styles_config and 'styles' in self.styles_config:
+            for s in self.styles_config['styles']:
+                self.styles[s['name']] = s
 
-        print(f"✅ Загружено символов: rus={len(self.rus_map)}, eng={len(self.eng_map)}", flush=True)
+        if not self.styles:
+            self.styles = {
+                "разговорный": {"rules_rus": "Кратко", "rules_eng": "Concise",
+                               "example_rus": "а плюс бэ", "example_eng": "a plus b"},
+                "академический": {"rules_rus": "Правильные термины", "rules_eng": "Proper terms",
+                                 "example_rus": "сумма а и бэ", "example_eng": "sum of a and b"}
+            }
+
+        print(f"✅ Загружено греческих: {len(self.greek_rus)}", flush=True)
+        print(f"✅ Загружено латинских: {len(self.latin_rus)}", flush=True)
+        print(f"✅ Загружено символов: {len(self.rus_map)}", flush=True)
+        print(f"✅ Загружено стилей: {len(self.styles)}", flush=True)
+
+
+    def _load_dictionaries(self, config_dir):
+      """Загружает словари из config файлов"""
+      # Загружаем греческие буквы
+      self.greeks = self._load_jsonl(os.path.join(config_dir, 'greeks.jsonl'))
+      self.greek_rus = {}
+      self.greek_eng = {}
+      for g in self.greeks:
+        self.greek_rus[g['sym']] = g.get('rus', g['sym'])
+        self.greek_eng[g['sym']] = g.get('eng', g['sym'])
+
+        # Загружаем латинские буквы
+        self.latins = self._load_jsonl(os.path.join(config_dir, 'latins.jsonl'))
+        self.latin_rus = {}
+        self.latin_eng = {}
+        for l in self.latins:
+          sym = l['sym']
+          rus_list = l.get('rus', [''])
+          eng_list = l.get('eng', [''])
+          self.latin_rus[sym] = rus_list[0] if rus_list else sym
+          self.latin_eng[sym] = eng_list[0] if eng_list else sym
+
+          # Загружаем символы (операторы, функции) - ИСПРАВЛЕНО
+          self.symbols = self._load_jsonl(os.path.join(config_dir, 'symbols.jsonl'))
+          self.rus_map = {}
+          self.eng_map = {}
+          for s in self.symbols:
+            # Берем поля 'rus' и 'eng' напрямую
+            self.rus_map[s['sym']] = s.get('rus', s['sym'])
+            self.eng_map[s['sym']] = s.get('eng', s['sym'])
+
+            # Загружаем стили
+            self.styles_config = self._load_json(os.path.join(config_dir, 'styles.json'))
+            self.styles = {}
+            if self.styles_config and 'styles' in self.styles_config:
+              for s in self.styles_config['styles']:
+                self.styles[s['name']] = s
+
+                if not self.styles:
+                  self.styles = {
+                    "разговорный": {"rules_rus": "Кратко", "rules_eng": "Concise",
+                                    "example_rus": "а плюс бэ", "example_eng": "a plus b"},
+                    "академический": {"rules_rus": "Правильные термины", "rules_eng": "Proper terms",
+                                      "example_rus": "сумма а и бэ", "example_eng": "sum of a and b"}
+                  }
+
+                  print(f"✅ Загружено греческих: {len(self.greek_rus)}", flush=True)
+                  print(f"✅ Загружено латинских: {len(self.latin_rus)}", flush=True)
+                  print(f"✅ Загружено символов: {len(self.rus_map)}", flush=True)
+                  print(f"✅ Загружено стилей: {len(self.styles)}", flush=True)
 
     def _load_jsonl(self, path):
         data = []
@@ -136,8 +212,195 @@ class HybridGenerator:
             print(f"⚠️ Файл {path} не найден", flush=True)
             return {"styles": []}
 
+    def _load_input_jsonl(self, path: str, limit: int = None) -> List[Dict]:
+        examples = []
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                for idx, line in enumerate(f):
+                    if line.strip():
+                        if limit and idx >= limit:
+                            break
+                        data = json.loads(line)
+                        examples.append({
+                            'sec': data.get('sec', 'unknown'),
+                            'sym': data.get('sym', 'unknown'),
+                            'rus_name': data.get('rus', ''),
+                            'eng_name': data.get('eng', ''),
+                            'script': data.get('script', ''),
+                            'scheme': data.get('scheme', ''),
+                            'idx': idx
+                        })
+        except FileNotFoundError:
+            print(f"❌ Файл {path} не найден", flush=True)
+            sys.exit(1)
+        return examples
+
+    def normalize(self, latex: str, lang: str = 'rus') -> str:
+        """НОРМАЛИЗАЦИЯ: замена LaTeX команд на слова (только из конфигов)"""
+        text = latex.strip('$')
+
+        # Выбираем словари в зависимости от языка
+        if lang == 'rus':
+            symbol_map = self.rus_map
+            greek_map = self.greek_rus
+            latin_map = self.latin_rus
+        else:
+            symbol_map = self.eng_map
+            greek_map = self.greek_eng
+            latin_map = self.latin_eng
+
+        # 1. Заменяем символы (операторы, функции) - сначала длинные
+        for sym, repl in sorted(symbol_map.items(), key=lambda x: -len(x[0])):
+            text = text.replace(sym, repl)
+
+        # 2. Заменяем греческие буквы
+        for sym, name in greek_map.items():
+            text = text.replace(sym, name)
+
+        # 3. Заменяем одиночные латинские буквы (переменные)
+        for letter, name in latin_map.items():
+            text = re.sub(rf'\b{letter}\b', name, text)
+            text = re.sub(rf'\b{letter.upper()}\b', name.capitalize(), text)
+
+        # 4. Убираем оставшиеся LaTeX команды
+        text = re.sub(r'\\([a-zA-Z]+)', r'\1', text)
+
+        # 5. Убираем фигурные скобки
+        text = text.replace('{', ' ').replace('}', ' ')
+
+        # 6. Очищаем пробелы
+        text = re.sub(r'\s+', ' ', text).strip()
+
+        # Предупреждение о незамененных символах
+        if '\\' in text:
+            unknown = re.findall(r'\\([a-zA-Z]+)', text)
+            if unknown:
+                print(f"      ⚠️ Неизвестные символы: {unknown}", flush=True)
+
+        return text
+
+    def stylize_one(self, normalized_text: str, style_name: str, lang: str, max_retries: int = 3) -> str:
+        """СТИЛИЗАЦИЯ: LLM оформляет нормализованный текст в стиле"""
+
+        time.sleep(self.request_delay)
+        style = self.styles.get(style_name, self.styles.get("разговорный"))
+
+        if lang == 'rus':
+            rules = style.get('rules_rus', 'Оформи текст естественно.')
+            example = style.get('example_rus', 'а плюс бэ')
+            prompt = f"""Текст формулы (слова уже заменены): {normalized_text}
+
+Оформи этот текст в стиле "{style_name}".
+Правила: {rules}
+Пример: {example}
+
+Требования:
+- НЕ меняй названия переменных
+- Можно склонять переменные по падежам
+- Можно использовать синонимы для операторов
+- Выведи ТОЛЬКО результат, без пояснений
+
+Результат:"""
+        else:
+            rules = style.get('rules_eng', 'Format this text naturally.')
+            example = style.get('example_eng', 'a plus b')
+            prompt = f"""Formula text (words already replaced): {normalized_text}
+
+Format this text in "{style_name}" style.
+Rules: {rules}
+Example: {example}
+
+Requirements:
+- DO NOT change variable names
+- You can use synonyms for operators
+- Output ONLY the result, no explanations
+
+Result:"""
+
+        for attempt in range(max_retries):
+            try:
+                response = self.session.post(
+                    f"{self.ollama_url}/api/generate",
+                    json={
+                        "model": self.model,
+                        "prompt": prompt,
+                        "stream": False,
+                        "temperature": 0.2,
+                        "keep_alive": 0,
+                        "context": [],
+                        "options": {"num_predict": 100, "num_ctx": 256}
+                    },
+                    timeout=25
+                )
+
+                if response.status_code == 200:
+                    result = response.json().get('response', '').strip()
+                    result = result.strip('"\'')
+                    result = result.split('\n')[0]
+                    result = re.sub(r'\s+', ' ', result).strip()
+
+                    if result and len(result) > 3:
+                        return result
+
+            except Exception as e:
+                if attempt < max_retries - 1:
+                    time.sleep(1)
+
+        return normalized_text
+
+    def process_one_example(self, example: Dict, worker_id: int) -> ProcessedExample:
+        start_time = time.time()
+
+        # Определяем need_styling
+        scheme = example.get('scheme', '')
+        need_styling = '@' in scheme or 'next' in scheme or len(re.findall(r'[()]', scheme)) > 2
+        style = random.choice(list(self.styles.keys())) if need_styling else None
+
+        # НОРМАЛИЗАЦИЯ (первый этап)
+        rus_normalized = self.normalize(example['script'], 'rus')
+        eng_normalized = self.normalize(example['script'], 'eng')
+
+        # ЛОГИРОВАНИЕ
+        print(f"\n📝 [Пример {example['idx']}]", flush=True)
+        print(f"   Исходный скрипт: {example['script']}", flush=True)
+        print(f"   Нормализованный русский: {rus_normalized}", flush=True)
+        print(f"   Нормализованный английский: {eng_normalized}", flush=True)
+
+        # СТИЛИЗАЦИЯ (второй этап, только для сложных)
+        if need_styling and style:
+            rus = self.stylize_one(rus_normalized, style, 'rus')
+            eng = self.stylize_one(eng_normalized, style, 'eng')
+            style_used = style
+            # ЛОГИРОВАНИЕ РЕЗУЛЬТАТА
+            print(f"   Стиль: {style}", flush=True)
+            print(f"   Результат русский: {rus}", flush=True)
+            print(f"   Результат английский: {eng}", flush=True)
+        else:
+            rus = rus_normalized
+            eng = eng_normalized
+            style_used = "нормализация"
+            print(f"   (без стилизации)", flush=True)
+
+        result = {
+            "sec": example['sec'],
+            "sym": example['sym'],
+            "rus_name": example['rus_name'],
+            "eng_name": example['eng_name'],
+            "script": example['script'],
+            "scheme": example['scheme'],
+            "idx": example['idx'],
+            "style": style_used,
+            "rus": rus,
+            "eng": eng
+        }
+
+        duration = time.time() - start_time
+        memory = self.get_gpu_memory() or 0
+
+        return ProcessedExample(example=example, result=result, memory_used=memory,
+                                worker_id=worker_id, duration=duration)
+
     def get_gpu_memory(self) -> Optional[int]:
-        """Получает текущее использование GPU памяти в MB"""
         try:
             result = subprocess.run(
                 ['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader,nounits'],
@@ -153,209 +416,16 @@ class HybridGenerator:
         return None
 
     def unload_model(self):
-        """Принудительная выгрузка модели из GPU"""
         try:
-            session = requests.Session()
-            session.post(
+            self.session.post(
                 f"{self.ollama_url}/api/generate",
                 json={"model": self.model, "keep_alive": 0},
                 timeout=5
             )
-            session.close()
         except:
             pass
 
-    def check_unknown_symbols(self, latex: str) -> List[str]:
-        """Проверяет неизвестные символы"""
-        known_symbols = set(self.rus_map.keys()) | set(self.eng_map.keys())
-        known_symbols.update([l['sym'] for l in self.latins])
-        known_symbols.update([g['sym'] for g in self.greeks])
-        known_symbols.update(['\\text', '\\text{rot}', '\\text{div}', '\\frac', '\\Box'])
-
-        commands = re.findall(r'\\([a-zA-Z]+|\W)', latex)
-        commands = [f'\\{c}' for c in commands if c]
-        single_chars = set(re.findall(r'(?<!\\)([a-zA-Z@])\b', latex))
-
-        unknown = []
-        for cmd in commands:
-            if cmd not in known_symbols and not cmd.startswith('\\text'):
-                unknown.append(cmd)
-        for ch in single_chars:
-            if ch not in [l['sym'] for l in self.latins]:
-                unknown.append(ch)
-        return unknown
-
-    def normalize(self, latex: str, lang: str = 'rus') -> str:
-        """Нормализация LaTeX в текст"""
-        text = latex.strip('$')
-
-        # Обработка \text{rot} и \text{div}
-        if '\\text{rot}' in text or '\\text{rot }' in text:
-            text = text.replace('\\text{rot}', 'ротор' if lang == 'rus' else 'rotor')
-            text = text.replace('\\text{rot }', 'ротор ' if lang == 'rus' else 'rotor ')
-        if '\\text{div}' in text or '\\text{div }' in text:
-            text = text.replace('\\text{div}', 'дивергенция' if lang == 'rus' else 'divergence')
-            text = text.replace('\\text{div }', 'дивергенция ' if lang == 'rus' else 'divergence ')
-
-        text = re.sub(r'\\text\{[^}]*\}', '', text)
-        text = text.replace('@', 'эт' if lang == 'rus' else 'at')
-
-        replacements = self.rus_map if lang == 'rus' else self.eng_map
-        latin_map = self.latin_rus if lang == 'rus' else self.latin_eng
-
-        for sym, repl in sorted(replacements.items(), key=lambda x: -len(x[0])):
-            text = text.replace(sym, repl)
-
-        text = re.sub(r'\\([a-zA-Z]+)', r'\1', text)
-
-        def replace_latin(match):
-            letter = match.group(1)
-            if letter == '@':
-                return 'эт' if lang == 'rus' else 'at'
-            return latin_map.get(letter, letter)
-
-        text = re.sub(r'\b([a-zA-Z@])\b', replace_latin, text)
-        text = text.replace('{', ' ').replace('}', ' ')
-        text = re.sub(r'\s+', ' ', text).strip()
-        text = text.replace('( )', '').replace('()', '')
-
-        return text
-
-    def validate_text(self, text: str, language: str) -> bool:
-        """Проверяет соответствие языка"""
-        if not text or len(text) < 2:
-            return False
-        if language == 'rus':
-            return bool(re.search(r'[а-яА-ЯёЁ]', text)) and not bool(re.search(r'[a-zA-Z]', text))
-        else:
-            return bool(re.search(r'[a-zA-Z]', text)) and not bool(re.search(r'[а-яА-ЯёЁ]', text))
-
-    def clean_reading(self, text: str, language: str) -> str:
-        """Очищает результат от мусора"""
-        text = text.strip('"\'')
-        prefixes = ["Reading:", "Произношение:", "Ответ:", "Result:", "Output:", "Pronunciation:", "Read:", "Formula:"]
-        for prefix in prefixes:
-            if text.startswith(prefix):
-                text = text[len(prefix):].strip()
-        text = text.split('\n')[0]
-        return re.sub(r'\s+', ' ', text).strip()
-
-    def stylize_one(self, normalized_text: str, style_name: str, lang: str, max_retries: int = 3) -> str:
-        """Стилизация одного текста"""
-        time.sleep(self.request_delay)
-
-        style = self.styles.get(style_name, self.styles.get("разговорный"))
-
-        if lang == 'rus':
-            rules = style.get('rules_rus', 'Прочитай формулу естественно.')
-            example = style.get('example_rus', 'а плюс бэ')
-            prompt = f"""Ты помогаешь создать датасет для озвучивания математических формул.
-
-Стиль: {style_name}
-
-Правила стиля:
-{rules}
-
-Пример:
-Формула: a + b
-Произношение: {example}
-
-Твоя задача:
-Примени этот стиль к следующей формуле (все символы уже заменены на слова):
-
-Формула: {normalized_text}
-
-Требования:
-1. НЕ меняй имена переменных
-2. НЕ добавляй пояснений
-3. Выведи ТОЛЬКО произношение на русском языке
-
-Произношение:"""
-        else:
-            rules = style.get('rules_eng', 'Read the formula naturally.')
-            example = style.get('example_eng', 'a plus b')
-            prompt = f"""You are helping to create a dataset for math formula speech synthesis.
-
-Style: {style_name}
-
-Rules:
-{rules}
-
-Example:
-Formula: a + b
-Reading: {example}
-
-Your task:
-Apply this style to the following formula:
-
-Formula: {normalized_text}
-
-Requirements:
-1. DO NOT change variable names
-2. DO NOT add explanations
-3. Output ONLY the reading in English
-
-Reading:"""
-
-        session = requests.Session()
-        for attempt in range(max_retries):
-            try:
-                response = session.post(
-                    f"{self.ollama_url}/api/generate",
-                    json={
-                        "model": self.model,
-                        "prompt": prompt,
-                        "stream": False,
-                        "temperature": 0,
-                        "keep_alive": 0,
-                        "options": {"num_predict": 100, "num_ctx": 512,
-                                   "stop": ["\n\n", "Объяснение", "Пояснение", "Разберем",
-                                           "Давайте", "Explanation", "Note:", "Warning:"]}
-                    },
-                    timeout=30
-                )
-                if response.status_code == 200:
-                    result = response.json().get('response', '').strip()
-                    result = self.clean_reading(result, lang)
-                    if self.validate_text(result, lang):
-                        session.close()
-                        return result
-            except Exception as e:
-                if attempt < max_retries - 1:
-                    time.sleep(1)
-        session.close()
-        return normalized_text
-
-    def process_one_example(self, example: Dict, worker_id: int) -> ProcessedExample:
-        """Обрабатывает один пример"""
-        start_time = time.time()
-
-        rus_normalized = self.normalize(example['script'], 'rus')
-        eng_normalized = self.normalize(example['script'], 'eng')
-
-        if example.get('need_styling') and example.get('style'):
-            rus = self.stylize_one(rus_normalized, example['style'], 'rus')
-            eng = self.stylize_one(eng_normalized, example['style'], 'eng')
-            style_used = example['style']
-        else:
-            rus = rus_normalized
-            eng = eng_normalized
-            style_used = "нормализация"
-
-        result = {
-            "field": example['field'], "name": example['name'], "type": example['type'],
-            "script": example['script'], "idx": example['idx'], "style": style_used,
-            "rus": rus, "eng": eng
-        }
-
-        duration = time.time() - start_time
-        memory = self.get_gpu_memory() or 0
-
-        return ProcessedExample(example=example, result=result, memory_used=memory,
-                                worker_id=worker_id, duration=duration)
-
     def memory_monitor(self, stop_event: threading.Event):
-        """Фоновый мониторинг памяти"""
         while not stop_event.is_set():
             mem = self.get_gpu_memory()
             if mem and mem > self.memory_threshold:
@@ -365,7 +435,6 @@ Reading:"""
             time.sleep(5)
 
     def worker_function(self, worker_id: int, stop_event: threading.Event):
-        """Рабочий поток"""
         while not stop_event.is_set():
             try:
                 example = self.input_queue.get(timeout=1)
@@ -378,7 +447,7 @@ Reading:"""
                 with self.lock:
                     self.processed_count += 1
                     if self.processed_count % self.batch_size == 0:
-                        print(f"\n🧹 Батч {self.processed_count} завершен, очистка...", flush=True)
+                        print(f"\n🧹 Батч {self.processed_count} завершен", flush=True)
                         self.unload_model()
                         time.sleep(1)
 
@@ -389,115 +458,63 @@ Reading:"""
                 with self.lock:
                     self.failed_count += 1
 
-    def process_scripts(self, input_path: str, output_dir: str, num_symbols: int = 20):
-        """Главный метод обработки"""
+    def process_scripts(self, input_path: str, output_dir: str, num_examples: int = None):
         print(f"\n📚 Загрузка {input_path}...", flush=True)
 
-        with open(input_path, 'r', encoding='utf-8') as f:
-            scripts_data = json.load(f)
+        examples = self._load_input_jsonl(input_path, num_examples)
+        print(f"📊 Загружено примеров: {len(examples)}", flush=True)
 
-        scripts_data = scripts_data[:num_symbols]
-
-        # Собираем примеры
-        examples = []
-        skipped = []
-
-        for entry in scripts_data:
-            field = entry.get('field', 'unknown')
-            name = entry.get('symbol_name', entry.get('name', 'unknown'))
-            for ex_type in ['simple', 'combination', 'outer', 'inner', 'equations']:
-                scripts = entry.get(ex_type, [])
-                for idx, script in enumerate(scripts):
-                    unknown = self.check_unknown_symbols(script)
-                    if unknown:
-                        skipped.append({'field': field, 'name': name, 'type': ex_type,
-                                       'script': script, 'reason': f'unknown: {unknown}'})
-                        continue
-
-                    need_styling = ex_type != 'simple'
-                    style = random.choice(list(self.styles.keys())) if need_styling else None
-                    examples.append({
-                        'field': field, 'name': name, 'type': ex_type,
-                        'script': script, 'idx': idx, 'style': style,
-                        'need_styling': need_styling
-                    })
-
-        if skipped:
-            os.makedirs(output_dir, exist_ok=True)
-            with open(os.path.join(output_dir, 'skipped.json'), 'w') as f:
-                json.dump(skipped, f, ensure_ascii=False, indent=2)
-            print(f"⚠️ Пропущено: {len(skipped)}", flush=True)
-
-        print(f"📊 Примеров к обработке: {len(examples)}", flush=True)
-
-        # Заполняем очередь
+        valid_examples = []
         for ex in examples:
+            valid_examples.append(ex)
+
+        print(f"📊 Примеров к обработке: {len(valid_examples)}", flush=True)
+
+        for ex in valid_examples:
             self.input_queue.put(ex)
 
-        # Стоп-событие
         stop_event = threading.Event()
 
-        # Запускаем монитор памяти
         monitor_thread = threading.Thread(target=self.memory_monitor, args=(stop_event,), daemon=True)
         monitor_thread.start()
 
-        # Запускаем рабочих
         workers = []
         for i in range(self.max_workers):
             worker = threading.Thread(target=self.worker_function, args=(i, stop_event))
             worker.start()
             workers.append(worker)
 
-        # Собираем результаты
         results = []
         start_time = datetime.now()
 
-        for _ in range(len(examples)):
+        for _ in range(len(valid_examples)):
             try:
                 processed = self.output_queue.get(timeout=30)
                 results.append(processed.result)
 
                 if len(results) % 10 == 0:
-                    mem = self.get_gpu_memory()
                     elapsed = (datetime.now() - start_time).total_seconds()
-                    speed = len(results) / elapsed
-                    print(f"📊 [{len(results)}/{len(examples)}] память: {mem} MB, пик: {self.peak_memory} MB, {speed:.2f} экз/сек", flush=True)
+                    speed = len(results) / elapsed if elapsed > 0 else 0
+                    print(f"📊 [{len(results)}/{len(valid_examples)}] {speed:.2f} экз/сек", flush=True)
 
-                    # Сохраняем чекпоинт
                     os.makedirs(output_dir, exist_ok=True)
-                    with open(os.path.join(output_dir, 'checkpoint.json'), 'w') as f:
-                        json.dump([r for r in results], f, ensure_ascii=False, indent=2)
+                    with open(os.path.join(output_dir, 'checkpoint.json'), 'w', encoding='utf-8') as f:
+                        json.dump(results, f, ensure_ascii=False, indent=2)
 
             except queue.Empty:
                 print("⚠️ Таймаут ожидания результатов", flush=True)
                 break
 
-        # Останавливаем рабочих
         stop_event.set()
         for _ in workers:
             self.input_queue.put(None)
         for worker in workers:
             worker.join(timeout=5)
 
-        # Разделяем на train/test
-        groups = {}
-        for r in results:
-            key = (r['field'], r['name'], r['type'])
-            if key not in groups:
-                groups[key] = []
-            groups[key].append(r)
+        split_idx = int(len(results) * 0.9)
+        train_data = results[:split_idx]
+        test_data = results[split_idx:]
 
-        train_data = []
-        test_data = []
-        for group_examples in groups.values():
-            group_examples.sort(key=lambda x: x['idx'])
-            for idx, ex in enumerate(group_examples):
-                if idx < 9:
-                    train_data.append(ex)
-                else:
-                    test_data.append(ex)
-
-        # Сохраняем
         os.makedirs(output_dir, exist_ok=True)
 
         with open(os.path.join(output_dir, 'train.json'), 'w', encoding='utf-8') as f:
@@ -510,17 +527,18 @@ Reading:"""
         print(f"📊 Train: {len(train_data)}, Test: {len(test_data)}", flush=True)
         print(f"📊 Пик памяти: {self.peak_memory} MB", flush=True)
 
+
 def main():
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--input', default='result/scripts.json')
-    parser.add_argument('--output-dir', default='result/latex')
-    parser.add_argument('--num-symbols', type=int, default=20)
+    parser.add_argument('--input', default='scripts/dataset.jsonl')
+    parser.add_argument('--output-dir', default='results')
+    parser.add_argument('--num-examples', type=int, default=None)
     parser.add_argument('--model', default='qwen2.5:7b')
-    parser.add_argument('--max-workers', type=int, default=2, help='Количество потоков (1-3)')
-    parser.add_argument('--batch-size', type=int, default=30, help='Очистка памяти каждые N примеров')
-    parser.add_argument('--memory-threshold', type=int, default=14000, help='Порог памяти в MB')
-    parser.add_argument('--delay', type=float, default=0.3, help='Задержка между запросами')
+    parser.add_argument('--max-workers', type=int, default=2)
+    parser.add_argument('--batch-size', type=int, default=30)
+    parser.add_argument('--memory-threshold', type=int, default=14000)
+    parser.add_argument('--delay', type=float, default=0.3)
     args = parser.parse_args()
 
     generator = HybridGenerator(
@@ -530,7 +548,9 @@ def main():
         memory_threshold=args.memory_threshold,
         request_delay=args.delay
     )
-    generator.process_scripts(args.input, args.output_dir, args.num_symbols)
+    generator.process_scripts(args.input, args.output_dir, args.num_examples)
+
+
 
 if __name__ == '__main__':
     try:
