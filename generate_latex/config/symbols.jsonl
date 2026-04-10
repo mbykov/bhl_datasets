@@ -1,7 +1,6 @@
 {"sec": "arithmetic", "sym": "\\cdot", "rus": "умножение (точка)", "eng": "dot product", "scheme": "@ \\cdot @"}
 {"sec": "arithmetic", "sym": "\\times", "rus": "умножение (крестик)", "eng": "cross product", "scheme": "@ \\times @"}
 {"sec": "arithmetic", "sym": "\\div", "rus": "деление", "eng": "division sign", "scheme": "@ \\div @"}
-{"sec": "arithmetic", "sym": "\\frac", "rus": "дробь", "eng": "fraction", "scheme": "\\frac{@}{@}"}
 {"sec": "arithmetic", "sym": "\\pm", "rus": "плюс-минус", "eng": "plus-minus", "scheme": "@ \\pm @"}
 {"sec": "arithmetic", "sym": "\\mp", "rus": "минус-плюс", "eng": "minus-plus", "scheme": "@ \\mp @"}
 {"sec": "binary_ops", "sym": "\\ast", "rus": "астериск", "eng": "asterisk", "scheme": "@ \\ast @"}
@@ -15,6 +14,8 @@
 {"sec": "binary_ops", "sym": "\\otimes", "rus": "тензорное произведение", "eng": "tensor product", "scheme": "@ \\otimes @"}
 {"sec": "powers_roots", "sym": "^", "rus": "степень", "eng": "power", "scheme": "@^{@}"}
 {"sec": "powers_roots", "sym": "_", "rus": "нижний индекс", "eng": "subscript", "scheme": "@_{@}"}
+
+{"sec": "arithmetic", "sym": "\\frac", "rus": "дробь", "eng": "fraction", "scheme": "\\frac{@}{@}"}
 
 {"sec": "powers_roots", "sym": "\\sqrt", "rus": "квадратный корень", "eng": "square root", "scheme": "\\sqrt{@}"}
 {"sec": "powers_roots", "sym": "\\sqrt[n]", "rus": "корень n-й степени", "eng": "n-th root", "scheme": "\\sqrt[@]{@}"}
