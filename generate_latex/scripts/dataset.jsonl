@@ -1,38 +1,64 @@
-{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\sin(r)", "scheme": "sym(@)"}
-{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\sin(68H - 57) - \\in(A)", "scheme": "sym(@) - next(@)"}
-{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\tan(a) / \\sin(y)", "scheme": "next(@) / sym(@)"}
-{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\sin(\\cap(K))", "scheme": "sym(next(@))"}
-{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\land(\\sin(j))", "scheme": "next(sym(@))"}
-{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\sin(\\otimes(\\Theta)) / \\otimes(\\sin(\\eta))", "scheme": "sym(next(@)) / next(sym(@))"}
-{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\lor(\\sin(\\alpha)) / \\sin(\\lor(77\\theta))", "scheme": "next(sym(@)) / sym(next(@))"}
-{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\sin(R) / \\arctan(\\nu)", "scheme": "sym(@) / next(@)"}
-{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\subset(k) - \\sin(\\alpha)", "scheme": "next(@) - sym(@)"}
-{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\sin(\\cosh(\\omega))", "scheme": "sym(next(@))"}
-{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\sqrt[n](\\sin(79p))", "scheme": "next(sym(@))"}
-{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\sin(\\dot(\\gamma - 3)) / \\dot(\\sin(\\epsilon))", "scheme": "sym(next(@)) / next(sym(@))"}
-{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\arccos(\\sin(y)) + \\sin(\\arccos(i))", "scheme": "next(sym(@)) + sym(next(@))"}
-{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\sin(\\Omega) / \\leftarrow(34q)", "scheme": "sym(@) / next(@)"}
-{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\implies(H) - \\sin(20\\epsilon)", "scheme": "next(@) - sym(@)"}
-{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\sin(\\dot(\\iota - 3))", "scheme": "sym(next(@))"}
-{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\lor(\\sin(\\Phi - 92))", "scheme": "next(sym(@))"}
-{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\sin(\\nabla^2(\\Delta)) / \\nabla^2(\\sin(66d))", "scheme": "sym(next(@)) / next(sym(@))"}
-{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\nabla \\cdot(\\sin(23\\phi)) + \\sin(\\nabla \\cdot(86\\beta))", "scheme": "next(sym(@)) + sym(next(@))"}
-{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\int(87 - 25H)", "scheme": "sym(@)"}
-{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\int(C) / \\delta_{ij}(\\Upsilon)", "scheme": "sym(@) / next(@)"}
-{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\det(3 + \\epsilon) + \\int(r - 80)", "scheme": "next(@) + sym(@)"}
-{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\int(\\arccos(\\omega))", "scheme": "sym(next(@))"}
-{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\nabla \\cdot(\\int(15 + \\rho))", "scheme": "next(sym(@))"}
-{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\int(\\angle(\\rho)) / \\angle(\\int(L))", "scheme": "sym(next(@)) / next(sym(@))"}
-{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\equiv(\\int(i)) + \\int(\\equiv(4r - 23))", "scheme": "next(sym(@)) + sym(next(@))"}
-{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\int(\\Lambda) - \\parallel(25u)", "scheme": "sym(@) - next(@)"}
-{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\sqrt(Z) + \\int(64\\Sigma)", "scheme": "next(@) + sym(@)"}
-{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\int(\\ge(55 - 8R))", "scheme": "sym(next(@))"}
-{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\sum(\\int(\\rho))", "scheme": "next(sym(@))"}
-{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\int(\\nexists(J)) - \\nexists(\\int(\\omega))", "scheme": "sym(next(@)) - next(sym(@))"}
-{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\forall(\\int(j)) + \\int(\\forall(m))", "scheme": "next(sym(@)) + sym(next(@))"}
-{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\int(F) / \\oplus(h)", "scheme": "sym(@) / next(@)"}
-{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\operatorname{tr}(67 - 59\\alpha) - \\int(\\Xi)", "scheme": "next(@) - sym(@)"}
-{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\int(\\cot(P))", "scheme": "sym(next(@))"}
-{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\parallel(\\int(\\phi))", "scheme": "next(sym(@))"}
-{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\int(\\angle(N)) / \\angle(\\int(86n))", "scheme": "sym(next(@)) / next(sym(@))"}
-{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\hat(\\int(a)) + \\int(\\hat(\\Sigma))", "scheme": "next(sym(@)) + sym(next(@))"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\sin(y - 48)", "scheme": "sym(@)"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "97 \\sin(y - 48) - 48", "scheme": "b*(sym(@)) + a"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\sin(D) / \\cos(\\tau + 24)", "scheme": "sym(@) / next(@)"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "3 \\sin(D) / \\cos(\\tau + 24)", "scheme": "b*(sym(@) / next(@))"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\cos(30 - F) - \\sin(67 Z + 67)", "scheme": "next(@) - sym(@)"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "27 \\cos(30 - F) - \\sin(67 Z + 67)", "scheme": "b*(next(@) - sym(@))"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\sin(\\cos(70 \\omega))", "scheme": "sym(next(@))"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "39 \\sin(\\cos(70 \\omega))", "scheme": "b*(sym(next(@)))"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\cos(\\sin(65 \\zeta))", "scheme": "next(sym(@))"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "43 \\cos(\\sin(65 \\zeta))", "scheme": "b*(next(sym(@)))"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\sin(\\int(t) d t) + \\cos(\\sin(\\delta + 100))", "scheme": "sym(next(@)) + next(sym(@))"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "94 \\sin(\\int(t) d t) + \\cos(\\sin(\\delta + 100))", "scheme": "b*(sym(next(@)) + next(sym(@)))"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\int(\\sin(\\rho) d rho) + \\sin(\\cos(46 \\alpha + 14))", "scheme": "next(sym(@)) + sym(next(@))"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "57 \\int(\\sin(\\rho) d rho) + \\sin(\\cos(46 \\alpha + 14)) + 91", "scheme": "b*(next(sym(@)) + sym(next(@))) + a"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\sin(U) - \\int(t) d t", "scheme": "sym(@) - next(@)"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "47 \\sin(U) - \\int(t) d t", "scheme": "b*(sym(@) - next(@))"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\cos(y) + \\sin(\\Sigma)", "scheme": "next(@) + sym(@)"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "18 \\cos(y) + \\sin(\\Sigma)", "scheme": "b*(next(@) + sym(@))"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\sin(\\cos(59 + 61 q))", "scheme": "sym(next(@))"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "39 \\sin(\\cos(59 + 61 q)) + 12", "scheme": "b*(sym(next(@))) + a"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\cos(\\sin(l + 42))", "scheme": "next(sym(@))"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "63 + 87 \\cos(\\sin(l + 42))", "scheme": "a + b*(next(sym(@)))"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\sin(\\cos(J)) - \\int(\\sin(\\psi - 46) d psi)", "scheme": "sym(next(@)) - next(sym(@))"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "61 - 35 \\sin(\\cos(J)) - \\int(\\sin(\\psi - 46) d psi)", "scheme": "a + b*(sym(next(@)) - next(sym(@)))"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "\\cos(\\sin(30 A)) / \\sin(\\int(\\Psi) d Psi)", "scheme": "next(sym(@)) / sym(next(@))"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "script": "89 \\cos(\\sin(30 A)) / \\sin(\\int(\\Psi) d Psi) + 70", "scheme": "b*(next(sym(@)) / sym(next(@))) + a"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "\\cos(D)", "scheme": "sym(@)"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "67 \\cos(D)", "scheme": "b*(sym(@))"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "\\cos(35 L) + \\int(H + 24) d H", "scheme": "sym(@) + next(@)"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "24 \\cos(35 L) + \\int(H + 24) d H", "scheme": "b*(sym(@) + next(@))"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "\\int(i) d i - \\cos(12 \\Delta)", "scheme": "next(@) - sym(@)"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "87 \\int(i) d i - \\cos(12 \\Delta)", "scheme": "b*(next(@) - sym(@))"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "\\cos(\\int(52 \\Lambda) d Lambda)", "scheme": "sym(next(@))"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "21 \\cos(\\int(52 \\Lambda) d Lambda) - 77", "scheme": "b*(sym(next(@))) + a"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "\\sin(\\cos(70 \\iota))", "scheme": "next(sym(@))"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "50 \\sin(\\cos(70 \\iota))", "scheme": "b*(next(sym(@)))"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "\\cos(\\sin(54 X)) - \\int(\\cos(70 \\Delta + 46) d Delta)", "scheme": "sym(next(@)) - next(sym(@))"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "66 \\cos(\\sin(54 X)) - \\int(\\cos(70 \\Delta + 46) d Delta)", "scheme": "b*(sym(next(@)) - next(sym(@)))"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "\\sin(\\cos(\\lambda)) / \\cos(\\int(L) d L)", "scheme": "next(sym(@)) / sym(next(@))"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "18 \\sin(\\cos(\\lambda)) / \\cos(\\int(L) d L) + 82", "scheme": "b*(next(sym(@)) / sym(next(@))) + a"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "\\cos(39 w - 2) / \\int(21 + 54 \\Omega) d Omega", "scheme": "sym(@) / next(@)"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "28 \\cos(39 w - 2) / \\int(21 + 54 \\Omega) d Omega - 51", "scheme": "b*(sym(@) / next(@)) + a"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "\\int(q) d q + \\cos(s)", "scheme": "next(@) + sym(@)"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "77 \\int(q) d q + \\cos(s)", "scheme": "b*(next(@) + sym(@))"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "\\cos(\\sin(N))", "scheme": "sym(next(@))"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "44 \\cos(\\sin(N)) - 77", "scheme": "b*(sym(next(@))) + a"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "\\int(\\cos(U) d U)", "scheme": "next(sym(@))"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "83 \\int(\\cos(U) d U)", "scheme": "b*(next(sym(@)))"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "\\cos(\\int(27 \\upsilon) d upsilon) + \\sin(\\cos(g))", "scheme": "sym(next(@)) + next(sym(@))"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "57 \\cos(\\int(27 \\upsilon) d upsilon) + \\sin(\\cos(g))", "scheme": "b*(sym(next(@)) + next(sym(@)))"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "\\sin(\\cos(38 \\Sigma - 75)) - \\cos(\\int(\\phi) d phi)", "scheme": "next(sym(@)) - sym(next(@))"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "script": "21 - 12 \\sin(\\cos(38 \\Sigma - 75)) - \\cos(\\int(\\phi) d phi)", "scheme": "a + b*(next(sym(@)) - sym(next(@)))"}
+{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\int \\gamma d gamma d\\psi d \\psi", "scheme": "\\int @ d@"}
+{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "88 + 8 \\int \\gamma d gamma d\\psi d \\psi", "scheme": "a + b*(\\int @ d@)"}
+{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\int S d S dl", "scheme": "\\int @ d@"}
+{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "93 - 16 \\int S d S dl", "scheme": "a + b*(\\int @ d@)"}
+{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\int_{H}^{\\zeta} \\lambda dv", "scheme": "\\int_{@}^{@} @ d@"}
+{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "78 \\int_{H}^{\\zeta} \\lambda dv", "scheme": "b*(\\int_{@}^{@} @ d@)"}
+{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\int_{v}^{\\phi} L dC", "scheme": "\\int_{@}^{@} @ d@"}
+{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "81 + 12 \\int_{v}^{\\phi} L dC", "scheme": "a + b*(\\int_{@}^{@} @ d@)"}
+{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\int_{c}^{\\beta} \\frac{\\partial}{\\partial M} dm", "scheme": "\\int_{@}^{@} \\frac{\\partial}{\\partial @} d@"}
+{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "36 \\int_{c}^{\\beta} \\frac{\\partial}{\\partial M} dm", "scheme": "b*(\\int_{@}^{@} \\frac{\\partial}{\\partial @} d@)"}
+{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "\\int_{\\gamma}^{v} \\frac{\\partial}{\\partial R} dN", "scheme": "\\int_{@}^{@} \\frac{\\partial}{\\partial @} d@"}
+{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "script": "75 \\int_{\\gamma}^{v} \\frac{\\partial}{\\partial R} dN", "scheme": "b*(\\int_{@}^{@} \\frac{\\partial}{\\partial @} d@)"}

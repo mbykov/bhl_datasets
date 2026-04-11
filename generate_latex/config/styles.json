@@ -2,45 +2,93 @@
   "styles": [
     {
       "name": "разговорный",
-      "rules_rus": "Максимально кратко. Использовать 'плюс', 'минус', 'на'.",
-      "rules_eng": "Very concise. Use 'plus', 'minus', 'over'.",
-      "example_rus": "а плюс бэ",
-      "example_eng": "a plus b"
-    },
-    {
-      "name": "профессиональный",
-      "rules_rus": "Сленговый, максимально сжатый.",
-      "rules_eng": "Slang, very concise.",
-      "example_rus": "интеграл эфки",
-      "example_eng": "integral of f"
+      "description": "Максимально просто и сжато, неформально. Опускать названия операций ('в квадрате' вместо 'во второй степени'). Допускать легкое пренебрежение правилами приоритета. Логарифмы называть 'лог', основание опускать.",
+      "rules_rus": "Говорить кратко, как в устной речи. Использовать 'на' вместо 'разделить'. 'В квадрате' вместо 'во второй степени'. 'Лог' вместо 'логарифм'. Опускать основания и уточнения.",
+      "rules_eng": "Speak concisely, like in spoken language. Use 'over' instead of 'divided by'. 'Squared' instead of 'to the second power'. 'Log' instead of 'logarithm'. Omit bases and clarifications.",
+      "examples_rus": [
+        {"input": "x + y", "output": "икс плюс игрек"},
+        {"input": "(x + y)^2", "output": "икс плюс игрек, все в квадрате"},
+        {"input": "(a + b)/c", "output": "а плюс бэ, и всё это на цэ"},
+        {"input": "\\sqrt{x^2 + 1}", "output": "корень из икс квадрат плюс один"},
+        {"input": "f'(x) = 0", "output": "эф штрих равно нулю"},
+        {"input": "\\int_a^b f(x) dx", "output": "интеграл от а до бэ эф икс по дэ икс"},
+        {"input": "\\sin(2\\alpha) = 2\\sin(\\alpha)\\cos(\\alpha)", "output": "синус двойного угла — это два синус альфа на косинус альфа"},
+        {"input": "\\log(ab) = \\log a + \\log b", "output": "лог произведения — это сумма логов"},
+        {"input": "\\tan^2(x + \\pi/4)", "output": "тангенс квадрат от икс плюс пи на четыре"},
+        {"input": "\\log(\\sqrt{x})", "output": "лог корня из икса"}
+      ],
+      "examples_eng": [
+        {"input": "x + y", "output": "x plus y"},
+        {"input": "(x + y)^2", "output": "x plus y, all squared"},
+        {"input": "(a + b)/c", "output": "a plus b over c"},
+        {"input": "\\sqrt{x^2 + 1}", "output": "square root of x squared plus one"},
+        {"input": "f'(x) = 0", "output": "f prime equals zero"},
+        {"input": "\\int_a^b f(x) dx", "output": "integral from a to b of f of x dx"},
+        {"input": "\\sin(2\\alpha) = 2\\sin(\\alpha)\\cos(\\alpha)", "output": "sine of double angle is two sine alpha cosine alpha"},
+        {"input": "\\log(ab) = \\log a + \\log b", "output": "log of product is sum of logs"},
+        {"input": "\\tan^2(x + \\pi/4)", "output": "tangent squared of x plus pi over four"},
+        {"input": "\\log(\\sqrt{x})", "output": "log of square root of x"}
+      ]
     },
     {
       "name": "академический",
-      "rules_rus": "Правильные термины: 'сумма', 'произведение'.",
-      "rules_eng": "Proper terms: 'sum', 'product'.",
-      "example_rus": "сумма а и бэ",
-      "example_eng": "sum of a and b"
+      "description": "Язык учебников и лекций. Точная терминология (сумма, частное, произведение, разность). Четкая иерархия действий. Проговаривать основания логарифмов и типы интегралов.",
+      "rules_rus": "Использовать точные термины: 'сумма', 'частное', 'произведение', 'разность', 'определенный интеграл', 'арифметический квадратный корень'. Проговаривать основания и границы. Строить фразу так, чтобы структуру можно было восстановить.",
+      "rules_eng": "Use precise terms: 'sum', 'quotient', 'product', 'difference', 'definite integral', 'arithmetic square root'. State bases and limits. Build phrases so the structure can be reconstructed.",
+      "examples_rus": [
+        {"input": "x + y", "output": "сумма икс и игрек"},
+        {"input": "(x + y)^2", "output": "сумма икс плюс игрек в квадрате"},
+        {"input": "(a + b)/c", "output": "частное суммы а и бэ и переменной цэ"},
+        {"input": "\\sqrt{x^2 + 1}", "output": "арифметический квадратный корень из суммы квадрата икс и единицы"},
+        {"input": "f'(x) = 0", "output": "производная функции эф по икс равна нулю"},
+        {"input": "\\int_a^b f(x) dx", "output": "определенный интеграл функции эф от икс на отрезке от а до бэ"},
+        {"input": "\\sin(2\\alpha) = 2\\sin(\\alpha)\\cos(\\alpha)", "output": "синус двойного аргумента альфа равен удвоенному произведению синуса альфа на косинус альфа"},
+        {"input": "\\log_a(bc) = \\log_a b + \\log_a c", "output": "логарифм произведения бэ и цэ по основанию а равен сумме логарифмов этих множителей по тому же основанию"},
+        {"input": "\\tan^2(x + \\pi/4)", "output": "квадрат тангенса суммы переменной икс и четверти числа пи"},
+        {"input": "\\log_{10}(\\sqrt{x})", "output": "десятичный логарифм квадратного корня из переменной икс"}
+      ],
+      "examples_eng": [
+        {"input": "x + y", "output": "sum of x and y"},
+        {"input": "(x + y)^2", "output": "sum of x plus y squared"},
+        {"input": "(a + b)/c", "output": "quotient of sum of a and b and variable c"},
+        {"input": "\\sqrt{x^2 + 1}", "output": "arithmetic square root of sum of x squared and one"},
+        {"input": "f'(x) = 0", "output": "derivative of function f with respect to x equals zero"},
+        {"input": "\\int_a^b f(x) dx", "output": "definite integral of function f of x on interval from a to b"},
+        {"input": "\\sin(2\\alpha) = 2\\sin(\\alpha)\\cos(\\alpha)", "output": "sine of double argument alpha equals twice the product of sine alpha and cosine alpha"},
+        {"input": "\\log_a(bc) = \\log_a b + \\log_a c", "output": "logarithm of product b and c base a equals sum of logarithms of these factors base a"},
+        {"input": "\\tan^2(x + \\pi/4)", "output": "square of tangent of sum of variable x and one quarter of pi"},
+        {"input": "\\log_{10}(\\sqrt{x})", "output": "base ten logarithm of square root of variable x"}
+      ]
     },
     {
-      "name": "формальный",
-      "rules_rus": "Проговаривать структуру: 'открывается скобка'.",
-      "rules_eng": "Articulate structure: 'open parenthesis'.",
-      "example_rus": "открывается скобка а плюс бэ закрывается скобка",
-      "example_eng": "open parenthesis a plus b close parenthesis"
-    },
-    {
-      "name": "логический",
-      "rules_rus": "Уточнять: 'переменная икс', 'функция эф'.",
-      "rules_eng": "Specify: 'variable x', 'function f'.",
-      "example_rus": "сумма переменной а и переменной бэ",
-      "example_eng": "sum of variable a and variable b"
-    },
-    {
-      "name": "концептуальный",
-      "rules_rus": "Акцент на смысле. Использовать 'равно', 'дает'.",
-      "rules_eng": "Focus on meaning. Use 'equals', 'gives'.",
-      "example_rus": "сумма а и бэ дает значение",
-      "example_eng": "sum of a and b gives the value"
+      "name": "формально-логический",
+      "description": "Стиль 'программирования для человека'. Описывать визуальные/структурные элементы (скобки, числители, границы). Называть каждый объект родовым признаком (переменная, константа, аргумент). Исключать двусмысленность.",
+      "rules_rus": "Проговаривать каждую скобку: 'открывается скобка', 'закрывается скобка'. Уточнять: 'переменная', 'константа', 'аргумент', 'функция', 'значение', 'результат'. Описывать структуру: 'дробь, в числителе которой...', 'радикал второй степени, под знаком которого...', 'интеграл в пределах от... до...'. Использовать 'эквивалентно' вместо 'равно'.",
+      "rules_eng": "Articulate every parenthesis: 'open parenthesis', 'close parenthesis'. Specify: 'variable', 'constant', 'argument', 'function', 'value', 'result'. Describe structure: 'fraction with numerator...', 'radical of the second degree under which...', 'integral ranging from... to...'. Use 'is equivalent to' instead of 'equals'.",
+      "examples_rus": [
+        {"input": "x + y", "output": "сумма переменной икс и переменной игрек"},
+        {"input": "(x + y)^2", "output": "скобка сумма переменной икс и переменной игрек скобка во второй степени"},
+        {"input": "(a + b)/c", "output": "дробь, в числителе которой сумма аргументов а и бэ, в знаменателе — аргумент цэ"},
+        {"input": "\\sqrt{x^2 + 1}", "output": "радикал второй степени, под знаком которого находится сумма переменной икс в степени два и константы один"},
+        {"input": "f'(x) = 0", "output": "значение первой производной функции эф в точке икс эквивалентно числовому значению ноль"},
+        {"input": "\\int_a^b f(x) dx", "output": "интеграл в пределах от нижней границы а до верхней границы бэ функции эф, зависящей от переменной икс, по дифференциалу икс"},
+        {"input": "\\sin(2\\alpha) = 2\\sin(\\alpha)\\cos(\\alpha)", "output": "тригонометрическая функция синус от произведения константы два и переменной альфа тождественно равна произведению числа два, значения синуса аргумента альфа и значения косинуса аргумента альфа"},
+        {"input": "\\log_a(bc) = \\log_a b + \\log_a c", "output": "значение логарифмической функции от произведения аргументов бэ и цэ при основании а эквивалентно сумме первого логарифма бэ по основанию а и второго логарифма цэ по основанию а"},
+        {"input": "\\tan^2(x + \\pi/4)", "output": "вторая степень тригонометрической функции тангенс, аргументом которой является сумма переменной икс и частного от деления константы пи на константу четыре"},
+        {"input": "\\log_{10}(\\sqrt{x})", "output": "логарифм по основанию десять от результата извлечения арифметического корня второй степени из значения переменной икс"}
+      ],
+      "examples_eng": [
+        {"input": "x + y", "output": "sum of variable x and variable y"},
+        {"input": "(x + y)^2", "output": "open parenthesis sum of variable x and variable y close parenthesis raised to the second power"},
+        {"input": "(a + b)/c", "output": "fraction with numerator sum of arguments a and b and denominator argument c"},
+        {"input": "\\sqrt{x^2 + 1}", "output": "radical of the second degree under which is the sum of variable x raised to the second power and constant one"},
+        {"input": "f'(x) = 0", "output": "value of the first derivative of function f at point x is equivalent to the numerical value zero"},
+        {"input": "\\int_a^b f(x) dx", "output": "integral ranging from lower bound a to upper bound b of function f depending on variable x with respect to differential x"},
+        {"input": "\\sin(2\\alpha) = 2\\sin(\\alpha)\\cos(\\alpha)", "output": "trigonometric function sine of the product of constant two and variable alpha is identically equal to the product of the number two, the value of sine of argument alpha, and the value of cosine of argument alpha"},
+        {"input": "\\log_a(bc) = \\log_a b + \\log_a c", "output": "value of the logarithmic function of the product of arguments b and c base a is equivalent to the sum of the first logarithm of b base a and the second logarithm of c base a"},
+        {"input": "\\tan^2(x + \\pi/4)", "output": "second power of the trigonometric function tangent, the argument of which is the sum of variable x and the quotient of constant pi and constant four"},
+        {"input": "\\log_{10}(\\sqrt{x})", "output": "logarithm base ten of the result of extracting the arithmetic root of the second degree from the value of variable x"}
+      ]
     }
   ]
 }

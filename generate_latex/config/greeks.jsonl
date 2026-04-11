@@ -22,15 +22,15 @@
 {"sym": "\\psi", "rus": "пси", "eng": "psi"}
 {"sym": "\\omega", "rus": "омега", "eng": "omega"}
 
-{"sym": "\\Gamma", "rus": "гамма заглавная", "eng": "Gamma"}
-{"sym": "\\Delta", "rus": "дельта заглавная", "eng": "Delta"}
-{"sym": "\\Theta", "rus": "тета заглавная", "eng": "Theta"}
-{"sym": "\\Lambda", "rus": "лямбда заглавная", "eng": "Lambda"}
-{"sym": "\\Xi", "rus": "кси заглавная", "eng": "Xi"}
-{"sym": "\\Pi", "rus": "пи заглавная", "eng": "Pi"}
-{"sym": "\\Sigma", "rus": "сигма заглавная", "eng": "Sigma"}
-{"sym": "\\Upsilon", "rus": "ипсилон заглавная", "eng": "Upsilon"}
-{"sym": "\\Phi", "rus": "фи заглавная", "eng": "Phi"}
-{"sym": "\\Psi", "rus": "пси заглавная", "eng": "Psi"}
-{"sym": "\\Omega", "rus": "омега заглавная", "eng": "Omega"}
+{"sym": "\\Gamma", "rus": "Гамма", "eng": "Gamma"}
+{"sym": "\\Delta", "rus": "Дельта", "eng": "Delta"}
+{"sym": "\\Theta", "rus": "Тета", "eng": "Theta"}
+{"sym": "\\Lambda", "rus": "Лямбда", "eng": "Lambda"}
+{"sym": "\\Xi", "rus": "Кси", "eng": "Xi"}
+{"sym": "\\Pi", "rus": "Пи", "eng": "Pi"}
+{"sym": "\\Sigma", "rus": "Сигма", "eng": "Sigma"}
+{"sym": "\\Upsilon", "rus": "Ипсилон", "eng": "Upsilon"}
+{"sym": "\\Phi", "rus": "Фи", "eng": "Phi"}
+{"sym": "\\Psi", "rus": "Пси", "eng": "Psi"}
+{"sym": "\\Omega", "rus": "Омега", "eng": "Omega"}
 
