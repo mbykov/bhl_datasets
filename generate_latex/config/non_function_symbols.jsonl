@@ -1,0 +1,15 @@
+{"sym": "\\partial", "reason": "partial derivative operator - needs function"}
+{"sym": "\\nabla", "reason": "nabla operator - needs function"}
+{"sym": "\\Delta", "reason": "delta constant/operator"}
+{"sym": "\\infty", "reason": "infinity constant"}
+{"sym": "\\emptyset", "reason": "empty set constant"}
+{"sym": "\\ell", "reason": "ell constant"}
+{"sym": "\\hbar", "reason": "Dirac constant"}
+{"sym": "\\dots", "reason": "ellipsis"}
+{"sym": "\\cdots", "reason": "center dots"}
+{"sym": "\\vec{v}", "reason": "vector - needs argument"}
+{"sym": "\\dot{}", "reason": "dot accent - needs argument"}
+{"sym": "\\ddot{}", "reason": "double dot - needs argument"}
+{"sym": "\\bar{}", "reason": "bar accent - needs argument"}
+{"sym": "\\hat{}", "reason": "hat accent - needs argument"}
+{"sym": "\\tilde{}", "reason": "tilde accent - needs argument"}

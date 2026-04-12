@@ -1,0 +1,19 @@
+{"sym": "\\int", "handler": "integral", "forms": ["\\int @ d@", "\\int_{@}^{@} @ d@", "\\int_{@}^{@} \\frac{\\partial}{\\partial @} d@"]}
+{"sym": "\\iint", "handler": "integral", "forms": ["\\iint @ d@ d@", "\\iint_{@} @ d@ d@"]}
+{"sym": "\\oint", "handler": "integral", "forms": ["\\oint @ d@", "\\oint_{@} @ d@"]}
+{"sym": "\\frac{}{}", "handler": "binary_args", "forms": ["\\frac{@}{@}"]}
+{"sym": "\\sqrt{}", "handler": "unary_arg", "forms": ["\\sqrt{@}"]}
+{"sym": "\\sqrt[n]{}", "handler": "binary_args", "forms": ["\\sqrt[@]{@}"]}
+{"sym": "^", "handler": "binary_op", "forms": ["@^{@}"]}
+{"sym": "_", "handler": "binary_op", "forms": ["@_{@}"]}
+{"sym": "\\sum", "handler": "sum_prod", "forms": ["\\sum_{@}^{@} @"]}
+{"sym": "\\prod", "handler": "sum_prod", "forms": ["\\prod_{@}^{@} @"]}
+{"sym": "\\lim", "handler": "limit", "forms": ["\\lim_{@ \\to @} @"]}
+{"sym": "\\det", "handler": "unary_arg", "forms": ["\\det(@)"]}
+{"sym": "\\operatorname{tr}", "handler": "unary_arg", "forms": ["\\operatorname{tr}(@)"]}
+{"sym": "\\vec{v}", "handler": "unary_arg", "forms": ["\\vec{@}"]}
+{"sym": "\\dot{}", "handler": "unary_arg", "forms": ["\\dot{@}"]}
+{"sym": "\\ddot{}", "handler": "unary_arg", "forms": ["\\ddot{@}"]}
+{"sym": "\\bar{}", "handler": "unary_arg", "forms": ["\\bar{@}"]}
+{"sym": "\\hat{}", "handler": "unary_arg", "forms": ["\\hat{@}"]}
+{"sym": "\\tilde{}", "handler": "unary_arg", "forms": ["\\tilde{@}"]}
