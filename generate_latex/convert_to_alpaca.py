@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-convert_to_alpaca.py - Конвертация датасета в формат LLaMA-Factory
-С валидацией и статистикой качества
+convert_to_alpaca.py - Конвертация датасета в формат Alpaca для LLaMA-Factory
 """
 
 import json
@@ -30,7 +29,6 @@ class DatasetConverter:
             if field not in record or not record[field]:
                 return False, f"Отсутствует обязательное поле: {field}"
         
-        # Проверка на пустые строки
         if not record['script'].strip() or not record['rus'].strip():
             return False, "Пустое значение в script или rus"
         
@@ -69,17 +67,17 @@ class DatasetConverter:
 
     def convert_to_alpaca(self, input_path, output_file, lang='rus'):
         """
-        Конвертация в формат Alpaca JSONL
+        Конвертация в формат Alpaca JSONL (объект на строку)
         
         Формат:
         {
-            "instruction": "Convert the following description to LaTeX script.",
+            "instruction": "Преобразуй описание на русском языке в LaTeX формулу.",
             "input": "<русское описание>",
             "output": "<LaTeX скрипт>"
         }
         """
         if not os.path.exists(input_path):
-            print(f"Ошибка: Файл {input_path} не найден.")
+            print(f"❌ Ошибка: Файл {input_path} не найден.")
             return None
         
         records = []
@@ -92,15 +90,15 @@ class DatasetConverter:
                         if valid:
                             records.append(data)
                         else:
-                            print(f"Пропущена запись: {error}")
+                            print(f"⚠️ Пропущена запись: {error}")
                     except json.JSONDecodeError as e:
-                        print(f"Ошибка парсинга JSON: {e}")
+                        print(f"⚠️ Ошибка парсинга JSON: {e}")
                         continue
         
         # Анализ перед конвертацией
         self.analyze_dataset(records)
         
-        # Конвертация в Alpaca формат
+        # Конвертация в Alpaca формат (объект на строку!)
         alpaca_records = []
         for record in records:
             if lang == 'rus' and record.get('rus'):
@@ -118,7 +116,7 @@ class DatasetConverter:
                 }
                 alpaca_records.append(alpaca_record)
         
-        # Запись в JSONL
+        # Запись в JSONL (каждая строка — объект, НЕ массив!)
         output_path = self.output_dir / output_file
         with open(output_path, 'w', encoding='utf-8') as f:
             for record in alpaca_records:
@@ -127,18 +125,18 @@ class DatasetConverter:
         return alpaca_records
 
     def create_dataset_info(self, dataset_name='latex_ds'):
-        """Создание файла dataset_info.json для LLaMA-Factory"""
+        """Создание файла dataset_info.json для LLaMA-Factory (формат Alpaca)"""
         info_file = self.output_dir / 'dataset_info.json'
         
         dataset_info = {
             dataset_name: {
                 "file_name": f"{dataset_name}_alpaca.jsonl",
+                "formatting": "alpaca",  # Формат Alpaca, не chat!
                 "columns": {
                     "instruction": "instruction",
                     "input": "input",
                     "output": "output"
                 },
-                "formatting": "alpaca",
                 "description": "Dataset for LaTeX formula generation from Russian text"
             }
         }
@@ -151,7 +149,7 @@ class DatasetConverter:
     def print_statistics(self):
         """Вывод статистики"""
         print(f"\n{'='*60}")
-        print("СТАТИСТИКА ДАТАСЕТА")
+        print("📊 СТАТИСТИКА ДАТАСЕТА")
         print(f"{'='*60}")
         print(f"Всего записей: {self.stats['total_records']}")
         print(f"Уникальных формул: {self.stats['total_unique_scripts']}")
@@ -160,12 +158,12 @@ class DatasetConverter:
         print(f"Средняя длина LaTeX (симв): {self.stats['avg_script_length']:.1f}")
         
         if self.stats['types']:
-            print(f"\nРаспределение по типам:")
+            print(f"\n📈 Распределение по типам:")
             for typ, count in self.stats['types'].most_common(10):
                 print(f"   {typ}: {count}")
         
         if self.stats['sec']:
-            print(f"\nРаспределение по разделам:")
+            print(f"\n📂 Распределение по разделам:")
             for sec, count in self.stats['sec'].most_common(10):
                 print(f"   {sec}: {count}")
         
@@ -177,32 +175,25 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--input', default='results/train.json',
                         help='Входной файл (train.json после normalize.py)')
-    parser.add_argument('--output-dir', default='results',
-                        help='Выходная директория')
-    parser.add_argument('--dataset-name', default='latex_ds',
-                        help='Имя датасета в dataset_info.json')
-    parser.add_argument('--lang', default='rus', choices=['rus', 'eng'],
-                        help='Язык описания: rus (русский) или eng (английский)')
+    parser.add_argument('--output-dir', default='results')
+    parser.add_argument('--dataset-name', default='latex_ds')
+    parser.add_argument('--lang', default='rus', choices=['rus', 'eng'])
     args = parser.parse_args()
     
-    # Конвертация JSON -> JSONL
     converter = DatasetConverter(output_dir=args.output_dir)
     
-    print(f"\nКонвертация {args.input}...")
+    print(f"\n🔄 Конвертация {args.input} в формат Alpaca...")
     
-    # Чтение JSON файла
     input_path = Path(args.input)
     if not input_path.exists():
-        print(f"Ошибка: Файл {args.input} не найден.")
+        print(f"❌ Ошибка: Файл {args.input} не найден.")
         return
     
     with open(input_path, 'r', encoding='utf-8') as f:
         records = json.load(f)
     
-    # Анализ
     converter.analyze_dataset(records)
     
-    # Преобразование в Alpaca формат
     output_file = f"{args.dataset_name}_alpaca.jsonl"
     alpaca_records = []
     
@@ -222,22 +213,19 @@ def main():
             }
             alpaca_records.append(alpaca_record)
     
-    # Запись JSONL
     output_path = Path(args.output_dir) / output_file
     with open(output_path, 'w', encoding='utf-8') as f:
         for record in alpaca_records:
             f.write(json.dumps(record, ensure_ascii=False) + '\n')
     
-    # Создание dataset_info.json
-    info_file = converter.create_dataset_info(args.dataset_name)
+    converter.create_dataset_info(args.dataset_name)
     
-    # Статистика
     converter.print_statistics()
     
-    print(f"\nГотово!")
+    print(f"\n✅ Готово!")
     print(f"   - JSONL: {output_path} ({len(alpaca_records)} записей)")
-    print(f"   - Info:  {info_file}")
-    print(f"\nВ YAML используйте: dataset: {args.dataset_name}, dataset_dir: {args.output_dir}")
+    print(f"   - Info:  {args.output_dir}/dataset_info.json")
+    print(f"\n💡 В YAML используйте: dataset: {args.dataset_name}, dataset_dir: {args.output_dir}")
 
 
 if __name__ == "__main__":
