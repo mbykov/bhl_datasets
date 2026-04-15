@@ -1,0 +1,142 @@
+{
+  "templates": [
+    {
+      "type": "unary_function",
+      "description": "Одноаргументная функция: sin(x), sqrt(x), log(x)",
+      "patterns_rus": [
+        "{func} {arg}",
+        "{func} от {arg}",
+        "значение {func} от {arg}",
+        "{func}({arg})",
+        "функция {func} аргумента {arg}"
+      ]
+    },
+    {
+      "type": "binary_function",
+      "description": "Двухаргументная функция: frac{a}{b}, pow{a}{b}",
+      "patterns_rus": [
+        "{left} {op} {right}",
+        "{left} и {right} {op}",
+        "отношение {left} к {right}",
+        "{op} {left} и {right}",
+        "{left}, {op} {right}"
+      ]
+    },
+    {
+      "type": "power",
+      "description": "Возведение в степень: x^2, sin^2(x)",
+      "patterns_rus": [
+        "{base} в {exp} степени",
+        "{base} во {exp} степени",
+        "степень {exp} от {base}",
+        "{base}^{exp}",
+        "{base}, возведённое в {exp}"
+      ]
+    },
+    {
+      "type": "root",
+      "description": "Корень: sqrt(x), sqrt[n]{x}",
+      "patterns_rus": [
+        "корень из {arg}",
+        "квадратный корень из {arg}",
+        "радикал из {arg}",
+        "корень, под которым {arg}",
+        "арифметический корень из {arg}"
+      ]
+    },
+    {
+      "type": "integral",
+      "description": "Интеграл: int f(x) dx",
+      "patterns_rus": [
+        "интеграл от {func} по {diff}",
+        "интеграл {func} {diff}",
+        "неопределённый интеграл от {func}",
+        "интеграл, под знаком которого {func}",
+        "вычислить интеграл от {func}"
+      ]
+    },
+    {
+      "type": "integral_bounded",
+      "description": "Определённый интеграл: int_a^b f(x) dx",
+      "patterns_rus": [
+        "интеграл от {lower} до {upper} от {func} по {diff}",
+        "определённый интеграл {func} на отрезке от {lower} до {upper}",
+        "интеграл от {lower} до {upper} функции {func}",
+        "интеграл по промежутку [{lower}, {upper}] от {func}",
+        "интеграл, пределы которого от {lower} до {upper}, подынтегральная функция {func}"
+      ]
+    },
+    {
+      "type": "sum",
+      "description": "Сумма: sum_{i=1}^n",
+      "patterns_rus": [
+        "сумма от {lower} до {upper} {term}",
+        "сумма {term} по i от {lower} до {upper}",
+        "суммирование {term} при i от {lower} до {upper}",
+        "сумма членов {term} от {lower} до {upper}"
+      ]
+    },
+    {
+      "type": "limit",
+      "description": "Предел: lim_{x->a} f(x)",
+      "patterns_rus": [
+        "предел {func} при {var} стремящемся к {val}",
+        "предел функции {func}, когда {var} стремится к {val}",
+        "граница {func} при {var} = {val}",
+        "предел, {var} → {val}, функции {func}"
+      ]
+    },
+    {
+      "type": "parentheses",
+      "description": "Скобки: (a + b)",
+      "patterns_rus": [
+        "скобка {inner} скобка",
+        "открывается скобка {inner} закрывается скобка",
+        "выражение в скобках: {inner}",
+        "({inner})",
+        "группа {inner}"
+      ]
+    },
+    {
+      "type": "atomic_var",
+      "description": "Переменная: x, y, alpha",
+      "patterns_rus": [
+        "{var}",
+        "переменная {var}",
+        "аргумент {var}",
+        "величина {var}"
+      ]
+    },
+    {
+      "type": "atomic_num",
+      "description": "Число: 1, 2, 100",
+      "patterns_rus": [
+        "{num}",
+        "число {num}",
+        "константа {num}",
+        "значение {num}"
+      ]
+    },
+    {
+      "type": "relation",
+      "description": "Отношение: a = b, a > b",
+      "patterns_rus": [
+        "{left} {rel} {right}",
+        "{left} {rel} {right}",
+        "{left} эквивалентно {right}",
+        "{left}, что {rel} {right}",
+        "выражение {left} {rel} выражению {right}"
+      ]
+    },
+    {
+      "type": "complex_nest",
+      "description": "Сложная вложенность: int sqrt sin x dx",
+      "patterns_rus": [
+        "{outer} {middle} {inner}",
+        "{outer} от {middle} от {inner}",
+        "сначала {inner}, затем {middle}, наконец {outer}",
+        "{outer}, аргументом которого является {middle} от {inner}"
+      ]
+    }
+  ]
+}

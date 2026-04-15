@@ -2,6 +2,7 @@ import json
 import random
 from pathlib import Path
 
+
 class LatexFormulaGenerator:
     def __init__(self, config_dir, global_multiplier=1):
         self.config_dir = Path(config_dir)
@@ -41,7 +42,7 @@ class LatexFormulaGenerator:
             if 'sense' in s:
                 self.symbol_sense[s['sym']] = s['sense']
 
-        # Веса типов
+        # Веса типов (конфигурируемые через config)
         self.example_types = {
             'atomic_var': {'weight': 5, 'generator': self._gen_atomic_var},
             'atomic_num': {'weight': 0, 'generator': self._gen_atomic_num},
@@ -51,6 +52,8 @@ class LatexFormulaGenerator:
             'binary_backward': {'weight': 8, 'generator': self._gen_binary_backward},
             'nest_forward': {'weight': 6, 'generator': self._gen_nest_forward},
             'nest_backward': {'weight': 6, 'generator': self._gen_nest_backward},
+            'triple_nest': {'weight': 4, 'generator': self._gen_triple_nest},
+            'power_function': {'weight': 5, 'generator': self._gen_power_function},
             'cnest_forward': {'weight': 4, 'generator': self._gen_cnest_forward},
             'cnest_backward': {'weight': 4, 'generator': self._gen_cnest_backward},
         }
@@ -96,20 +99,27 @@ class LatexFormulaGenerator:
         return op_sym
 
     def _apply_scheme(self, scheme, vars_list):
+        """Применяет схему, заменяя @ на переменные из списка последовательно"""
         result = scheme
         for var in vars_list:
             result = result.replace('@', var, 1)
         return result
 
-    def _build_sense_scheme(self, scheme, args_schemes):
-        """Построение sense_scheme из схемы и смыслов аргументов"""
-        result = scheme
+    def _build_sense_scheme(self, sense, args_schemes):
+        """
+        Строит sense_scheme из базового sense и смыслов аргументов.
+        args_schemes — список смыслов аргументов (например, ['var', 'pow(var)'])
+        """
+        result = sense
         for arg_scheme in args_schemes:
             if '@' in result:
                 result = result.replace('@', arg_scheme, 1)
             else:
                 result = f"{result}({arg_scheme})"
         result = result.replace('@', 'var')
+        # Оборачиваем в скобки для однозначности сложных случаев
+        if '(' in result or '^' in result:
+            result = f"({result})"
         return result
 
     def _get_random_other_symbol(self, current_sym, exclude_sym=None):
@@ -200,7 +210,7 @@ class LatexFormulaGenerator:
         right_sense_scheme = self._build_sense_scheme(right_sense, ['var'] * at_right)
 
         script = self._apply_scheme(op_scheme, [left_script, right_script])
-        sense_scheme = f"{left_sense_scheme} {op_sense} {right_sense_scheme}"
+        sense_scheme = self._build_sense_scheme(f"{left_sense_scheme} {op_sense} {right_sense_scheme}", [])
 
         return {
             'script': script,
@@ -230,7 +240,7 @@ class LatexFormulaGenerator:
         right_sense_scheme = self._build_sense_scheme(right_sense, ['var'] * at_right)
 
         script = self._apply_scheme(op_scheme, [left_script, right_script])
-        sense_scheme = f"{left_sense_scheme} {op_sense} {right_sense_scheme}"
+        sense_scheme = self._build_sense_scheme(f"{left_sense_scheme} {op_sense} {right_sense_scheme}", [])
 
         return {
             'script': script,
@@ -238,7 +248,7 @@ class LatexFormulaGenerator:
             'sense_scheme': sense_scheme
         }
 
-    # ========== Вложенность ==========
+    # ========== Двойная вложенность ==========
     def _gen_nest_forward(self, symbol, other):
         outer_scheme = self._get_scheme_for_symbol(symbol['sym'])
         inner_scheme = self._get_scheme_for_symbol(other['sym'])
@@ -295,7 +305,108 @@ class LatexFormulaGenerator:
             'sense_scheme': outer_sense_scheme
         }
 
-    # ========== Сложная вложенность ==========
+    # ========== Тройная вложенность ==========
+    def _gen_triple_nest(self, outer, middle, inner_sym):
+        """
+        Генерирует тройное вложение: outer(middle(inner(var)))
+        Пример: \int \sqrt{\sin(x)} dx
+        """
+        outer_scheme = self._get_scheme_for_symbol(outer['sym'])
+        middle_scheme = self._get_scheme_for_symbol(middle['sym'])
+        inner_scheme = self._get_scheme_for_symbol(inner_sym['sym'])
+
+        outer_sense = self._get_sense_for_symbol(outer['sym'])
+        middle_sense = self._get_sense_for_symbol(middle['sym'])
+        inner_sense = self._get_sense_for_symbol(inner_sym['sym'])
+
+        if not all([outer_scheme, middle_scheme, inner_scheme, outer_sense, middle_sense, inner_sense]):
+            return None
+
+        # Проверка: outer и middle должны принимать хотя бы один аргумент
+        if outer_scheme.count('@') < 1 or middle_scheme.count('@') < 1 or inner_scheme.count('@') < 1:
+            return None
+
+        # Генерируем внутреннюю часть
+        inner_vars = self._get_random_vars(inner_scheme.count('@'))
+        inner_script = self._apply_scheme(inner_scheme, inner_vars)
+        inner_sense_scheme = self._build_sense_scheme(inner_sense, ['var'] * inner_scheme.count('@'))
+
+        # Генерируем среднюю часть
+        middle_script = middle_scheme.replace('@', inner_script, 1)
+        middle_remaining = middle_script.count('@')
+        if middle_remaining > 0:
+            middle_vars = self._get_random_vars(middle_remaining)
+            middle_script = self._apply_scheme(middle_script, middle_vars)
+        middle_sense_scheme = self._build_sense_scheme(middle_sense, [inner_sense_scheme] + ['var'] * middle_remaining)
+
+        # Генерируем внешнюю часть
+        outer_script = outer_scheme.replace('@', middle_script, 1)
+        outer_remaining = outer_script.count('@')
+        if outer_remaining > 0:
+            outer_vars = self._get_random_vars(outer_remaining)
+            outer_script = self._apply_scheme(outer_script, outer_vars)
+        outer_sense_scheme = self._build_sense_scheme(outer_sense, [middle_sense_scheme] + ['var'] * outer_remaining)
+
+        return {
+            'script': outer_script,
+            'type': 'triple_nest',
+            'sense_scheme': outer_sense_scheme
+        }
+
+    # ========== Возведение функции в степень ==========
+    def _gen_power_function(self, func_sym, power_sym=None):
+        """
+        Генерирует возведение функции в степень: func^power(arg)
+        Примеры: \sin^2(x), \log^3(a), x^2 (если power_sym = '^')
+        """
+        func_scheme = self._get_scheme_for_symbol(func_sym['sym'])
+        func_sense = self._get_sense_for_symbol(func_sym['sym'])
+
+        if not func_scheme or not func_sense:
+            return None
+
+        # Определяем схему возведения в степень
+        if power_sym and not self._is_variable(power_sym['sym']):
+            # power_sym — это символ типа ^ или \pow
+            power_scheme = self._get_scheme_for_symbol(power_sym['sym'])
+            power_sense = self._get_sense_for_symbol(power_sym['sym'])
+        else:
+            # Используем стандартную схему @^{@}
+            power_scheme = "@^{@}"
+            power_sense = "pow"
+
+        # Нужно: 1 аргумент для функции + 1 аргумент для степени
+        func_arg_count = func_scheme.count('@')
+        if func_arg_count < 1:
+            return None
+
+        # Генерируем аргумент функции
+        func_arg_vars = self._get_random_vars(1)
+        func_arg_script = func_arg_vars[0]
+        func_arg_sense = 'var'
+
+        # Применяем функцию к аргументу
+        func_part_script = func_scheme.replace('@', func_arg_script, 1)
+        func_part_sense = self._build_sense_scheme(func_sense, [func_arg_sense])
+
+        # Генерируем степень
+        power_var = self._get_random_vars(1)[0]
+        power_sense_val = 'var'
+
+        # Строим итоговый скрипт и sense_scheme
+        script = power_scheme.replace('@', func_part_script, 1).replace('@', power_var, 1)
+        sense_scheme = self._build_sense_scheme(
+            f"{func_part_sense}^{power_sense_val}",
+            []
+        )
+
+        return {
+            'script': script,
+            'type': 'power_function',
+            'sense_scheme': sense_scheme
+        }
+
+    # ========== Сложная вложенность (с оператором) ==========
     def _gen_cnest_forward(self, symbol, other_left, other_right, op_sym):
         sym_scheme = self._get_scheme_for_symbol(symbol['sym'])
         left_scheme = self._get_scheme_for_symbol(other_left['sym'])
@@ -333,7 +444,7 @@ class LatexFormulaGenerator:
         right_sense_part = self._build_sense_scheme(right_sense, [right_inner_sense] + ['var'] * right_remaining)
 
         script = self._apply_scheme(op_scheme, [left_part, right_part])
-        sense_scheme = f"{left_sense_part} {op_sense} {right_sense_part}"
+        sense_scheme = self._build_sense_scheme(f"{left_sense_part} {op_sense} {right_sense_part}", [])
 
         return {
             'script': script,
@@ -378,7 +489,7 @@ class LatexFormulaGenerator:
         right_sense_part = self._build_sense_scheme(sym_sense, [right_inner_sense] + ['var'] * right_remaining)
 
         script = self._apply_scheme(op_scheme, [left_part, right_part])
-        sense_scheme = f"{left_sense_part} {op_sense} {right_sense_part}"
+        sense_scheme = self._build_sense_scheme(f"{left_sense_part} {op_sense} {right_sense_part}", [])
 
         return {
             'script': script,
@@ -407,7 +518,7 @@ class LatexFormulaGenerator:
                         'sym': ex['script'],
                         'script': ex['script'],
                         'type': ex['type'],
-                        'sense_scheme': ex['sense_scheme']
+                        'scheme': ex['sense_scheme']
                     })
             print(f"  {ex_type}: {len(examples)} × {count} = {len(examples) * count}")
 
@@ -429,15 +540,119 @@ class LatexFormulaGenerator:
                             'sym': symbol['sym'],
                             'script': ex['script'],
                             'type': ex['type'],
-                            'sense_scheme': ex['sense_scheme']
+                            'scheme': ex['sense_scheme']
                         })
                         generated += 1
             print(f"  simple: {generated} примеров")
 
-        # Составные типы
-        print("\nГенерация составных типов...")
-        complex_types = ['binary_forward', 'binary_backward', 'nest_forward',
-                         'nest_backward', 'cnest_forward', 'cnest_backward']
+        # Двойная вложенность
+        print("\nГенерация двойной вложенности (nest)...")
+        nest_config = self.example_types['nest_forward']
+        nest_weight = nest_config['weight']
+        if nest_weight > 0:
+            target_count = nest_weight * self.global_multiplier
+            generated = 0
+            for symbol in self.symbols:
+                if self._is_variable(symbol['sym']):
+                    continue
+                for _ in range(target_count):
+                    other = self._get_random_other_symbol(symbol['sym'])
+                    if not other:
+                        continue
+                    ex = nest_config['generator'](symbol, other)
+                    if ex:
+                        all_examples.append({
+                            'sec': symbol['sec'],
+                            'sym': symbol['sym'],
+                            'script': ex['script'],
+                            'type': ex['type'],
+                            'scheme': ex['sense_scheme']
+                        })
+                        generated += 1
+            print(f"  nest_forward: {generated} примеров")
+
+        nest_config_b = self.example_types['nest_backward']
+        nest_weight_b = nest_config_b['weight']
+        if nest_weight_b > 0:
+            target_count = nest_weight_b * self.global_multiplier
+            generated = 0
+            for symbol in self.symbols:
+                if self._is_variable(symbol['sym']):
+                    continue
+                for _ in range(target_count):
+                    other = self._get_random_other_symbol(symbol['sym'])
+                    if not other:
+                        continue
+                    ex = nest_config_b['generator'](symbol, other)
+                    if ex:
+                        all_examples.append({
+                            'sec': symbol['sec'],
+                            'sym': symbol['sym'],
+                            'script': ex['script'],
+                            'type': ex['type'],
+                            'scheme': ex['sense_scheme']
+                        })
+                        generated += 1
+            print(f"  nest_backward: {generated} примеров")
+
+        # Тройная вложенность
+        print("\nГенерация тройной вложенности (triple_nest)...")
+        triple_config = self.example_types['triple_nest']
+        triple_weight = triple_config['weight']
+        if triple_weight > 0:
+            target_count = triple_weight * self.global_multiplier
+            generated = 0
+            for outer in self.symbols:
+                if self._is_variable(outer['sym']):
+                    continue
+                for _ in range(target_count):
+                    middle = self._get_random_other_symbol(outer['sym'])
+                    if not middle:
+                        continue
+                    inner = self._get_random_other_symbol(outer['sym'], exclude_sym=middle['sym'])
+                    if not inner:
+                        inner = middle
+                    ex = triple_config['generator'](outer, middle, inner)
+                    if ex:
+                        all_examples.append({
+                            'sec': outer['sec'],
+                            'sym': outer['sym'],
+                            'script': ex['script'],
+                            'type': ex['type'],
+                            'scheme': ex['sense_scheme']
+                        })
+                        generated += 1
+            print(f"  triple_nest: {generated} примеров")
+
+        # Power function
+        print("\nГенерация функций в степени (power_function)...")
+        power_config = self.example_types['power_function']
+        power_weight = power_config['weight']
+        if power_weight > 0:
+            target_count = power_weight * self.global_multiplier
+            generated = 0
+            # Символы, которые можно возводить в степень
+            powerable_symbols = [s for s in self.symbols
+                                if not self._is_variable(s['sym'])
+                                and s.get('scheme')
+                                and s['sym'] not in ['^', '\\sqrt', '\\frac']]
+            for func_sym in powerable_symbols:
+                for _ in range(target_count):
+                    ex = power_config['generator'](func_sym)
+                    if ex:
+                        all_examples.append({
+                            'sec': func_sym['sec'],
+                            'sym': func_sym['sym'],
+                            'script': ex['script'],
+                            'type': ex['type'],
+                            'scheme': ex['sense_scheme']
+                        })
+                        generated += 1
+            print(f"  power_function: {generated} примеров")
+
+        # Составные типы с оператором
+        print("\nГенерация составных типов с операторами...")
+        complex_types = ['binary_forward', 'binary_backward', 'cnest_forward', 'cnest_backward']
 
         for ex_type in complex_types:
             config = self.example_types[ex_type]
@@ -483,7 +698,7 @@ class LatexFormulaGenerator:
                             'sym': symbol['sym'],
                             'script': ex['script'],
                             'type': ex['type'],
-                            'sense_scheme': ex['sense_scheme']
+                            'scheme': ex['sense_scheme']
                         })
                         generated += 1
             print(f"  {ex_type}: {generated} примеров")
@@ -514,8 +729,8 @@ class LatexFormulaGenerator:
 
 
 def main():
-    config_path = "/home/michael/LLM/datasets_bhl/generate_latex/config"
-    output_path = "/home/michael/LLM/datasets_bhl/generate_latex/scripts"
+    config_path = "config"
+    output_path = "results"
 
     generator = LatexFormulaGenerator(config_path, global_multiplier=1)
     generator.save_dataset(output_path)

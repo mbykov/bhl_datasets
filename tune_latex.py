@@ -79,8 +79,8 @@ def tune_latex():
 if __name__ == "__main__":
     os.makedirs("./saves", exist_ok=True)
 
-    if not os.path.exists("./generate_latex/scripts/train.json"):
-        print("⚠️  Внимание: файл generate_latex/scripts/train.json не найден")
+    if not os.path.exists("./generate_latex/results/train.json"):
+        print("⚠️  Внимание: файл generate_latex/results/train.json не найден")
         print("   Сначала запустите aloud.py")
         response = input("   Продолжить? (y/n): ")
         if response.lower() != 'y':
