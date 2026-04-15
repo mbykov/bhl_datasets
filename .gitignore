@@ -3,6 +3,7 @@
 *.exe
 bhl
 *saves*
+*scripts*
 result*
 models
 .DS_Store

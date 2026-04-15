@@ -1,7 +1,0 @@
-{"sec": "delimiters", "sym": "( )", "rus": "круглые скобки", "eng": "parentheses"}
-{"sec": "delimiters", "sym": "[ ]", "rus": "квадратные скобки", "eng": "brackets"}
-{"sec": "delimiters", "sym": "\\{ \\}", "rus": "фигурные скобки", "eng": "braces"}
-{"sec": "delimiters", "sym": "| |", "rus": "модуль / определитель", "eng": "vertical bars / absolute value"}
-{"sec": "delimiters", "sym": "\\| \\|", "rus": "норма", "eng": "double vertical bars / norm"}
-{"sec": "delimiters", "sym": "\\langle \\rangle", "rus": "угловые скобки", "eng": "angle brackets"}
-

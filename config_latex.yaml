@@ -1,37 +1,32 @@
-model_name_or_path: ../bhl/Models/Qwen2.5-1.5B-Instruct  # Будет заменен на путь к модели после команд
-trust_remote_code: True
-
-stage: sft
-do_train: True
-finetuning_type: lora
-lora_target: all
-lora_rank: 16
-lora_alpha: 32
-
-dataset: latex_ds  # Используем новый датасет
-dataset_dir: ./result/latex
-template: qwen
-cutoff_len: 512  # Для LaTeX нужно больше токенов
-overwrite_cache: True
-preprocessing_num_workers: 4
-packing: False  # Для LaTeX лучше отключить packing
-
-output_dir: ./saves/qwen_latex_lora
-logging_steps: 5
-save_steps: 100
-plot_loss: True
-overwrite_output_dir: True
-
-per_device_train_batch_size: 4  # Меньше, т.к. текст длиннее
-gradient_accumulation_steps: 4
-learning_rate: 2.0e-4
-num_train_epochs: 3.0  # Меньше эпох для второго этапа
-lr_scheduler_type: cosine
-warmup_ratio: 0.1
-bf16: True
-flash_attn: auto
-
-val_size: 0.1
-per_device_eval_batch_size: 2
-eval_strategy: steps
+bf16: true
+cutoff_len: 512
+dataset: latex_ds
+dataset_dir: ./generate_latex/results
+do_train: true
 eval_steps: 50
+eval_strategy: steps
+finetuning_type: lora
+flash_attn: auto
+gradient_accumulation_steps: 4
+learning_rate: 0.0002
+logging_steps: 5
+lora_alpha: 32
+lora_rank: 16
+lora_target: all
+lr_scheduler_type: cosine
+model_name_or_path: ../bhl/Models/Qwen2.5-1.5B-Instruct/orig
+num_train_epochs: 3.0
+output_dir: ./saves/qwen_latex_lora
+overwrite_cache: true
+overwrite_output_dir: true
+packing: false
+per_device_eval_batch_size: 2
+per_device_train_batch_size: 4
+plot_loss: true
+preprocessing_num_workers: 4
+save_steps: 100
+stage: sft
+template: qwen
+trust_remote_code: true
+val_size: 0.1
+warmup_ratio: 0.1

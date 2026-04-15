@@ -1,651 +1,524 @@
 import json
 import random
-import re
 from pathlib import Path
 
 class LatexFormulaGenerator:
-    def __init__(self, config_dir, samples_per_type=3, only_symbols=None):
+    def __init__(self, config_dir, global_multiplier=1):
         self.config_dir = Path(config_dir)
-        self.samples_per_type = samples_per_type
-        self.only_symbols = only_symbols or []
+        self.global_multiplier = global_multiplier
 
         # Загрузка данных
         self.greeks = self._load_jsonl('greeks.jsonl')
         self.latins = self._load_jsonl('latins.jsonl')
         self.symbols = self._load_jsonl('symbols.jsonl')
-        self.special_symbols = self._load_jsonl('special_symbols.jsonl')
-        self.non_function_symbols = self._load_jsonl('non_function_symbols.jsonl')
+        self.arithmetics = self._load_jsonl('arithmetics.jsonl')
 
-        # Фильтруем символы
-        if self.only_symbols:
-            self.symbols = [s for s in self.symbols if s['sym'] in self.only_symbols]
-            self.special_symbols = [s for s in self.special_symbols if s['sym'] in self.only_symbols]
+        # Переменные (латинские + греческие)
+        self.latin_vars = [l['sym'] for l in self.latins if l['sym'] != '@']
+        self.greek_vars = [g['sym'] for g in self.greeks]
+        self.all_vars = self.latin_vars + self.greek_vars
+        self.variable_set = set(self.all_vars)
 
-        # Создаём списки переменных
-        self.greek_symbols = [g['sym'] for g in self.greeks]
-        self.latin_symbols = [l['sym'] for l in self.latins if l['sym'] != '@']
-        self.all_vars = self.greek_symbols + self.latin_symbols
+        # Числа от 1 до 100
+        self.numbers = list(range(1, 101))
 
-        # Множество не-функций
-        self.non_function_set = {item['sym'] for item in self.non_function_symbols}
+        # Операторы
+        self.operators = []
+        self.op_symbols = []
+        for op in self.arithmetics:
+            sym = op.get('sym', '')
+            if sym:
+                self.operators.append(op)
+                self.op_symbols.append(sym)
 
-        # Словарь специальных обработчиков
-        self.special_handlers = {}
-        for special in self.special_symbols:
-            self.special_handlers[special['sym']] = special
+        # Схемы символов и их смыслы
+        self.symbol_schemes = {}  # sym -> list of schemes
+        self.symbol_sense = {}    # sym -> sense
+        for s in self.symbols:
+            if 'scheme' in s:
+                schemes = [sch.strip() for sch in s['scheme'].split(',')]
+                self.symbol_schemes[s['sym']] = schemes
+            if 'sense' in s:
+                self.symbol_sense[s['sym']] = s['sense']
 
-        # Арифметические операторы
-        self.arithmetic_ops = ['+', '-', '/']
-        self.coefficients = list(range(2, 101))
+        # Веса типов
+        self.example_types = {
+            'atomic_var': {'weight': 5, 'generator': self._gen_atomic_var},
+            'atomic_num': {'weight': 0, 'generator': self._gen_atomic_num},
+            'atomic_diff': {'weight': 5, 'generator': self._gen_atomic_diff},
+            'simple': {'weight': 15, 'generator': self._gen_simple},
+            'binary_forward': {'weight': 8, 'generator': self._gen_binary_forward},
+            'binary_backward': {'weight': 8, 'generator': self._gen_binary_backward},
+            'nest_forward': {'weight': 6, 'generator': self._gen_nest_forward},
+            'nest_backward': {'weight': 6, 'generator': self._gen_nest_backward},
+            'cnest_forward': {'weight': 4, 'generator': self._gen_cnest_forward},
+            'cnest_backward': {'weight': 4, 'generator': self._gen_cnest_backward},
+        }
 
     def _load_jsonl(self, filename):
         data = []
-        file_path = self.config_dir / filename
-        if not file_path.exists():
-            return []
-        with open(file_path, 'r', encoding='utf-8') as f:
-            for line in f:
-                if line.strip():
-                    data.append(json.loads(line))
+        try:
+            with open(self.config_dir / filename, 'r', encoding='utf-8') as f:
+                for line in f:
+                    if line.strip():
+                        data.append(json.loads(line))
+        except FileNotFoundError:
+            print(f"⚠️ Файл не найден: {filename}")
         return data
 
     def _get_random_vars(self, count):
-        if count > len(self.all_vars):
-            return random.choices(self.all_vars, k=count)
-        return random.sample(self.all_vars, count)
+        return random.sample(self.all_vars, min(count, len(self.all_vars)))
 
-    def _is_valid_function_symbol(self, sym):
-        if sym in self.non_function_set:
-            return False
-        if any(x in sym for x in ['{}', '[]', '()']):
-            return False
-        return True
+    def _is_variable(self, sym):
+        return sym in self.variable_set
 
-    def _get_random_other_symbol(self, current_sym):
-        if self.only_symbols:
-            others = [s for s in self.symbols
+    def _get_scheme_for_symbol(self, sym):
+        if self._is_variable(sym):
+            return "@"
+        schemes = self.symbol_schemes.get(sym, [])
+        return random.choice(schemes) if schemes else None
+
+    def _get_sense_for_symbol(self, sym):
+        if self._is_variable(sym):
+            return "var"
+        return self.symbol_sense.get(sym, None)
+
+    def _get_scheme_for_operator(self, op_sym):
+        for op in self.operators:
+            if op['sym'] == op_sym:
+                return op.get('scheme', f"@ {op_sym} @")
+        return f"@ {op_sym} @"
+
+    def _get_sense_for_operator(self, op_sym):
+        for op in self.operators:
+            if op['sym'] == op_sym:
+                return op.get('rus', op_sym)
+        return op_sym
+
+    def _apply_scheme(self, scheme, vars_list):
+        result = scheme
+        for var in vars_list:
+            result = result.replace('@', var, 1)
+        return result
+
+    def _build_sense_scheme(self, scheme, args_schemes):
+        """Построение sense_scheme из схемы и смыслов аргументов"""
+        result = scheme
+        for arg_scheme in args_schemes:
+            if '@' in result:
+                result = result.replace('@', arg_scheme, 1)
+            else:
+                result = f"{result}({arg_scheme})"
+        result = result.replace('@', 'var')
+        return result
+
+    def _get_random_other_symbol(self, current_sym, exclude_sym=None):
+        candidates = [s for s in self.symbols
                      if s['sym'] != current_sym
-                     and s['sym'] in self.only_symbols
-                     and self._is_valid_function_symbol(s['sym'])]
-        else:
-            others = [s for s in self.symbols
-                     if s['sym'] != current_sym
-                     and self._is_valid_function_symbol(s['sym'])]
+                     and not self._is_variable(s['sym'])
+                     and s.get('scheme')]
+        if exclude_sym:
+            candidates = [s for s in candidates if s['sym'] != exclude_sym]
+        return random.choice(candidates) if candidates else None
 
-        if not others:
-            others = [s for s in self.symbols if s['sym'] != current_sym]
-        return random.choice(others)
+    def _get_random_operator(self):
+        return random.choice(self.operators) if self.operators else None
 
-    def _get_random_op(self):
-        return random.choice(self.arithmetic_ops)
+    # ========== Атомарные типы ==========
+    def _gen_atomic_var(self):
+        examples = []
+        for var in self.all_vars:
+            examples.append({
+                'script': var,
+                'type': 'atomic_var',
+                'sense_scheme': 'var'
+            })
+        return examples
 
-    def _get_random_coefficient(self):
-        return random.choice(self.coefficients)
+    def _gen_atomic_num(self):
+        examples = []
+        for num in self.numbers:
+            examples.append({
+                'script': str(num),
+                'type': 'atomic_num',
+                'sense_scheme': 'num'
+            })
+        return examples
 
-    def _transform_variable(self, var):
-        # 50% - оставляем как есть
-        if random.random() < 0.5:
-            return var
+    def _gen_atomic_diff(self):
+        examples = []
+        for var in self.all_vars:
+            clean_var = var.replace('\\', '')
+            examples.append({
+                'script': f'd{clean_var}',
+                'type': 'atomic_diff',
+                'sense_scheme': 'diff'
+            })
+        return examples
 
-        has_A = random.random() < 0.5
-        B = 1 if random.random() < 0.5 else self._get_random_coefficient()
+    # ========== Simple тип ==========
+    def _gen_simple(self, symbol):
+        scheme = self._get_scheme_for_symbol(symbol['sym'])
+        sense = self._get_sense_for_symbol(symbol['sym'])
+        if not scheme or not sense:
+            return None
 
-        # Пробел между числом и переменной
-        if B == 1:
-            b_part = var
-        else:
-            b_part = f"{B} {var}"
+        at_count = scheme.count('@')
+        vars_list = self._get_random_vars(at_count) if at_count > 0 else []
+        script = self._apply_scheme(scheme, vars_list)
 
-        if not has_A:
-            return b_part
+        # Строим sense_scheme
+        args_schemes = ['var'] * at_count
+        sense_scheme = self._build_sense_scheme(sense, args_schemes)
 
-        A = self._get_random_coefficient()
-        op = random.choice(['+', '-'])
-
-        # Пробелы вокруг оператора
-        if random.random() < 0.5:
-            return f"{A} {op} {b_part}"
-        else:
-            return f"{b_part} {op} {A}"
-
-    def _add_linear_variant(self, script, scheme):
-        coeff = self._get_random_coefficient()
-
-        if random.random() < 0.5:
-            const = self._get_random_coefficient()
-            op = random.choice(['+', '-'])
-            # Пробелы
-            if random.random() < 0.5:
-                linear_script = f"{const} {op} {coeff} {script}"
-                linear_scheme = f"a + b*({scheme})"
-            else:
-                linear_script = f"{coeff} {script} {op} {const}"
-                linear_scheme = f"b*({scheme}) + a"
-        else:
-            linear_script = f"{coeff} {script}"
-            linear_scheme = f"b*({scheme})"
-
-        return linear_script, linear_scheme
-
-    def _ensure_integral_differential(self, script: str) -> str:
-        """Добавляет дифференциал ко всем интегралам, у которых его нет"""
-
-        # Паттерн: \int(что-то) без последующего d...
-        pattern = r'\\int\(([^)]+)\)(?!\s*d\s+[a-zA-Z])'
-
-        def add_diff(match):
-            inner = match.group(1)
-            vars_in_inner = re.findall(r'[a-zA-Zα-ω]+', inner)
-            if vars_in_inner:
-                diff_var = vars_in_inner[-1]
-            else:
-                diff_var = 'x'
-            return f'\\int({inner}) d {diff_var}'
-
-        script = re.sub(pattern, add_diff, script)
-
-        # Паттерн: \int что-то без последующего d...
-        pattern2 = r'\\int\s+([a-zA-Zα-ω\\]+(?:\([^)]*\))?)(?!\s*d\s+[a-zA-Z])'
-
-        def add_diff2(match):
-            inner = match.group(1)
-            vars_in_inner = re.findall(r'[a-zA-Zα-ω]+', inner)
-            if vars_in_inner:
-                diff_var = vars_in_inner[-1]
-            else:
-                diff_var = 'x'
-            return f'\\int {inner} d {diff_var}'
-
-        script = re.sub(pattern2, add_diff2, script)
-
-        # Паттерн: \int_{нижний}^{верхний} что-то без d...
-        pattern3 = r'\\int\{([^}]+)\}\{([^}]+)\}\s*([a-zA-Zα-ω\\]+(?:\([^)]*\))?)(?!\s*d\s+[a-zA-Z])'
-
-        def add_diff3(match):
-            lower = match.group(1)
-            upper = match.group(2)
-            inner = match.group(3)
-            vars_in_inner = re.findall(r'[a-zA-Zα-ω]+', inner)
-            if vars_in_inner:
-                diff_var = vars_in_inner[-1]
-            else:
-                diff_var = 'x'
-            return f'\\int_{{{lower}}}^{{{upper}}} {inner} d {diff_var}'
-
-        script = re.sub(pattern3, add_diff3, script)
-
-        return script
-
-    def _handle_integral(self, symbol, special_config):
-        """Генерация для интегралов"""
-        scripts = []
-        forms = special_config.get('forms', [])
-
-        for form in forms:
-            for _ in range(self.samples_per_type):
-                at_count = form.count('@')
-                vars_list = self._get_random_vars(at_count)
-
-                script = form
-                for var in vars_list:
-                    script = script.replace('@', var, 1)
-
-                # Убеждаемся, что есть дифференциал с пробелом
-                if 'd@' in script:
-                    script = script.replace('d@', f'd {vars_list[-1] if vars_list else "x"}')
-                elif 'd' not in script[-2:]:
-                    diff_var = vars_list[-1] if vars_list else 'x'
-                    script = f"{script} d {diff_var}"
-
-                scripts.append({
-                    'sec': symbol['sec'],
-                    'sym': symbol['sym'],
-                    'rus': symbol.get('rus', ''),
-                    'eng': symbol.get('eng', ''),
-                    'script': script,
-                    'scheme': form
-                })
-
-                # Добавляем вариант с линейной функцией
-                linear_script, linear_scheme = self._add_linear_variant(script, form)
-                scripts.append({
-                    'sec': symbol['sec'],
-                    'sym': symbol['sym'],
-                    'rus': symbol.get('rus', ''),
-                    'eng': symbol.get('eng', ''),
-                    'script': linear_script,
-                    'scheme': linear_scheme
-                })
-
-        return scripts
-
-    def _handle_binary_args(self, symbol, special_config):
-        scripts = []
-        forms = special_config.get('forms', [])
-
-        for form in forms:
-            for _ in range(self.samples_per_type):
-                at_count = form.count('@')
-                vars_list = self._get_random_vars(at_count)
-
-                script = form
-                for var in vars_list:
-                    script = script.replace('@', var, 1)
-
-                scripts.append({
-                    'sec': symbol['sec'],
-                    'sym': symbol['sym'],
-                    'rus': symbol.get('rus', ''),
-                    'eng': symbol.get('eng', ''),
-                    'script': script,
-                    'scheme': form
-                })
-
-                linear_script, linear_scheme = self._add_linear_variant(script, form)
-                scripts.append({
-                    'sec': symbol['sec'],
-                    'sym': symbol['sym'],
-                    'rus': symbol.get('rus', ''),
-                    'eng': symbol.get('eng', ''),
-                    'script': linear_script,
-                    'scheme': linear_scheme
-                })
-
-        return scripts
-
-    def _handle_unary_arg(self, symbol, special_config):
-        scripts = []
-        forms = special_config.get('forms', [])
-
-        for form in forms:
-            for _ in range(self.samples_per_type):
-                at_count = form.count('@')
-                vars_list = self._get_random_vars(at_count)
-
-                script = form
-                for var in vars_list:
-                    script = script.replace('@', var, 1)
-
-                scripts.append({
-                    'sec': symbol['sec'],
-                    'sym': symbol['sym'],
-                    'rus': symbol.get('rus', ''),
-                    'eng': symbol.get('eng', ''),
-                    'script': script,
-                    'scheme': form
-                })
-
-                linear_script, linear_scheme = self._add_linear_variant(script, form)
-                scripts.append({
-                    'sec': symbol['sec'],
-                    'sym': symbol['sym'],
-                    'rus': symbol.get('rus', ''),
-                    'eng': symbol.get('eng', ''),
-                    'script': linear_script,
-                    'scheme': linear_scheme
-                })
-
-        return scripts
-
-    def _handle_binary_op(self, symbol, special_config):
-        scripts = []
-        forms = special_config.get('forms', [])
-
-        for form in forms:
-            for _ in range(self.samples_per_type):
-                at_count = form.count('@')
-                vars_list = self._get_random_vars(at_count)
-
-                script = form
-                for var in vars_list:
-                    script = script.replace('@', var, 1)
-
-                scripts.append({
-                    'sec': symbol['sec'],
-                    'sym': symbol['sym'],
-                    'rus': symbol.get('rus', ''),
-                    'eng': symbol.get('eng', ''),
-                    'script': script,
-                    'scheme': form
-                })
-
-                linear_script, linear_scheme = self._add_linear_variant(script, form)
-                scripts.append({
-                    'sec': symbol['sec'],
-                    'sym': symbol['sym'],
-                    'rus': symbol.get('rus', ''),
-                    'eng': symbol.get('eng', ''),
-                    'script': linear_script,
-                    'scheme': linear_scheme
-                })
-
-        return scripts
-
-    def _handle_sum_prod(self, symbol, special_config):
-        scripts = []
-        forms = special_config.get('forms', [])
-
-        for form in forms:
-            for _ in range(self.samples_per_type):
-                at_count = form.count('@')
-                vars_list = self._get_random_vars(at_count)
-
-                script = form
-                for var in vars_list:
-                    script = script.replace('@', var, 1)
-
-                scripts.append({
-                    'sec': symbol['sec'],
-                    'sym': symbol['sym'],
-                    'rus': symbol.get('rus', ''),
-                    'eng': symbol.get('eng', ''),
-                    'script': script,
-                    'scheme': form
-                })
-
-                linear_script, linear_scheme = self._add_linear_variant(script, form)
-                scripts.append({
-                    'sec': symbol['sec'],
-                    'sym': symbol['sym'],
-                    'rus': symbol.get('rus', ''),
-                    'eng': symbol.get('eng', ''),
-                    'script': linear_script,
-                    'scheme': linear_scheme
-                })
-
-        return scripts
-
-    def _handle_limit(self, symbol, special_config):
-        scripts = []
-        forms = special_config.get('forms', [])
-
-        for form in forms:
-            for _ in range(self.samples_per_type):
-                at_count = form.count('@')
-                vars_list = self._get_random_vars(at_count)
-
-                script = form
-                for var in vars_list:
-                    script = script.replace('@', var, 1)
-
-                scripts.append({
-                    'sec': symbol['sec'],
-                    'sym': symbol['sym'],
-                    'rus': symbol.get('rus', ''),
-                    'eng': symbol.get('eng', ''),
-                    'script': script,
-                    'scheme': form
-                })
-
-                linear_script, linear_scheme = self._add_linear_variant(script, form)
-                scripts.append({
-                    'sec': symbol['sec'],
-                    'sym': symbol['sym'],
-                    'rus': symbol.get('rus', ''),
-                    'eng': symbol.get('eng', ''),
-                    'script': linear_script,
-                    'scheme': linear_scheme
-                })
-
-        return scripts
-
-    def generate_normal_scripts(self, symbol):
-        scripts = []
-
-        # 1. Simple: sym(@)
-        var = self._get_random_vars(1)[0]
-        transformed_var = self._transform_variable(var)
-        script = f"{symbol['sym']}({transformed_var})"
-        scripts.append({
-            'sec': symbol['sec'],
-            'sym': symbol['sym'],
-            'rus': symbol.get('rus', ''),
-            'eng': symbol.get('eng', ''),
+        return {
             'script': script,
-            'scheme': "sym(@)"
-        })
+            'type': 'simple',
+            'sense_scheme': sense_scheme
+        }
 
-        # Линейный вариант для simple
-        linear_script, linear_scheme = self._add_linear_variant(script, "sym(@)")
-        scripts.append({
-            'sec': symbol['sec'],
-            'sym': symbol['sym'],
-            'rus': symbol.get('rus', ''),
-            'eng': symbol.get('eng', ''),
-            'script': linear_script,
-            'scheme': linear_scheme
-        })
+    # ========== Бинарные операции ==========
+    def _gen_binary_forward(self, symbol, other, op_sym):
+        left_scheme = self._get_scheme_for_symbol(symbol['sym'])
+        right_scheme = self._get_scheme_for_symbol(other['sym'])
+        left_sense = self._get_sense_for_symbol(symbol['sym'])
+        right_sense = self._get_sense_for_symbol(other['sym'])
+        op_scheme = self._get_scheme_for_operator(op_sym)
+        op_sense = self._get_sense_for_operator(op_sym)
 
-        for _ in range(self.samples_per_type):
-            # 2. Comb вариант 1: sym(@) ? next(@)
-            other1 = self._get_random_other_symbol(symbol['sym'])
-            vars_list = self._get_random_vars(2)
-            transformed_vars = [self._transform_variable(v) for v in vars_list]
-            op = self._get_random_op()
-            script = f"{symbol['sym']}({transformed_vars[0]}) {op} {other1['sym']}({transformed_vars[1]})"
-            scheme = f"sym(@) {op} next(@)"
-            scripts.append({
-                'sec': symbol['sec'],
-                'sym': symbol['sym'],
-                'rus': symbol.get('rus', ''),
-                'eng': symbol.get('eng', ''),
-                'script': script,
-                'scheme': scheme
-            })
+        if not left_scheme or not right_scheme or not left_sense or not right_sense:
+            return None
 
-            linear_script, linear_scheme = self._add_linear_variant(script, scheme)
-            scripts.append({
-                'sec': symbol['sec'],
-                'sym': symbol['sym'],
-                'rus': symbol.get('rus', ''),
-                'eng': symbol.get('eng', ''),
-                'script': linear_script,
-                'scheme': linear_scheme
-            })
+        at_left = left_scheme.count('@')
+        at_right = right_scheme.count('@')
+        vars_list = self._get_random_vars(at_left + at_right)
 
-            # 3. Comb вариант 2: next(@) ? sym(@)
-            other2 = self._get_random_other_symbol(symbol['sym'])
-            vars_list = self._get_random_vars(2)
-            transformed_vars = [self._transform_variable(v) for v in vars_list]
-            op = self._get_random_op()
-            script = f"{other2['sym']}({transformed_vars[0]}) {op} {symbol['sym']}({transformed_vars[1]})"
-            scheme = f"next(@) {op} sym(@)"
-            scripts.append({
-                'sec': symbol['sec'],
-                'sym': symbol['sym'],
-                'rus': symbol.get('rus', ''),
-                'eng': symbol.get('eng', ''),
-                'script': script,
-                'scheme': scheme
-            })
+        left_script = self._apply_scheme(left_scheme, vars_list[:at_left])
+        right_script = self._apply_scheme(right_scheme, vars_list[at_left:])
 
-            linear_script, linear_scheme = self._add_linear_variant(script, scheme)
-            scripts.append({
-                'sec': symbol['sec'],
-                'sym': symbol['sym'],
-                'rus': symbol.get('rus', ''),
-                'eng': symbol.get('eng', ''),
-                'script': linear_script,
-                'scheme': linear_scheme
-            })
+        left_sense_scheme = self._build_sense_scheme(left_sense, ['var'] * at_left)
+        right_sense_scheme = self._build_sense_scheme(right_sense, ['var'] * at_right)
 
-            # 4. Nest вариант 1: sym(next(@))
-            other3 = self._get_random_other_symbol(symbol['sym'])
-            var = self._get_random_vars(1)[0]
-            transformed_var = self._transform_variable(var)
-            script = f"{symbol['sym']}({other3['sym']}({transformed_var}))"
-            scheme = "sym(next(@))"
-            scripts.append({
-                'sec': symbol['sec'],
-                'sym': symbol['sym'],
-                'rus': symbol.get('rus', ''),
-                'eng': symbol.get('eng', ''),
-                'script': script,
-                'scheme': scheme
-            })
+        script = self._apply_scheme(op_scheme, [left_script, right_script])
+        sense_scheme = f"{left_sense_scheme} {op_sense} {right_sense_scheme}"
 
-            linear_script, linear_scheme = self._add_linear_variant(script, scheme)
-            scripts.append({
-                'sec': symbol['sec'],
-                'sym': symbol['sym'],
-                'rus': symbol.get('rus', ''),
-                'eng': symbol.get('eng', ''),
-                'script': linear_script,
-                'scheme': linear_scheme
-            })
+        return {
+            'script': script,
+            'type': f'binary_forward_{op_sym}',
+            'sense_scheme': sense_scheme
+        }
 
-            # 5. Nest вариант 2: next(sym(@))
-            other4 = self._get_random_other_symbol(symbol['sym'])
-            var = self._get_random_vars(1)[0]
-            transformed_var = self._transform_variable(var)
-            script = f"{other4['sym']}({symbol['sym']}({transformed_var}))"
-            scheme = "next(sym(@))"
-            scripts.append({
-                'sec': symbol['sec'],
-                'sym': symbol['sym'],
-                'rus': symbol.get('rus', ''),
-                'eng': symbol.get('eng', ''),
-                'script': script,
-                'scheme': scheme
-            })
+    def _gen_binary_backward(self, symbol, other, op_sym):
+        left_scheme = self._get_scheme_for_symbol(other['sym'])
+        right_scheme = self._get_scheme_for_symbol(symbol['sym'])
+        left_sense = self._get_sense_for_symbol(other['sym'])
+        right_sense = self._get_sense_for_symbol(symbol['sym'])
+        op_scheme = self._get_scheme_for_operator(op_sym)
+        op_sense = self._get_sense_for_operator(op_sym)
 
-            linear_script, linear_scheme = self._add_linear_variant(script, scheme)
-            scripts.append({
-                'sec': symbol['sec'],
-                'sym': symbol['sym'],
-                'rus': symbol.get('rus', ''),
-                'eng': symbol.get('eng', ''),
-                'script': linear_script,
-                'scheme': linear_scheme
-            })
+        if not left_scheme or not right_scheme or not left_sense or not right_sense:
+            return None
 
-            # 6. Cnest вариант 1: sym(next1(@)) ? next2(sym(@))
-            other5 = self._get_random_other_symbol(symbol['sym'])
-            other6 = self._get_random_other_symbol(symbol['sym'])
-            if other5['sym'] == other6['sym'] and len([s for s in self.symbols if s['sym'] != symbol['sym'] and self._is_valid_function_symbol(s['sym'])]) > 1:
-                other6 = self._get_random_other_symbol(symbol['sym'])
+        at_left = left_scheme.count('@')
+        at_right = right_scheme.count('@')
+        vars_list = self._get_random_vars(at_left + at_right)
 
-            vars_list = self._get_random_vars(2)
-            transformed_vars = [self._transform_variable(v) for v in vars_list]
-            op = self._get_random_op()
-            script = f"{symbol['sym']}({other5['sym']}({transformed_vars[0]})) {op} {other6['sym']}({symbol['sym']}({transformed_vars[1]}))"
-            scheme = f"sym(next(@)) {op} next(sym(@))"
-            scripts.append({
-                'sec': symbol['sec'],
-                'sym': symbol['sym'],
-                'rus': symbol.get('rus', ''),
-                'eng': symbol.get('eng', ''),
-                'script': script,
-                'scheme': scheme
-            })
+        left_script = self._apply_scheme(left_scheme, vars_list[:at_left])
+        right_script = self._apply_scheme(right_scheme, vars_list[at_left:])
 
-            linear_script, linear_scheme = self._add_linear_variant(script, scheme)
-            scripts.append({
-                'sec': symbol['sec'],
-                'sym': symbol['sym'],
-                'rus': symbol.get('rus', ''),
-                'eng': symbol.get('eng', ''),
-                'script': linear_script,
-                'scheme': linear_scheme
-            })
+        left_sense_scheme = self._build_sense_scheme(left_sense, ['var'] * at_left)
+        right_sense_scheme = self._build_sense_scheme(right_sense, ['var'] * at_right)
 
-            # 7. Cnest вариант 2: next1(sym(@)) ? sym(next2(@))
-            other7 = self._get_random_other_symbol(symbol['sym'])
-            other8 = self._get_random_other_symbol(symbol['sym'])
-            if other7['sym'] == other8['sym'] and len([s for s in self.symbols if s['sym'] != symbol['sym'] and self._is_valid_function_symbol(s['sym'])]) > 1:
-                other8 = self._get_random_other_symbol(symbol['sym'])
+        script = self._apply_scheme(op_scheme, [left_script, right_script])
+        sense_scheme = f"{left_sense_scheme} {op_sense} {right_sense_scheme}"
 
-            vars_list = self._get_random_vars(2)
-            transformed_vars = [self._transform_variable(v) for v in vars_list]
-            op = self._get_random_op()
-            script = f"{other7['sym']}({symbol['sym']}({transformed_vars[0]})) {op} {symbol['sym']}({other8['sym']}({transformed_vars[1]}))"
-            scheme = f"next(sym(@)) {op} sym(next(@))"
-            scripts.append({
-                'sec': symbol['sec'],
-                'sym': symbol['sym'],
-                'rus': symbol.get('rus', ''),
-                'eng': symbol.get('eng', ''),
-                'script': script,
-                'scheme': scheme
-            })
+        return {
+            'script': script,
+            'type': f'binary_backward_{op_sym}',
+            'sense_scheme': sense_scheme
+        }
 
-            linear_script, linear_scheme = self._add_linear_variant(script, scheme)
-            scripts.append({
-                'sec': symbol['sec'],
-                'sym': symbol['sym'],
-                'rus': symbol.get('rus', ''),
-                'eng': symbol.get('eng', ''),
-                'script': linear_script,
-                'scheme': linear_scheme
-            })
+    # ========== Вложенность ==========
+    def _gen_nest_forward(self, symbol, other):
+        outer_scheme = self._get_scheme_for_symbol(symbol['sym'])
+        inner_scheme = self._get_scheme_for_symbol(other['sym'])
+        outer_sense = self._get_sense_for_symbol(symbol['sym'])
+        inner_sense = self._get_sense_for_symbol(other['sym'])
 
-        return scripts
+        if not outer_scheme or not inner_scheme or not outer_sense or not inner_sense:
+            return None
 
-    def generate_scripts_for_symbol(self, symbol):
-        if symbol['sym'] in self.special_handlers:
-            special_config = self.special_handlers[symbol['sym']]
-            handler_type = special_config.get('handler')
+        inner_at = inner_scheme.count('@')
+        inner_vars = self._get_random_vars(inner_at)
+        inner_script = self._apply_scheme(inner_scheme, inner_vars)
+        inner_sense_scheme = self._build_sense_scheme(inner_sense, ['var'] * inner_at)
 
-            handlers_map = {
-                'integral': self._handle_integral,
-                'binary_args': self._handle_binary_args,
-                'unary_arg': self._handle_unary_arg,
-                'binary_op': self._handle_binary_op,
-                'sum_prod': self._handle_sum_prod,
-                'limit': self._handle_limit,
-            }
+        outer_script = outer_scheme.replace('@', inner_script, 1)
+        remaining = outer_script.count('@')
+        if remaining > 0:
+            outer_vars = self._get_random_vars(remaining)
+            outer_script = self._apply_scheme(outer_script, outer_vars)
 
-            if handler_type in handlers_map:
-                scripts = handlers_map[handler_type](symbol, special_config)
-            else:
-                scripts = self.generate_normal_scripts(symbol)
-        else:
-            scripts = self.generate_normal_scripts(symbol)
+        outer_sense_scheme = self._build_sense_scheme(outer_sense, [inner_sense_scheme] + ['var'] * remaining)
 
-        # Пост-обработка: добавляем дифференциалы ко всем интегралам
-        for script_obj in scripts:
-            script_obj['script'] = self._ensure_integral_differential(script_obj['script'])
+        return {
+            'script': outer_script,
+            'type': 'nest_forward',
+            'sense_scheme': outer_sense_scheme
+        }
 
-        return scripts
+    def _gen_nest_backward(self, symbol, other):
+        outer_scheme = self._get_scheme_for_symbol(other['sym'])
+        inner_scheme = self._get_scheme_for_symbol(symbol['sym'])
+        outer_sense = self._get_sense_for_symbol(other['sym'])
+        inner_sense = self._get_sense_for_symbol(symbol['sym'])
 
-    def save_scripts(self, output_dir):
+        if not outer_scheme or not inner_scheme or not outer_sense or not inner_sense:
+            return None
+
+        inner_at = inner_scheme.count('@')
+        inner_vars = self._get_random_vars(inner_at)
+        inner_script = self._apply_scheme(inner_scheme, inner_vars)
+        inner_sense_scheme = self._build_sense_scheme(inner_sense, ['var'] * inner_at)
+
+        outer_script = outer_scheme.replace('@', inner_script, 1)
+        remaining = outer_script.count('@')
+        if remaining > 0:
+            outer_vars = self._get_random_vars(remaining)
+            outer_script = self._apply_scheme(outer_script, outer_vars)
+
+        outer_sense_scheme = self._build_sense_scheme(outer_sense, [inner_sense_scheme] + ['var'] * remaining)
+
+        return {
+            'script': outer_script,
+            'type': 'nest_backward',
+            'sense_scheme': outer_sense_scheme
+        }
+
+    # ========== Сложная вложенность ==========
+    def _gen_cnest_forward(self, symbol, other_left, other_right, op_sym):
+        sym_scheme = self._get_scheme_for_symbol(symbol['sym'])
+        left_scheme = self._get_scheme_for_symbol(other_left['sym'])
+        right_scheme = self._get_scheme_for_symbol(other_right['sym'])
+        sym_sense = self._get_sense_for_symbol(symbol['sym'])
+        left_sense = self._get_sense_for_symbol(other_left['sym'])
+        right_sense = self._get_sense_for_symbol(other_right['sym'])
+        op_scheme = self._get_scheme_for_operator(op_sym)
+        op_sense = self._get_sense_for_operator(op_sym)
+
+        if not all([sym_scheme, left_scheme, right_scheme, sym_sense, left_sense, right_sense]):
+            return None
+
+        left_inner_vars = self._get_random_vars(left_scheme.count('@'))
+        left_inner = self._apply_scheme(left_scheme, left_inner_vars)
+        left_inner_sense = self._build_sense_scheme(left_sense, ['var'] * left_scheme.count('@'))
+
+        left_part = sym_scheme.replace('@', left_inner, 1)
+        left_remaining = left_part.count('@')
+        if left_remaining > 0:
+            left_vars = self._get_random_vars(left_remaining)
+            left_part = self._apply_scheme(left_part, left_vars)
+        left_sense_part = self._build_sense_scheme(sym_sense, [left_inner_sense] + ['var'] * left_remaining)
+
+        right_inner_scheme = self._get_scheme_for_symbol(symbol['sym'])
+        right_inner_vars = self._get_random_vars(right_inner_scheme.count('@'))
+        right_inner = self._apply_scheme(right_inner_scheme, right_inner_vars)
+        right_inner_sense = self._build_sense_scheme(sym_sense, ['var'] * right_inner_scheme.count('@'))
+
+        right_part = right_scheme.replace('@', right_inner, 1)
+        right_remaining = right_part.count('@')
+        if right_remaining > 0:
+            right_vars = self._get_random_vars(right_remaining)
+            right_part = self._apply_scheme(right_part, right_vars)
+        right_sense_part = self._build_sense_scheme(right_sense, [right_inner_sense] + ['var'] * right_remaining)
+
+        script = self._apply_scheme(op_scheme, [left_part, right_part])
+        sense_scheme = f"{left_sense_part} {op_sense} {right_sense_part}"
+
+        return {
+            'script': script,
+            'type': f'cnest_forward_{op_sym}',
+            'sense_scheme': sense_scheme
+        }
+
+    def _gen_cnest_backward(self, symbol, other_left, other_right, op_sym):
+        left_scheme = self._get_scheme_for_symbol(other_left['sym'])
+        right_scheme = self._get_scheme_for_symbol(other_right['sym'])
+        sym_scheme = self._get_scheme_for_symbol(symbol['sym'])
+        left_sense = self._get_sense_for_symbol(other_left['sym'])
+        right_sense = self._get_sense_for_symbol(other_right['sym'])
+        sym_sense = self._get_sense_for_symbol(symbol['sym'])
+        op_scheme = self._get_scheme_for_operator(op_sym)
+        op_sense = self._get_sense_for_operator(op_sym)
+
+        if not all([left_scheme, right_scheme, sym_scheme, left_sense, right_sense, sym_sense]):
+            return None
+
+        left_inner_scheme = self._get_scheme_for_symbol(symbol['sym'])
+        left_inner_vars = self._get_random_vars(left_inner_scheme.count('@'))
+        left_inner = self._apply_scheme(left_inner_scheme, left_inner_vars)
+        left_inner_sense = self._build_sense_scheme(sym_sense, ['var'] * left_inner_scheme.count('@'))
+
+        left_part = left_scheme.replace('@', left_inner, 1)
+        left_remaining = left_part.count('@')
+        if left_remaining > 0:
+            left_vars = self._get_random_vars(left_remaining)
+            left_part = self._apply_scheme(left_part, left_vars)
+        left_sense_part = self._build_sense_scheme(left_sense, [left_inner_sense] + ['var'] * left_remaining)
+
+        right_inner_vars = self._get_random_vars(right_scheme.count('@'))
+        right_inner = self._apply_scheme(right_scheme, right_inner_vars)
+        right_inner_sense = self._build_sense_scheme(right_sense, ['var'] * right_scheme.count('@'))
+
+        right_part = sym_scheme.replace('@', right_inner, 1)
+        right_remaining = right_part.count('@')
+        if right_remaining > 0:
+            right_vars = self._get_random_vars(right_remaining)
+            right_part = self._apply_scheme(right_part, right_vars)
+        right_sense_part = self._build_sense_scheme(sym_sense, [right_inner_sense] + ['var'] * right_remaining)
+
+        script = self._apply_scheme(op_scheme, [left_part, right_part])
+        sense_scheme = f"{left_sense_part} {op_sense} {right_sense_part}"
+
+        return {
+            'script': script,
+            'type': f'cnest_backward_{op_sym}',
+            'sense_scheme': sense_scheme
+        }
+
+    # ========== Генерация датасета ==========
+    def generate_dataset(self):
+        all_examples = []
+
+        # Атомарные типы
+        print("Генерация атомарных типов...")
+        for ex_type in ['atomic_var', 'atomic_num', 'atomic_diff']:
+            config = self.example_types[ex_type]
+            weight = config['weight']
+            if weight == 0:
+                print(f"  {ex_type}: SKIPPED")
+                continue
+            examples = config['generator']()
+            count = weight * self.global_multiplier
+            for _ in range(count):
+                for ex in examples:
+                    all_examples.append({
+                        'sec': 'atomic',
+                        'sym': ex['script'],
+                        'script': ex['script'],
+                        'type': ex['type'],
+                        'sense_scheme': ex['sense_scheme']
+                    })
+            print(f"  {ex_type}: {len(examples)} × {count} = {len(examples) * count}")
+
+        # Simple тип
+        print("\nГенерация simple типов...")
+        simple_config = self.example_types['simple']
+        simple_weight = simple_config['weight']
+        if simple_weight > 0:
+            simple_count = simple_weight * self.global_multiplier
+            generated = 0
+            for symbol in self.symbols:
+                if self._is_variable(symbol['sym']):
+                    continue
+                for _ in range(simple_count):
+                    ex = self._gen_simple(symbol)
+                    if ex:
+                        all_examples.append({
+                            'sec': symbol['sec'],
+                            'sym': symbol['sym'],
+                            'script': ex['script'],
+                            'type': ex['type'],
+                            'sense_scheme': ex['sense_scheme']
+                        })
+                        generated += 1
+            print(f"  simple: {generated} примеров")
+
+        # Составные типы
+        print("\nГенерация составных типов...")
+        complex_types = ['binary_forward', 'binary_backward', 'nest_forward',
+                         'nest_backward', 'cnest_forward', 'cnest_backward']
+
+        for ex_type in complex_types:
+            config = self.example_types[ex_type]
+            weight = config['weight']
+            if weight == 0:
+                print(f"  {ex_type}: SKIPPED")
+                continue
+
+            target_count = weight * self.global_multiplier
+            generated = 0
+
+            for symbol in self.symbols:
+                if self._is_variable(symbol['sym']):
+                    continue
+                for _ in range(target_count):
+                    if 'cnest' in ex_type:
+                        other_left = self._get_random_other_symbol(symbol['sym'])
+                        if not other_left:
+                            continue
+                        other_right = self._get_random_other_symbol(symbol['sym'], exclude_sym=other_left['sym'])
+                        if not other_right:
+                            other_right = other_left
+                        op = self._get_random_operator()
+                        if not op:
+                            continue
+                        op_sym = op['sym']
+                        ex = config['generator'](symbol, other_left, other_right, op_sym)
+                    else:
+                        other = self._get_random_other_symbol(symbol['sym'])
+                        if not other:
+                            continue
+                        if 'binary' in ex_type:
+                            op = self._get_random_operator()
+                            if not op:
+                                continue
+                            ex = config['generator'](symbol, other, op['sym'])
+                        else:
+                            ex = config['generator'](symbol, other)
+
+                    if ex:
+                        all_examples.append({
+                            'sec': symbol['sec'],
+                            'sym': symbol['sym'],
+                            'script': ex['script'],
+                            'type': ex['type'],
+                            'sense_scheme': ex['sense_scheme']
+                        })
+                        generated += 1
+            print(f"  {ex_type}: {generated} примеров")
+
+        print("\nПеремешивание...")
+        random.shuffle(all_examples)
+        return all_examples
+
+    def save_dataset(self, output_dir, filename='dataset.jsonl'):
         output_path = Path(output_dir)
         output_path.mkdir(parents=True, exist_ok=True)
+        output_file = output_path / filename
 
-        output_file = output_path / 'dataset.jsonl'
+        print(f"\n{'='*60}")
+        print(f"Генерация датасета с multiplier={self.global_multiplier}")
+        print(f"{'='*60}\n")
 
-        all_scripts = []
-        total_symbols = len(self.symbols)
+        dataset = self.generate_dataset()
 
-        for idx, symbol in enumerate(self.symbols):
-            print(f"Обработка символа [{idx+1}/{total_symbols}]: {symbol['sym']}")
-            scripts = self.generate_scripts_for_symbol(symbol)
-            all_scripts.extend(scripts)
-
-        # Сохраняем финальный файл
         with open(output_file, 'w', encoding='utf-8') as f:
-            for script in all_scripts:
-                f.write(json.dumps(script, ensure_ascii=False) + '\n')
+            for example in dataset:
+                f.write(json.dumps(example, ensure_ascii=False) + '\n')
 
-        print(f"\n✅ Скрипты сохранены в: {output_file}")
-        print(f"📊 Всего сгенерировано записей: {len(all_scripts)}")
-        return output_file
+        print(f"\n{'='*60}")
+        print(f"✅ Датасет сохранён: {output_file}")
+        print(f"📊 Всего примеров: {len(dataset)}")
+        print(f"{'='*60}")
 
 
 def main():
-    config_path = Path("/home/michael/LLM/datasets_bhl/generate_latex/config")
-    output_path = Path("/home/michael/LLM/datasets_bhl/generate_latex/scripts")
+    config_path = "/home/michael/LLM/datasets_bhl/generate_latex/config"
+    output_path = "/home/michael/LLM/datasets_bhl/generate_latex/scripts"
 
-    # Только нужные символы для теста
-    only_symbols = [
-        '\\sin',
-        '\\int',
-        '\\cos',
-        '\\frac{}{}',
-    ]
-
-    generator = LatexFormulaGenerator(config_path, samples_per_type=2, only_symbols=only_symbols)
-    generator.save_scripts(output_path)
+    generator = LatexFormulaGenerator(config_path, global_multiplier=1)
+    generator.save_dataset(output_path)
 
 
 if __name__ == "__main__":

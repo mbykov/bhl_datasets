@@ -21,11 +21,11 @@ def tune_latex():
     print("=" * 60)
 
     # Проверяем, что командная модель существует
-    command_adapter_path = "./saves/qwen_command_lora"
-    if not os.path.exists(command_adapter_path):
-        print(f"❌ Ошибка: Командная модель (LoRA) не найдена по пути {command_adapter_path}")
-        print("Сначала запустите tune_command.py для обучения команд")
-        return False
+    # command_adapter_path = "./saves/qwen_command_lora"
+    # if not os.path.exists(command_adapter_path):
+    #     print(f"❌ Ошибка: Командная модель (LoRA) не найдена по пути {command_adapter_path}")
+    #     print("Сначала запустите tune_command.py для обучения команд")
+    #     return False
 
     # Загружаем базовый конфиг
     config = load_config()
@@ -34,7 +34,7 @@ def tune_latex():
     # model_name_or_path должен указывать на базовую модель Qwen
     # adapter_name_or_path указывает на LoRA веса
     config["model_name_or_path"] = config["model_name_or_path"]  # Базовая модель
-    config["adapter_name_or_path"] = command_adapter_path        # LoRA после команд
+    # config["adapter_name_or_path"] = command_adapter_path        # LoRA после команд
     config["finetuning_type"] = "lora"                           # Продолжаем LoRA
     config["dataset"] = "latex_ds"                               # LaTeX датасет
     config["output_dir"] = "./saves/qwen_latex_lora"             # Новый адаптер
@@ -48,13 +48,13 @@ def tune_latex():
     config["per_device_eval_batch_size"] = 2
 
     # Сохраняем временный конфиг
-    temp_config = "config_latex_temp.yaml"
+    temp_config = "config_latex.yaml"
     with open(temp_config, "w", encoding="utf-8") as f:
         yaml.dump(config, f, default_flow_style=False, allow_unicode=True)
 
     print(f"\n📊 Параметры обучения:")
     print(f"   Базовая модель: {config['model_name_or_path']}")
-    print(f"   Стартовый адаптер: {command_adapter_path}")
+    # print(f"   Стартовый адаптер: {command_adapter_path}")
     print(f"   Датасет: {config['dataset']}")
     print(f"   Эпох: {config['num_train_epochs']}")
     print(f"   Batch size: {config['per_device_train_batch_size']}")
@@ -79,9 +79,9 @@ def tune_latex():
 if __name__ == "__main__":
     os.makedirs("./saves", exist_ok=True)
 
-    if not os.path.exists("./result/latex/dataset.jsonl"):
-        print("⚠️  Внимание: файл result/latex/dataset.jsonl не найден")
-        print("   Сначала запустите generate_latex.py")
+    if not os.path.exists("./generate_latex/scripts/train.json"):
+        print("⚠️  Внимание: файл generate_latex/scripts/train.json не найден")
+        print("   Сначала запустите aloud.py")
         response = input("   Продолжить? (y/n): ")
         if response.lower() != 'y':
             exit(1)
