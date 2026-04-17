@@ -1,53 +1,70 @@
 #!/usr/bin/env python3
 """
 Генератор командного датасета с аугментацией и train/test разделением
+
+Структура команд:
+- Ядро: глагол + объект (2 слова) — "останови запись", "создай абзац"
+- Варианты без глагола: только объект с подразумеваемым действием — "новый параграф"
+- Шум: 1 слово префикс ИЛИ 1 слово суффикс — "пожалуйста", "немедленно"
+
+Garbage:
+- Сбалансировано 1:1 с командами
+- Исключены фразы с ключевыми словами команд
 """
 
 import json
 import os
 import random
-import re
 import sys
 
 # Синонимы для генерации команд
 SYNONYMS = {
     "rus": {
         "actions": {
-            "remove": ["удали", "очисти", "сотри", "убери", "уничтожь", "вырежи", "убей", "избавься", "ликвидируй", "дропни", "снеси"],
-            "create": ["создай", "начни", "сделай", "добавь", "новый", "сгенерируй", "запили", "организуй", "вставь"],
-            "highlight": ["выдели", "подсвети", "отметь", "замаркируй", "акцентируй", "маркируй", "подчеркни"],
-            "start": ["начни", "запусти", "старт", "включи", "активируй", "вруби"],
-            "stop": ["останови", "прекрати", "стоп", "выключи", "заверши", "выруби", "кончай"],
-            "undo": ["отмени", "откати", "верни", "аннулируй", "забудь", "назад"],
-            "edit": ["исправь", "отредактируй", "модифицируй", "измени", "поправь"]
+            "remove": ["удали", "очисти", "сотри", "убери", "уничтожь", "вырежи", "убери", "избавься", "выкинь", "снеси", "ликвидируй", "дропни", "делитни", "скипни", "выпили", "грохни"],
+            "create": ["создай", "начни", "сделай", "добавь", "сгенерируй", "вставь", "запили", "сформулируй", "организуй", "пропиши", "замути", "запиши", "накидай", "сваргань", "новый"],
+            "highlight": ["выдели", "подсвети", "отметь", "маркируй", "подчеркни", "обозначь", "акцентируй", "чекай", "выцепи", "замаркай"],
+            "start": ["начни", "запусти", "включи", "активируй", "погнали", "давай", "открой", "стартуй", "юзай", "раскручивай"],
+            "stop": ["останови", "прекрати", "стоп", "выключи", "заверши", "хватит", "хорош", "пауза", "прерви", "офни", "завязывай", "застопори", "выруби"],
+            "undo": ["отмени", "откати", "верни", "назад", "верни как было", "анду", "отмена", "откат"],
+            "edit": ["исправь", "отредактируй", "измени", "поправь", "обнови", "переделай", "корректируй", "преобразуй", "редачь", "зачекай", "твикни", "зафикси", "перепиши"]
         },
         "objects": {
-            "text": ["текст", "заметку", "запись", "содержимое", "написанное", "инфу", "контент"],
-            "paragraph": ["абзац", "параграф", "блок", "отступ", "кусок"],
-            "phrase": ["фразу", "предложение", "высказывание", "строчку", "цитату"],
-            "record": ["запись", "протокол", "диктофон", "аудио", "стрим", "эфир"],
-            "command": ["команду", "действие", "инструкцию", "запрос"],
-            "latex": ["формулу", "латех", "скрипт"]
-        }
+            "text": ["текст", "заметка", "запись", "содержимое", "инфа", "контент", "материал", "документ", "статья", "буквы", "текстура", "тело", "инпут"],
+            "paragraph": ["абзац", "параграф", "блок", "кусок", "фрагмент", "часть", "абзацик", "раздел"],
+            "phrase": ["фраза", "предложение", "строчка", "слово", "выражение"],
+            "word": ["слово", "словечко", "лексема"],
+            "record": ["запись", "аудио", "стрим", "голос", "голосовуха", "звук", "трек", "войс", "аудиодорожка"],
+            "command": ["команда", "действие", "инструкция", "запрос", "задача", "промпт", "директива"],
+            "latex": ["формула", "латех", "скрипт", "математика", "выражение", "уравнение"]
+        },
+        # Короткие слова шума (префиксы)
+        "prefixes": ["пожалуйста", "немедленно", "срочно", "быстро", "живо", "ну", "давай", "эх"],
+        # "prefixes": ["пожалуйста", "немедленно", "срочно", "быстро", "живо", "ну", "давай", "эх", "слушай", "слышь", "алло", "короче", "плиз", "просто", "в общем", "тут"],
+        # Короткие слова шума (суффиксы)
+        "suffixes": ["пожалуйста", "срочно", "быстро", "уже", "кстати", "ну"]
+        # "suffixes": ["пожалуйста", "срочно", "быстро", "уже", "кстати", "ну", "ок", "ok", "плиз", "плизрез", "да", "ага", "сейчас", "щас", "чекай", "глянь", "плизик"]
     },
     "eng": {
         "actions": {
-            "remove": ["remove", "delete", "clear", "erase", "wipe", "kill", "drop", "cut"],
-            "create": ["create", "start", "make", "add", "new", "generate", "produce"],
-            "highlight": ["highlight", "mark", "select", "spotlight", "accentuate", "emphasize"],
-            "start": ["start", "launch", "begin", "turn on", "activate", "run"],
-            "stop": ["stop", "finish", "end", "turn off", "terminate", "disable"],
-            "undo": ["undo", "revert", "roll back", "cancel", "reverse"],
-            "edit": ["edit", "modify", "change", "correct", "update"]
+            "remove": ["remove", "delete", "clear", "erase", "kill", "drop", "cut"],
+            "create": ["create", "start", "make", "add", "generate", "insert"],
+            "highlight": ["highlight", "mark", "select", "emphasize"],
+            "start": ["start", "launch", "begin", "activate", "run"],
+            "stop": ["stop", "finish", "end", "terminate", "disable"],
+            "undo": ["undo", "revert", "cancel", "reverse"],
+            "edit": ["edit", "modify", "change", "update", "correct"]
         },
         "objects": {
-            "text": ["text", "note", "record", "content", "memo", "input", "data"],
-            "paragraph": ["paragraph", "block", "para", "section", "part"],
-            "phrase": ["phrase", "sentence", "line", "expression", "quote"],
-            "record": ["recording", "record", "protocol", "audio", "track"],
-            "command": ["command", "action", "instruction", "order"],
+            "text": ["text", "note", "record", "content", "input", "data"],
+            "paragraph": ["paragraph", "block", "para", "section"],
+            "phrase": ["phrase", "sentence", "line"],
+            "record": ["recording", "record", "audio", "track"],
+            "command": ["command", "action", "instruction"],
             "latex": ["formula", "latex", "script"]
-        }
+        },
+        "prefixes": ["please", "quickly", "now", "immediately", "just", "hey"],
+        "suffixes": ["please", "quickly", "now", "already", "ok", "pls"]
     }
 }
 
@@ -61,176 +78,151 @@ COMMAND_MAPPING = {
     "latex": {"create": "createLatex", "edit": "editLatex"}
 }
 
-# Префиксы для аугментации (русские)
-RUS_PREFIXES = [
-    # Вежливые
-    "пожалуйста", "будь добр", "если не сложно", "будьте добры", "будь любезен",
-    "не сочти за труд", "если можно", "прошу тебя", "очень прошу",
-    # Срочные/эмоциональные
-    "срочно", "немедленно", "быстро", "сейчас же", "немедленно же", "поскорее",
-    "торопись", "живо", "мигом", "сию секунду",
-    # Разговорные
-    "а ну-ка", "давай-ка", "слушай", "эй", "ну-ка", "слушай-ка", "эх",
-    # Усилители
-    "я тебе говорю", "сделай", "давай", "вот", "на", "ну",
-    # Вопросительные
-    "можешь", "не мог бы ты", "будь так добр", "не мог бы ты",
-    # Грубые/эмоциональные (для разнообразия)
-    "гад ты этакий", "безобразник", "ну ты и", "чтоб тебя", "что за",
-    "какого черта", "тьфу ты", "вот гад", "ну и дела", "идиот",
-    # Ласковые
-    "милый", "дорогой", "родной", "любимый", "good boy", "умница",
+# Ядро объектов (для фраз без явного действия)
+OBJECT_CORE = {
+    "paragraph": ["новый абзац", "новый параграф", "новый блок", "новый отступ"],
+    "text": ["новый текст", "новый контент"],
+    "latex": ["новая формула", "новый латех"]
+}
+
+# Глаголы для garbage (нерелевантные действия)
+GARBAGE_VERBS_RUS = ["купи", "сходи", "принеси", "покорми", "позвони", "сделай", "помой", "убери"]
+GARBAGE_OBJECTS_RUS = ["молока", "в магазин", "воды", "кота", "маме", "домашку", "посуду", "мусор"]
+
+GARBAGE_VERBS_ENG = ["buy", "go", "bring", "feed", "call", "do", "wash", "clean"]
+GARBAGE_OBJECTS_ENG = ["milk", "to the store", "water", "the cat", "mom", "homework", "dishes", "trash"]
+
+# Garbage шаблоны (без ключевых слов команд!)
+GARBAGE_PATTERNS_RUS = [
+    # Приветствия
+    "привет", "здравствуйте", "добрый день", "доброе утро", "добрый вечер", "приветики",
+    # Вопросы
+    "как дела", "что нового", "как настроение", "что случилось", "ты меня слышишь",
+    "почему так", "когда это будет", "зачем ты это", "что происходит",
+    # Погода/время
+    "какая погода", "сколько времени", "который час", "будет ли дождь", "солнечно сегодня",
+    # О себе
+    "кто ты", "что ты умеешь", "расскажи о себе", "откуда ты", "ты меня понимаешь",
+    # Высказывания
+    "мне кажется", "я думаю", "ты любишь котиков", "я устал", "это интересно",
+    "мне нужно подумать", "это сложный вопрос", "давай поговорим",
+    # Эмоциональные
+    "ой", "ух", "вау", "ого", "ну и ну", "спасибо", "благодарю", "пока", "до свидания",
+    # Утверждения
+    "небо голубое", "трава зеленая", "солнце светит", "зимой холодно", "два плюс два",
+    # Бытовые (с нерелевантными глаголами)
 ]
 
-# Суффиксы для аугментации (русские)
-RUS_SUFFIXES = [
-    "пожалуйста", "срочно", "быстро", "немедленно", "сейчас же", "поскорее",
-    "очень прошу", "умоляю", "очень нужно", "кстати", "к слову", "вот",
-    "наконец-то", "уже", "надоел", "задолбал", "uff", "pls", "plz",
-]
-
-# Префиксы для аугментации (английские)
-ENG_PREFIXES = [
-    "please", "could you", "would you", "kindly", "if you don't mind",
-    "urgently", "quickly", "right now", "immediately", "now", "ASAP",
-    "hey", "listen", "come on", "go ahead", "look here",
-    "I told you", "just", "go", "for God's sake", "for pity's sake",
+GARBAGE_PATTERNS_ENG = [
+    # Greetings
+    "hello", "hi", "good morning", "good evening", "hey", "howdy",
+    # Questions
+    "how are you", "what's up", "how's it going", "what's new", "do you hear me",
+    "why is this", "when will this", "why do you", "what's happening",
+    # Weather/time
+    "what's the weather", "what time is it", "will it rain", "is it sunny",
+    # About self
+    "who are you", "what can you do", "tell me about yourself", "where are you from",
+    # Statements
+    "i think", "i believe", "do you like cats", "i am tired", "this is interesting",
+    "i need to think", "that's a question", "let's talk",
     # Emotional
-    "dammit", "goddamn", "damn", "bloody hell", "what the hell",
-    # Nice
-    "dear", "darling", "sweetheart", "my dear",
+    "oh", "ah", "wow", "oh my", "thank you", "thanks", "bye", "goodbye",
+    # Statements
+    "the sky is blue", "grass is green", "the sun shines", "winter is cold",
 ]
 
-ENG_SUFFIXES = [
-    "please", "urgently", "quickly", "now", "immediately", "ASAP",
-    "will you", "won't you", "would you", "can you", "please do",
-    "for me", "now", "already", "already will ya",
-]
 
-def augment_command(text, lang="rus", max_variants=5):
+def generate_command_core(synonyms, act_key, obj_key, cmd_name):
+    """Генерирует ядро команд: глагол + объект"""
+    commands = []
+    actions = synonyms["actions"][act_key]
+    objects = synonyms["objects"][obj_key]
+
+    for action in actions:
+        for obj in objects:
+            commands.append((f"{action} {obj}", cmd_name))
+
+    return commands
+
+
+def generate_object_only(synonyms, obj_core):
+    """Генерирует команды без явного глагола: только объект с подразумеваемым действием"""
+    commands = []
+    for phrases in obj_core.values():
+        for phrase in phrases:
+            # Маппинг по ключевому слову
+            if "абзац" in phrase or "параграф" in phrase or "блок" in phrase:
+                cmd = "newPar"
+            elif "текст" in phrase or "контент" in phrase:
+                cmd = "removeText"  # или новая команда
+            elif "формула" in phrase or "латех" in phrase:
+                cmd = "createLatex"
+            else:
+                cmd = "none"
+            commands.append((phrase, cmd))
+    return commands
+
+
+def augment_command(command_text, synonyms, max_variants=3):
     """
-    Генерирует варианты одной команды с префиксами и суффиксами
+    Упрощённая аугментация: максимум 1 префикс ИЛИ 1 суффикс
     """
-    if lang == "rus":
-        prefixes = RUS_PREFIXES
-        suffixes = RUS_SUFFIXES
-    else:
-        prefixes = ENG_PREFIXES
-        suffixes = ENG_SUFFIXES
+    prefixes = synonyms.get("prefixes", [])
+    suffixes = synonyms.get("suffixes", [])
 
-    variants = [text]  # Оригинал
+    variants = [command_text]  # Оригинал
 
-    # Добавляем префиксы
+    # Добавляем префиксы (максимум N)
     for p in random.sample(prefixes, min(max_variants, len(prefixes))):
-        variants.append(f"{p} {text}")
+        variants.append(f"{p} {command_text}")
 
-    # Добавляем суффиксы
+    # Добавляем суффиксы (максимум N)
     for s in random.sample(suffixes, min(max_variants, len(suffixes))):
-        variants.append(f"{text} {s}")
+        variants.append(f"{command_text} {s}")
 
-    # Комбинации (меньше, чтобы не раздувать сильно)
-    for p in random.sample(prefixes, min(max_variants // 2, len(prefixes))):
-        for s in random.sample(suffixes, min(2, len(suffixes))):
-            variants.append(f"{p} {text} {s}")
-
-    # Убираем дубликаты
     return list(set(variants))
 
-def generate_garbage(lang="rus", count=800):
-    """Генерирует garbage-фразы — сложные не-команды для обучения"""
+
+def generate_garbage(synonyms, patterns, count, lang):
+    """Генерирует garbage-фразы (не команды)"""
+    garbage = list(patterns)
+
+    # Добавляем бытовые фразы с нерелевантными глаголами
     if lang == "rus":
-        garbage = [
-            # Приветствия
-            "привет", "здравствуйте", "добрый день", "доброе утро", "добрый вечер", "приветики",
-            # Вопросы
-            "как дела", "что нового", "как настроение", "как жизнь", "что случилось", "ты меня слышишь",
-            "почему так происходит", "когда это закончится", "зачем ты это делаешь",
-            # Погода/время
-            "какая погода", "сколько времени", "который час", "будет ли дождь", "солнечно сегодня",
-            # О себе /LM
-            "кто ты", "что ты умеешь", "расскажи о себе", "откуда ты", "ты живой", "ты меня понимаешь",
-            # Высказывания (не команды)
-            "мне кажется завтра будет дождь", "ты любишь котиков", "я устал сегодня",
-            "это очень интересно", "ну и дела", "вот это поворот",
-            "мне нужно подумать", "это сложный вопрос", "давай поговорим о музыке",
-            "что ты думаешь о политике", "какой сегодня день недели",
-            # Бессмысленные
-            "тра-ля-ля", "ля-ля-ля", "ой-ой-ой", "ай-яй-яй", "бамбам", "криминальное чтиво",
-            # Эмоциональные
-            "ой", "ух", "вау", "ого", "ну и ну", "ничего себе", "ого-го", "ай-ай-ай",
-            # Благодарности
-            "спасибо", "благодарю", "merci", "thanks", "спасибо большое", "очень признателен",
-            # Прощания
-            "пока", "до свидания", "удачи", "всего хорошего", "увидимся", "до скорого",
-            # Бытовые (не команды)
-            "купи молока", "сходи в магазин", "принеси воды", "покорми кота", "позвони маме",
-            "сделай домашку", "постирай посуду", "вынеси мусор",
-            # Утверждения
-            "небо голубое", "трава зеленая", "солнце светит", "зимой холодно",
-            "два плюс два четыре", "море синее", "кофе бодрит",
-            # Сложные фразы
-            "мне нужно поговорить с тобой о важном деле",
-            "ты знаешь, как решить эту задачу",
-            "расскажи мне что-нибудь интересное",
-            "что ты можешь предложить для улучшения",
-            "как правильно написать эту программу",
-        ]
+        for _ in range(count // 3):
+            verb = random.choice(GARBAGE_VERBS_RUS)
+            obj = random.choice(GARBAGE_OBJECTS_RUS)
+            garbage.append(f"{verb} {obj}")
     else:
-        garbage = [
-            # Greetings
-            "hello", "hi", "good morning", "good evening", "hey", "howdy",
-            # Questions
-            "how are you", "what's up", "how's it going", "what's new", "do you hear me",
-            "why is this happening", "when will this end", "why do you do this",
-            # Weather/time
-            "what's the weather", "what time is it", "what day is it", "will it rain", "is it sunny",
-            # About self
-            "who are you", "what can you do", "tell me about yourself", "where are you from", "are you alive",
-            # Statements (not commands)
-            "i think it will rain tomorrow", "do you like cats", "i am tired today",
-            "this is very interesting", "wow", "what a twist",
-            "i need to think about this", "that's a tough question", "let's talk about music",
-            "what do you think about politics", "what day is it today",
-            # Nonsense
-            "la la la", "tra la la", "oh my", "wow", "bambam", "oops",
-            # Emotional
-            "oh", "ah", "ouch", "wow", "no way", "oh no", "gee whiz",
-            # Thanks
-            "thank you", "thanks", "merci", "gracias", "thank you very much", "i appreciate it",
-            # Farewells
-            "bye", "goodbye", "see you", "take care", "later", "catch you later",
-            # Statements
-            "the sky is blue", "grass is green", "the sun is shining", "winter is cold",
-            "two plus two is four", "the sea is blue", "coffee gives me energy",
-            # Complex phrases
-            "i need to talk to you about something important",
-            "do you know how to solve this problem",
-            "tell me something interesting",
-            "what can you suggest for improvement",
-            "how do i write this program correctly",
-        ]
+        for _ in range(count // 3):
+            verb = random.choice(GARBAGE_VERBS_ENG)
+            obj = random.choice(GARBAGE_OBJECTS_ENG)
+            garbage.append(f"{verb} {obj}")
 
     # Добавляем случайные повторы и вариации
     result = []
     for _ in range(count):
         phrase = random.choice(garbage)
-        # Иногда добавляем восклицательный знак или вопрос
         if random.random() > 0.7:
-            phrase = phrase + random.choice(["!", "?", "!!", "??", "...", ";)"])
+            phrase = phrase + random.choice(["!", "?", "!!", "..."])
         result.append(phrase)
 
     return result
 
-def generate_commands(augment=True, augment_factor=15, garbage_count=800, test_ratio=0.1, seed=42):
+
+def generate_commands(augment=True, augment_factor=3, garbage_ratio=1.0, test_ratio=0.1, seed=42):
     """
     Генерирует датасет команд с аугментацией и train/test разделением
+
+    garbage_ratio: соотношение garbage к командам (1.0 = 1:1)
     """
     print("\n" + "="*60)
     print("🎲 ГЕНЕРАЦИЯ КОМАНДНОГО ДАТАСЕТА")
     print("="*60)
     print(f"Аугментация: {'включена' if augment else 'выключена'}")
     print(f"Коэффициент аугментации: {augment_factor}")
-    print(f"Garbage-фраз: {garbage_count}")
+    print(f"Garbage ratio: {garbage_ratio} (1.0 = баланс 1:1)")
     print(f"Test ratio: {test_ratio}")
     print("="*60)
 
@@ -241,58 +233,46 @@ def generate_commands(augment=True, augment_factor=15, garbage_count=800, test_r
 
     for lang in ["rus", "eng"]:
         s = SYNONYMS[lang]
+        patterns = GARBAGE_PATTERNS_RUS if lang == "rus" else GARBAGE_PATTERNS_ENG
 
         # Собираем ключевые слова
         for cat in s.values():
-            for words in cat.values():
-                keywords.update(words)
+            if isinstance(cat, dict):
+                for words in cat.values():
+                    if isinstance(words, list):
+                        keywords.update(words)
 
-        # 1. Положительные команды (с аугментацией)
+        # 1. Ядро команд (глагол + объект)
+        all_commands = []
         for obj_key, actions in COMMAND_MAPPING.items():
             for act_key, cmd_name in actions.items():
-                # Проверяем, есть ли такое действие в синонимах
                 if act_key not in s["actions"]:
                     continue
-                for a in s["actions"][act_key]:
-                    for o in s["objects"][obj_key]:
-                        command_text = f"{a} {o}".lower()
+                commands = generate_command_core(s, act_key, obj_key, cmd_name)
+                all_commands.extend(commands)
 
-                        if augment and lang == "rus":
-                            # Только русские команды аугментируем
-                            variants = augment_command(command_text, lang, augment_factor)
-                            for variant in variants:
-                                final_data.append({
-                                    "name": cmd_name,
-                                    lang: variant
-                                })
-                        else:
-                            final_data.append({
-                                "name": cmd_name,
-                                lang: command_text
-                            })
+        # 2. Объект без глагола (подразумеваемое действие)
+        object_only = generate_object_only(s, OBJECT_CORE)
+        all_commands.extend(object_only)
 
-        # 2. Негативные (мусор)
-        garbage = generate_garbage(lang, garbage_count)
+        # Аугментация и сохранение
+        for cmd_text, cmd_name in all_commands:
+            if augment and lang == "rus":
+                variants = augment_command(cmd_text, s, augment_factor)
+                for variant in variants:
+                    final_data.append({"name": cmd_name, lang: variant})
+            else:
+                final_data.append({"name": cmd_name, lang: cmd_text})
+
+        # 3. Garbage (сбалансированное количество)
+        cmd_count_for_lang = sum(1 for item in final_data if item.get("name") != "none" and item.get(lang))
+        garbage_count = int(cmd_count_for_lang * garbage_ratio)
+
+        garbage = generate_garbage(s, patterns, garbage_count, lang)
         for g in garbage:
-            final_data.append({
-                "name": "none",
-                lang: g
-            })
+            final_data.append({"name": "none", lang: g})
 
-        # 3. Ложные комбинации (объект без действия и наоборот)
-        for _ in range(100):
-            obj = random.choice(list(s["objects"].values()))[0]
-            final_data.append({
-                "name": "none",
-                lang: f"этот {obj} просто так"
-            })
-            act = random.choice(list(s["actions"].values()))[0]
-            final_data.append({
-                "name": "none",
-                lang: f"{act} яблоки"
-            })
-
-    # Перемешиваем датасет
+    # Перемешиваем
     random.shuffle(final_data)
 
     # Статистика
@@ -303,6 +283,7 @@ def generate_commands(augment=True, augment_factor=15, garbage_count=800, test_r
     print(f"   Всего примеров: {len(final_data)}")
     print(f"   Команд: {cmd_count}")
     print(f"   Garbage: {garbage_count_result}")
+    print(f"   Соотношение: {cmd_count}:{garbage_count_result} ≈ {cmd_count/garbage_count_result if garbage_count_result else 0:.2f}:1")
     print(f"   Ключевых слов: {len(keywords)}")
 
     # Разделяем на train и test
@@ -317,6 +298,7 @@ def generate_commands(augment=True, augment_factor=15, garbage_count=800, test_r
     print(f"   Test:  {len(test_data)} примеров ({int(test_ratio*100)}%)")
 
     return train_data, test_data, sorted(list(keywords))
+
 
 def update_dataset_info(output_dir="result/command"):
     """Обновляет dataset_info.json"""
@@ -342,6 +324,7 @@ def update_dataset_info(output_dir="result/command"):
 
     return info_path
 
+
 def validate_json(filepath, name):
     """Проверяет валидность JSON файла"""
     invalid_count = 0
@@ -354,48 +337,51 @@ def validate_json(filepath, name):
                 print(f"   ❌ {name} строка {line_num}: {e}")
     return invalid_count
 
+
 def print_samples(data, count=5, name="Примеры"):
     """Показывает примеры из датасета"""
     print(f"\n📝 {name}:")
     shown = 0
     for item in data:
         if item.get("name") != "none":
-            print(f"   {item.get('rus', 'N/A')} → {item['name']}")
+            lang_key = "rus" if "rus" in item else "eng"
+            print(f"   {item.get(lang_key, 'N/A')} → {item['name']}")
             shown += 1
             if shown >= count:
                 break
+    # Показать несколько garbage
+    print(f"   ... (garbage примеры с name='none')")
 
-def generate_dataset(augment=True, augment_factor=15, garbage_count=800, test_ratio=0.1):
+
+def generate_dataset(augment=True, augment_factor=3, garbage_ratio=1.0, test_ratio=0.1):
     """
     Основная функция генерации датасета
     """
-    # Генерируем данные
     train_data, test_data, keywords = generate_commands(
         augment=augment,
         augment_factor=augment_factor,
-        garbage_count=garbage_count,
+        garbage_ratio=garbage_ratio,
         test_ratio=test_ratio
     )
 
-    # Создаем директории
     output_dir = "result/command"
     os.makedirs(output_dir, exist_ok=True)
 
-    # Сохраняем train датасет
+    # Train
     train_path = os.path.join(output_dir, "dataset.jsonl")
     with open(train_path, "w", encoding="utf-8") as f:
         for item in train_data:
             f.write(json.dumps(item, ensure_ascii=False) + '\n')
     print(f"\n✅ Train датасет сохранен: {train_path}")
 
-    # Сохраняем test датасет
+    # Test
     test_path = os.path.join(output_dir, "test.jsonl")
     with open(test_path, "w", encoding="utf-8") as f:
         for item in test_data:
             f.write(json.dumps(item, ensure_ascii=False) + '\n')
     print(f"✅ Test датасет сохранен: {test_path}")
 
-    # Проверяем валидность
+    # Валидация
     print("\n🔍 Проверка валидности JSON...")
     train_invalid = validate_json(train_path, "Train")
     test_invalid = validate_json(test_path, "Test")
@@ -403,50 +389,43 @@ def generate_dataset(augment=True, augment_factor=15, garbage_count=800, test_ra
     if train_invalid == 0 and test_invalid == 0:
         print(f"   ✅ Все строки валидны!")
     else:
-        print(f"   ⚠️ Найдено ошибок: Train={train_invalid}, Test={test_invalid}")
+        print(f"   ⚠️ Ошибок: Train={train_invalid}, Test={test_invalid}")
 
-    # Сохраняем ключевые слова
+    # Ключевые слова
     keywords_path = os.path.join(output_dir, "keywords.txt")
     with open(keywords_path, "w", encoding="utf-8") as f:
         f.write("\n".join(keywords))
-    print(f"✅ Ключевые слова сохранены: {keywords_path} ({len(keywords)} слов)")
+    print(f"✅ Ключевые слова: {keywords_path} ({len(keywords)} слов)")
 
-    # Обновляем dataset_info.json
+    # Конфиг
     info_path = update_dataset_info(output_dir)
-    print(f"✅ Конфиг сохранен: {info_path}")
+    print(f"✅ Конфиг: {info_path}")
 
-    # Показываем примеры
-    print_samples(train_data, count=5, name="Примеры команд (train)")
-    print_samples(test_data, count=3, name="Примеры команд (test)")
+    # Примеры
+    print_samples(train_data, count=5, name="Примеры (train)")
+    print_samples(test_data, count=3, name="Примеры (test)")
 
     # Статистика по командам
     print("\n📊 Распределение команд:")
     cmd_stats = {}
     for item in train_data:
         name = item.get("name")
-        if name != "none":
-            cmd_stats[name] = cmd_stats.get(name, 0) + 1
+        cmd_stats[name] = cmd_stats.get(name, 0) + 1
 
     for cmd, count in sorted(cmd_stats.items(), key=lambda x: x[1], reverse=True):
-        print(f"   {cmd:15} | {count:5} примеров")
+        print(f"   {cmd:15} | {count:5}")
 
     print("\n" + "="*60)
-    print("✅ Генерация командного датасета завершена!")
+    print("✅ Генерация завершена!")
     print("="*60)
 
     return train_data, test_data, keywords
 
-def generate_dataset_with_custom_params(augment=True, augment_factor=3, garbage_count=500, test_ratio=0.1):
-    """
-    Генерация с пользовательскими параметрами (алиас для основной функции)
-    """
-    return generate_dataset(augment, augment_factor, garbage_count, test_ratio)
 
 if __name__ == "__main__":
-    # Парсим аргументы командной строки
     augment = True
-    augment_factor = 15
-    garbage_count = 500
+    augment_factor = 3
+    garbage_ratio = 1.0
     test_ratio = 0.1
 
     for arg in sys.argv[1:]:
@@ -454,8 +433,8 @@ if __name__ == "__main__":
             augment = False
         elif arg.startswith("--augment-factor="):
             augment_factor = int(arg.split("=")[1])
-        elif arg.startswith("--garbage="):
-            garbage_count = int(arg.split("=")[1])
+        elif arg.startswith("--garbage-ratio="):
+            garbage_ratio = float(arg.split("=")[1])
         elif arg.startswith("--test-ratio="):
             test_ratio = float(arg.split("=")[1])
         elif arg == "--help":
@@ -463,24 +442,22 @@ if __name__ == "__main__":
 Использование: python generate_commands.py [опции]
 
 Опции:
-  --no-augment              Отключить аугментацию (по умолчанию включена)
-  --augment-factor=N        Коэффициент аугментации (по умолчанию: 3)
-  --garbage=N               Количество garbage-фраз (по умолчанию: 500)
-  --test-ratio=R            Доля тестовой выборки (по умолчанию: 0.1)
-  --help                    Показать эту справку
+  --no-augment           Отключить аугментацию
+  --augment-factor=N     Коэффициент аугментации (по умолчанию: 3)
+  --garbage-ratio=R      Соотношение garbage к командам (по умолчанию: 1.0 = 1:1)
+  --test-ratio=R         Доля тестовой выборки (по умолчанию: 0.1)
+  --help                 Справка
 
 Примеры:
   python generate_commands.py
-  python generate_commands.py --no-augment
-  python generate_commands.py --augment-factor=5 --garbage=1000
-  python generate_commands.py --test-ratio=0.2
+  python generate_commands.py --no-augment --garbage-ratio=1.5
+  python generate_commands.py --augment-factor=5 --test-ratio=0.2
             """)
             sys.exit(0)
 
-    # Запускаем генерацию
-    generate_dataset_with_custom_params(
+    generate_dataset(
         augment=augment,
         augment_factor=augment_factor,
-        garbage_count=garbage_count,
+        garbage_ratio=garbage_ratio,
         test_ratio=test_ratio
     )

@@ -7,6 +7,7 @@ bhl
 result*
 models
 .DS_Store
+LLaMA-Factory/
 llama.cpp
 *.log
 .env
