@@ -1,0 +1,46 @@
+model_name_or_path: ../bhl/Models/Qwen2.5-0.5B-Instruct/orig
+trust_remote_code: true
+
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_target: all
+lora_rank: 8
+lora_alpha: 16
+
+dataset: command_ds
+dataset_dir: result/command
+template: qwen
+cutoff_len: 256
+overwrite_cache: true
+preprocessing_num_workers: 4
+packing: false
+
+output_dir: ./saves/qwen_command_lora
+logging_steps: 10
+save_steps: 100
+plot_loss: true
+overwrite_output_dir: true
+
+# RTX 5060 Ti 16GB VRAM
+per_device_train_batch_size: 8
+gradient_accumulation_steps: 2
+learning_rate: 1.0e-4
+num_train_epochs: 3.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.1
+bf16: true
+flash_attn: auto
+
+# Дополнительные настройки памяти
+max_grad_norm: 1.0
+remove_unused_columns: false
+
+val_size: 0.1
+per_device_eval_batch_size: 4
+eval_strategy: steps
+eval_steps: 100
+save_strategy: steps
+load_best_model_at_end: true
+metric_for_best_model: loss
+greater_is_better: false

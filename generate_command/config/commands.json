@@ -1,0 +1,66 @@
+{
+  "newText": {
+    "actions": "create",
+    "objects": "text"
+  },
+  "saveNote": {
+    "actions": "save",
+    "objects": "text"
+  },
+  "removeText": {
+    "actions": "remove",
+    "objects": "text"
+  },
+  "newParagraph": {
+    "actions": "create",
+    "objects": "paragraph"
+  },
+  "undoPhrase": {
+    "actions": "undo",
+    "objects": "phrase"
+  },
+  "undoParagraph": {
+    "actions": "undo",
+    "objects": "paragraph"
+  },
+  "undoCommand": {
+    "actions": "undo",
+    "objects": "command"
+  },
+  "removeParagraph": {
+    "actions": "remove",
+    "objects": "paragraph"
+  },
+  "removePhrase": {
+    "actions": "remove",
+    "objects": "phrase"
+  },
+  "recordStop": {
+    "actions": "stop",
+    "objects": "record"
+  },
+  "recordStart": {
+    "actions": "start",
+    "objects": "record"
+  },
+  "sendText": {
+    "actions": "send",
+    "objects": "text"
+  },
+  "sendParagraph": {
+    "actions": "send",
+    "objects": "paragraph"
+  },
+  "createLatex": {
+    "actions": "create",
+    "objects": "latex"
+  },
+  "highlightParagraph": {
+    "actions": "highlight",
+    "objects": "paragraph"
+  },
+  "highlightWord": {
+    "actions": "highlight",
+    "objects": "word"
+  }
+}

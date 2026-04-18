@@ -8,6 +8,7 @@ result*
 models
 .DS_Store
 LLaMA-Factory/
+__pycache__/
 llama.cpp
 *.log
 .env
