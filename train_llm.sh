@@ -31,7 +31,7 @@ echo "📚 Запуск обучения..."
 echo "========================================="
 
 # Запуск обучения с указанием конфига
-llamafactory-cli train config_latex.yaml
+llamafactory-cli train config_bhl.yaml
 
 echo ""
 echo "========================================="

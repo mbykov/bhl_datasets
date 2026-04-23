@@ -32,7 +32,9 @@ GARBAGE_FILE = CONFIG_DIR / "garbage.json"
 NOISE_FILE = CONFIG_DIR / "noise.json"
 
 # Выходные пути
-RESULT_DIR = Path(__file__).parent.parent / "result" / "command"
+# RESULT_DIR = Path(__file__).parent.parent / "result" / "command"
+RESULT_DIR = Path(__file__).parent / "result"
+
 
 
 def load_data():
@@ -112,6 +114,7 @@ def generate_command_phrases(action_type, object_type, actions, objects, noise):
             phrases.append(inf_reverse)
 
         # Вариант 4: с шумом (добавляем каждые 4-й уникальный паттерн)
+        # if False:
         if noise:
             noise_word = random.choice(noise)
             # Шум в начале
@@ -128,18 +131,18 @@ def generate_command_phrases(action_type, object_type, actions, objects, noise):
 
             # То же с обратным порядком
             noise_reverse = f"{noise_word} {obj} {action}"
-            phrases.append(noise_reverse)
+            # phrases.append(noise_reverse)
 
             noise_middle_rev = f"{obj} {noise_word} {action}"
-            phrases.append(noise_middle_rev)
+            # phrases.append(noise_middle_rev)
 
             noise_end_rev = f"{obj} {action} {noise_word}"
-            phrases.append(noise_end_rev)
+            # phrases.append(noise_end_rev)
 
     return phrases
 
 
-def generate_dataset(commands, synonyms, garbage, noise, garbage_multiplier=3, seed=42):
+def generate_dataset(commands, synonyms, garbage, noise, garbage_multiplier=0, seed=42):
     """Генерирует полный датасет."""
     random.seed(seed)
     dataset = []
@@ -208,7 +211,7 @@ def save_dataset(dataset, keywords, train_ratio=0.8):
     train_data = dataset[:split_idx]
     test_data = dataset[split_idx:]
 
-    RESULT_DIR.mkdir(exist_ok=True)
+    # RESULT_DIR.mkdir(exist_ok=True)
 
     # Формируем данные в формате Alpaca: instruction, input, output
     # instruction: "Распознай команду"
@@ -216,7 +219,7 @@ def save_dataset(dataset, keywords, train_ratio=0.8):
     # output: имя команды (или "none" для garbage)
     def to_alpaca(item):
         return {
-            "instruction": "Распознай команду",
+            # "instruction": "Распознай команду",
             "input": item["rus"],
             "output": item["name"]
         }
@@ -410,7 +413,7 @@ def main():
     parser = argparse.ArgumentParser(description="Генератор датасета команд")
     parser.add_argument("--train-ratio", type=float, default=0.8, help="Доля train данных")
     parser.add_argument("--seed", type=int, default=42, help="Случайное число")
-    parser.add_argument("--garbage-multiplier", type=int, default=3, help="Коэффициент garbage (по умолчанию 3x)")
+    parser.add_argument("--garbage-multiplier", type=int, default=0, help="Коэффициент garbage (по умолчанию 1x)")
     parser.add_argument("--generate-prompt", action="store_true", help="Сгенерировать command_prompt.txt")
     args = parser.parse_args()
 

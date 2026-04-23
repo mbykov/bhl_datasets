@@ -1,20 +1,12 @@
-# Makefile для управления процессом экспорта модели
+# Makefile для загрузки модели в Ollama
 
 # Пути
-BASE_MODEL ?= ../bhl/Models/Qwen2.5-1.5B-Instruct
-LORA_PATH ?= ./saves/qwen_merged_lora
-MERGED_PATH ?= ./models/qwen_merged
-GGUF_DIR ?= ./models/gguf
-LLAMA_PATH ?= ./llama.cpp
+GGUF_DIR ?= ./models/bhl_gguf
+MODEL_NAME ?= qwen_bhl
+GGUF_FILE ?= $(GGUF_DIR)/qwen_bhl_q8_0.gguf
 
-# Типы квантования
-QUANT_TYPES ?= q4_0 q8_0
-
-# Python (используем uv run)
-PYTHON = uv run python
-
-# Файл-флаг для проверки сборки (создаем в текущей директории)
-LLAMA_BUILT_FLAG = .llama_built
+# Ollama команды
+OLLAMA ?= ollama
 
 # Цвета
 GREEN = \033[0;32m
@@ -22,148 +14,132 @@ RED = \033[0;31m
 YELLOW = \033[1;33m
 NC = \033[0m
 
-.PHONY: help merge quantize test clean all setup-llama check-llama
+.PHONY: help create-modelfile import test list clean check merge quantize
 
 help:
 	@echo "========================================="
-	@echo "Управление экспортом модели"
+	@echo "Ollama Model Management"
 	@echo "========================================="
-	@echo "make merge        - Объединить LoRA с базовой моделью"
-	@echo "make quantize     - Квантовать модель в GGUF"
-	@echo "make test         - Тестировать GGUF модель"
-	@echo "make all          - Выполнить все шаги"
-	@echo "make clean        - Очистить временные файлы"
-	@echo "make setup-llama  - Скачать и собрать llama.cpp (принудительно)"
-	@echo "make rebuild-llama - Принудительная пересборка llama.cpp"
-	@echo "make clean-all    - Полная очистка"
+	@echo "make merge             - Объединить LoRA с базовой моделью"
+	@echo "make quantize          - Квантовать модель в GGUF"
+	@echo "make create-modelfile  - Создать Modelfile"
+	@echo "make import            - Импортировать модель в Ollama"
+	@echo "make test              - Протестировать модель"
+	@echo "make list              - Показать модели в Ollama"
+	@echo "make clean             - Удалить модель из Ollama"
+	@echo "make check             - Проверить статус"
 	@echo "========================================="
 
-# Проверка, собран ли llama.cpp
-check-llama:
-	@if [ ! -f "$(LLAMA_BUILT_FLAG)" ]; then \
-		echo "$(YELLOW)⚠️  llama.cpp не собран. Запускаю сборку...$(NC)"; \
-		$(MAKE) setup-llama; \
-	else \
-		echo "$(GREEN)✅ llama.cpp уже собран$(NC)"; \
-	fi
+# Проверка наличия Ollama
+check-ollama:
+	@$(OLLAMA) --version > /dev/null 2>&1 || { \
+		echo "$(RED)❌ Ollama не найден!$(NC)"; \
+		echo "Установите: https://ollama.ai/download"; \
+		exit 1; \
+	}
+	@echo "$(GREEN)✅ Ollama найден: $($(OLLAMA) --version)$(NC)"
 
-# Сборка llama.cpp (только если нужно)
-setup-llama:
-	@echo "$(GREEN)🔧 Установка llama.cpp...$(NC)"
-	@if [ ! -d "$(LLAMA_PATH)" ]; then \
-		echo "   Клонирование репозитория..."; \
-		git clone https://github.com/ggml-org/llama.cpp.git $(LLAMA_PATH); \
-	fi
-	@echo "   Сборка проекта..."
-	@cd $(LLAMA_PATH) && \
-		cmake -B build -DCMAKE_BUILD_TYPE=Release && \
-		cmake --build build --config Release -j 4
-	@if [ -d "$(LLAMA_PATH)/build/bin" ]; then \
-		echo "   ✅ Сборка завершена"; \
-		touch $(LLAMA_BUILT_FLAG); \
-		echo "   Создан флаг: $(LLAMA_BUILT_FLAG)"; \
-	else \
-		echo "   ❌ Ошибка: не найдена папка build/bin"; \
+# Проверка наличия GGUF файла
+check-gguf:
+	@if [ ! -f "$(GGUF_FILE)" ]; then \
+		echo "$(RED)❌ GGUF файл не найден: $(GGUF_FILE)$(NC)"; \
+		echo "Доступные файлы:"; \
+		ls -lh $(GGUF_DIR)/*.gguf 2>/dev/null || echo "   Нет GGUF файлов"; \
 		exit 1; \
 	fi
-	@echo "$(GREEN)✅ llama.cpp готов$(NC)"
+	@echo "$(GREEN)✅ GGUF файл найден: $(GGUF_FILE)$(NC)"
 
-# Объединение LoRA (без лишних зависимостей)
-merge:
-	@echo "$(GREEN)🔧 Объединение LoRA...$(NC)"
-	@mkdir -p $(dir $(MERGED_PATH))
-	@$(PYTHON) merge_lora.py \
-		--base-model $(BASE_MODEL) \
-		--lora $(LORA_PATH) \
-		--output $(MERGED_PATH)
-	@echo "$(GREEN)✅ Объединение завершено$(NC)"
+# Создание Modelfile
+create-modelfile: check-ollama check-gguf
+	@echo "$(GREEN)📝 Создание Modelfile...$(NC)"
+	@echo "FROM $(GGUF_FILE)" > Modelfile
+	@echo "" >> Modelfile
+	@echo "PARAMETER temperature 0.3" >> Modelfile
+	@echo "PARAMETER top_p 0.9" >> Modelfile
+	@echo "PARAMETER top_k 40" >> Modelfile
+	@echo "" >> Modelfile
+	@printf 'SYSTEM "'
+	@cat docs/bhl_prompt.txt | sed 's/"/\\"/g' | tr '\n' ' ' >> Modelfile
+	@echo '"\n' >> Modelfile
+	@echo "" >> Modelfile
+	@echo 'TEMPLATE """{{- if .System }}system' >> Modelfile
+	@echo '{{ .System }}' >> Modelfile
+	@echo '' >> Modelfile
+	@echo '{{- end }}{{- if .Prompt }}<|im_start|>user' >> Modelfile
+	@echo '{{ .Prompt }}' >> Modelfile
+	@echo '' >> Modelfile
+	@echo '{{- end }}<|im_start|>assistant' >> Modelfile
+	@echo '"""' >> Modelfile
+	@echo "$(GREEN)✅ Создан Modelfile$(NC)"
+	@cat Modelfile
 
-# Квантование (проверяет сборку, но не пересобирает без необходимости)
-quantize: check-llama
-	@echo "$(GREEN)🔧 Квантование модели...$(NC)"
-	@mkdir -p $(GGUF_DIR)
-	@for type in $(QUANT_TYPES); do \
-		echo "  Обработка $$type..."; \
-		$(PYTHON) quantize_model.py \
-			--model $(MERGED_PATH) \
-			--output $(GGUF_DIR) \
-			--type $$type \
-			--llama-path $(LLAMA_PATH); \
-	done
-	@echo "$(GREEN)✅ Квантование завершено$(NC)"
+# Импорт модели в Ollama
+import: create-modelfile
+	@echo "$(GREEN)📦 Импорт модели в Ollama...$(NC)"
+	@$(OLLAMA) create $(MODEL_NAME) -f Modelfile
+	@echo "$(GREEN)✅ Модель '$(MODEL_NAME)' импортирована!$(NC)"
+	@echo "   Запуск: $(OLLAMA) run $(MODEL_NAME) 'твой запрос'"
 
-# Тестирование
-# test:
-# 	@echo "$(GREEN)🔧 Тестирование GGUF модели...$(NC)"
-# 	@for file in $(GGUF_DIR)/*.gguf; do \
-# 		if [ -f "$$file" ]; then \
-# 			echo "  Тестирование $$file"; \
-# 			$(PYTHON) test_gguf.py --model "$$file" || true; \
-# 		fi \
-# 	done
-# 	@echo "$(GREEN)✅ Тестирование завершено$(NC)"
-
+# Тестирование модели
 test:
-	@echo "$(GREEN)🔧 Тестирование GGUF модели...$(NC)"
-	@for file in $(GGUF_DIR)/*.gguf; do \
-		if [ -f "$$file" ]; then \
-			echo "  Тестирование $$file"; \
-			$(PYTHON) test_gguf.py --model "$$file" --llama-path $(LLAMA_PATH) || true; \
-		fi \
-	done
-	@echo "$(GREEN)✅ Тестирование завершено$(NC)"
+	@echo "$(GREEN)🧪 Тестирование модели...$(NC)"
+	@echo "-------------------------------------------"
+	@echo "Тест 1: 'добавь новый абзац'"
+	@$(OLLAMA) run $(MODEL_NAME) "добавь новый абзац" || true
+	@echo ""
+	@echo "Тест 2: 'доброе утро' (garbage)"
+	@$(OLLAMA) run $(MODEL_NAME) "доброе утро" || true
+	@echo ""
+	@echo "Тест 3: 'удали этот текст'"
+	@$(OLLAMA) run $(MODEL_NAME) "удали этот текст" || true
+	@echo "-------------------------------------------"
 
+# Список моделей
+list: check-ollama
+	@echo "$(GREEN)📋 Модели в Ollama:$(NC)"
+	@$(OLLAMA) list | grep $(MODEL_NAME) || echo "   Модель '$(MODEL_NAME)' не найдена"
 
-
-# Очистка только моделей
-clean:
-	@echo "$(YELLOW)🧹 Очистка моделей...$(NC)"
-	@rm -rf $(MERGED_PATH)
-	@rm -rf $(GGUF_DIR)
-	@rm -f $(LLAMA_BUILT_FLAG)
+# Удаление модели
+clean: check-ollama
+	@echo "$(YELLOW)🗑️  Удаление модели $(MODEL_NAME)...$(NC)"
+	@$(OLLAMA) rm $(MODEL_NAME) 2>/dev/null || echo "   Модель не найдена"
+	@rm -f Modelfile
 	@echo "$(GREEN)✅ Очистка завершена$(NC)"
 
-# Полная очистка включая llama.cpp
-clean-all: clean
-	@echo "$(YELLOW)🧹 Полная очистка (включая llama.cpp)...$(NC)"
-	@rm -rf $(LLAMA_PATH)
-	@echo "$(GREEN)✅ Полная очистка завершена$(NC)"
+# Объединение LoRA с базовой моделью
+merge:
+	@echo "$(GREEN)🔗 Объединение LoRA с базовой моделью...$(NC)"
+	python3 merge_lora.py \
+		--base-model "../bhl/Models/Qwen2.5-1.5B-Instruct/orig" \
+		--lora "./saves/qwen_bhl_lora" \
+		--output "./models/qwen_bhl"
 
-# Полный цикл
-all: merge quantize test
-	@echo "$(GREEN)🎉 Все шаги выполнены успешно!$(NC)"
+# Квантование модели в GGUF
+quantize:
+	@echo "$(GREEN)📦 Квантование модели в GGUF...$(NC)"
+	python3 quantize_model.py     \
+		--model "./models/qwen_bhl" \
+		--output "$(GGUF_DIR)" \
+		--type "q4_0,q8_0" \
+		--llama-path "./llama.cpp"
 
-# Быстрые варианты
-merge-q4: merge
-	@$(MAKE) quantize QUANT_TYPES="q4_0"
-
-merge-q8: merge
-	@$(MAKE) quantize QUANT_TYPES="q8_0"
-
-merge-all: merge
-	@$(MAKE) quantize QUANT_TYPES="q4_0 q4_1 q5_0 q5_1 q8_0 f16"
-
-# Принудительная пересборка llama.cpp
-rebuild-llama:
-	@echo "$(YELLOW)🔧 Принудительная пересборка llama.cpp...$(NC)"
-	@rm -f $(LLAMA_BUILT_FLAG)
-	@rm -rf $(LLAMA_PATH)/build
-	@$(MAKE) setup-llama
-
-# Показать статус сборки
-status:
-	@if [ -f "$(LLAMA_BUILT_FLAG)" ]; then \
-		echo "$(GREEN)✅ llama.cpp собран$(NC)"; \
+# Проверка статуса
+check: check-ollama
+	@echo "========================================="
+	@echo "Статус:"
+	@echo "========================================="
+	@echo "GGUF файл: $(GGUF_FILE)"
+	@if [ -f "$(GGUF_FILE)" ]; then \
+		echo "$(GREEN)✅ Существует$(NC)"; \
+		ls -lh $(GGUF_FILE); \
 	else \
-		echo "$(RED)❌ llama.cpp не собран$(NC)"; \
+		echo "$(RED)❌ Не найден$(NC)"; \
 	fi
-	@if [ -d "$(MERGED_PATH)" ]; then \
-		echo "$(GREEN)✅ Объединенная модель существует$(NC)"; \
+	@echo ""
+	@echo "Модель в Ollama: $(MODEL_NAME)"
+	@if $(OLLAMA) list | grep -q $(MODEL_NAME); then \
+		echo "$(GREEN)✅ Имортирована$(NC)"; \
 	else \
-		echo "$(RED)❌ Объединенная модель не найдена$(NC)"; \
+		echo "$(RED)❌ Не импортирована$(NC)"; \
 	fi
-	@if [ -d "$(GGUF_DIR)" ]; then \
-		echo "$(GREEN)✅ GGUF файлы: $(shell ls $(GGUF_DIR)/*.gguf 2>/dev/null | wc -l) штук$(NC)"; \
-	else \
-		echo "$(RED)❌ GGUF файлы не найдены$(NC)"; \
-	fi
+	@echo "========================================="

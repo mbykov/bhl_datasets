@@ -1,9 +1,9 @@
 # Makefile для загрузки модели в Ollama
 
 # Пути
-GGUF_DIR ?= ./models/command_gguf
-MODEL_NAME ?= qwen_command
-GGUF_FILE ?= $(GGUF_DIR)/qwen_command_merged_q8_0.gguf
+GGUF_DIR ?= ./models/bhl_gguf
+MODEL_NAME ?= qwen_bhl
+GGUF_FILE ?= $(GGUF_DIR)/qwen_bhl_q8_0.gguf
 
 # Ollama команды
 OLLAMA ?= ollama

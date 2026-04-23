@@ -1,0 +1,215 @@
+/home/michael/LLM/datasets_bhl/generate_both
+
+--- Структура проекта ---
+
+.
+├── config
+│   ├── greeks.jsonl
+│   ├── latins.jsonl
+│   └── symbols.jsonl
+└── generator.py
+
+2 directories, 4 files
+
+---
+
+-- /home/michael/LLM/datasets_bhl/generate_both/config/symbols.jsonl:
+{"sec": "arithmetic", "sym": "+", "rus": "плюс", "eng": "plus", "scheme": "@ + @", "sense": "add"}
+{"sec": "arithmetic", "sym": "-", "rus": "минус", "eng": "minus", "scheme": "@ - @", "sense": "sub"}
+{"sec": "arithmetic", "sym": "\\cdot", "rus": "умножение (точка)", "eng": "dot product", "scheme": "@ \\cdot @", "sense": "mul"}
+{"sec": "arithmetic", "sym": "\\times", "rus": "умножение (крестик)", "eng": "cross product", "scheme": "@ \\times @", "sense": "mul"}
+{"sec": "arithmetic", "sym": "\\div", "rus": "деление", "eng": "division sign", "scheme": "@ \\div @", "sense": "div"}
+{"sec": "arithmetic", "sym": "\\frac", "rus": "дробь", "eng": "fraction", "scheme": "\\frac{@}{@}", "sense": "div"}
+{"sec": "arithmetic", "sym": "\\pm", "rus": "плюс-минус", "eng": "plus-minus", "scheme": "@ \\pm @", "sense": "pm"}
+{"sec": "arithmetic", "sym": "\\mp", "rus": "минус-плюс", "eng": "minus-plus", "scheme": "@ \\mp @", "sense": "mp"}
+{"sec": "binary_ops", "sym": "\\ast", "rus": "астериск", "eng": "asterisk", "scheme": "@ \\ast @", "sense": "mul"}
+{"sec": "binary_ops", "sym": "\\star", "rus": "звезда", "eng": "star", "scheme": "@ \\star @", "sense": "mul"}
+{"sec": "binary_ops", "sym": "\\circ", "rus": "композиция", "eng": "composition", "scheme": "@ \\circ @", "sense": "comp"}
+{"sec": "binary_ops", "sym": "\\bullet", "rus": "маркер", "eng": "bullet", "scheme": "@ \\bullet @", "sense": "mul"}
+{"sec": "binary_ops", "sym": "\\cup", "rus": "объединение", "eng": "union", "scheme": "@ \\cup @", "sense": "union"}
+{"sec": "binary_ops", "sym": "\\cap", "rus": "пересечение", "eng": "intersection", "scheme": "@ \\cap @", "sense": "intersect"}
+{"sec": "binary_ops", "sym": "\\setminus", "rus": "разность множеств", "eng": "set minus", "scheme": "@ \\setminus @", "sense": "diff"}
+{"sec": "binary_ops", "sym": "\\oplus", "rus": "прямая сумма", "eng": "circled plus", "scheme": "@ \\oplus @", "sense": "add"}
+{"sec": "binary_ops", "sym": "\\otimes", "rus": "тензорное произведение", "eng": "tensor product", "scheme": "@ \\otimes @", "sense": "mul"}
+{"sec": "powers_roots", "sym": "^", "rus": "степень", "eng": "power", "scheme": "@^{@}", "sense": "pow"}
+{"sec": "powers_roots", "sym": "_", "rus": "нижний индекс", "eng": "subscript", "scheme": "@_{@}", "sense": "subscr"}
+{"sec": "powers_roots", "sym": "\\sqrt", "rus": "квадратный корень", "eng": "square root", "scheme": "\\sqrt{@}", "sense": "sqrt"}
+{"sec": "powers_roots", "sym": "\\sqrt[n]", "rus": "корень n-й степени", "eng": "n-th root", "scheme": "\\sqrt[@]{@}", "sense": "root"}
+{"sec": "powers_roots", "sym": "\\exp", "rus": "экспонента", "eng": "exponential", "scheme": "\\exp(@)", "sense": "exp"}
+{"sec": "trigonometry", "sym": "\\sin", "rus": "синус", "eng": "sine", "scheme": "\\sin(@)", "sense": "sin"}
+{"sec": "trigonometry", "sym": "\\cos", "rus": "косинус", "eng": "cosine", "scheme": "\\cos(@)", "sense": "cos"}
+{"sec": "trigonometry", "sym": "\\tan", "rus": "тангенс", "eng": "tangent", "scheme": "\\tan @", "sense": "tan"}
+{"sec": "trigonometry", "sym": "\\cot", "rus": "котангенс", "eng": "cotangent", "scheme": "\\cot @", "sense": "cot"}
+{"sec": "trigonometry", "sym": "\\arcsin", "rus": "арксинус", "eng": "arcsine", "scheme": "\\arcsin @", "sense": "asin"}
+{"sec": "trigonometry", "sym": "\\arccos", "rus": "арккосинус", "eng": "arccosine", "scheme": "\\arccos @", "sense": "acos"}
+{"sec": "trigonometry", "sym": "\\arctan", "rus": "арктангенс", "eng": "arctangent", "scheme": "\\arctan @", "sense": "atan"}
+{"sec": "trigonometry", "sym": "\\sinh", "rus": "синус гиперболический", "eng": "hyperbolic sine", "scheme": "\\sinh @", "sense": "sinh"}
+{"sec": "trigonometry", "sym": "\\cosh", "rus": "косинус гиперболический", "eng": "hyperbolic cosine", "scheme": "\\cosh @", "sense": "cosh"}
+{"sec": "big_operators", "sym": "\\sum", "rus": "сумма", "eng": "summation", "scheme": "\\sum_{@}^{@} @", "sense": "sum"}
+{"sec": "big_operators", "sym": "\\prod", "rus": "произведение", "eng": "product", "scheme": "\\prod_{@}^{@} @", "sense": "prod"}
+{"sec": "big_operators", "sym": "\\int", "rus": "интеграл", "eng": "integral", "scheme": "\\int @ d@", "sense": "int"}
+{"sec": "big_operators", "sym": "\\int{}{}", "rus": "определенный интеграл", "eng": "integral", "scheme": "\\int_{@}^{@} @ d@", "sense": "int"}
+{"sec": "big_operators", "sym": "\\iint", "rus": "двойной интеграл", "eng": "double integral", "scheme": "\\iint_{@} @ d@d@", "sense": "int"}
+{"sec": "big_operators", "sym": "\\oint", "rus": "контурный интеграл", "eng": "contour integral", "scheme": "\\oint_{@} @ d@", "sense": "oint"}
+{"sec": "big_operators", "sym": "\\lim", "rus": "предел", "eng": "limit", "scheme": "\\lim_{@ \\to @} @", "sense": "lim"}
+{"sec": "big_operators", "sym": "\\bigcup", "rus": "большое объединение", "eng": "big union", "scheme": "\\bigcup_{@} @", "sense": "union"}
+{"sec": "big_operators", "sym": "\\bigcap", "rus": "большое пересечение", "eng": "big intersection", "scheme": "\\bigcap_{@} @", "sense": "intersect"}
+{"sec": "relations", "sym": "=", "rus": "равно", "eng": "equals", "scheme": "@ = @", "sense": "eq"}
+{"sec": "relations", "sym": "\\neq", "rus": "не равно", "eng": "not equal", "scheme": "@ \\neq @", "sense": "neq"}
+{"sec": "relations", "sym": ">", "rus": "больше", "eng": "greater than", "scheme": "@ > @", "sense": "gt"}
+{"sec": "relations", "sym": "<", "rus": "меньше", "eng": "less than", "scheme": "@ < @", "sense": "lt"}
+{"sec": "relations", "sym": "\\ge", "rus": "больше или равно", "eng": "greater or equal", "scheme": "@ \\ge @", "sense": "ge"}
+{"sec": "relations", "sym": "\\le", "rus": "меньше или равно", "eng": "less or equal", "scheme": "@ \\le @", "sense": "le"}
+{"sec": "relations", "sym": "\\approx", "rus": "приблизительно", "eng": "approximately", "scheme": "@ \\approx @", "sense": "approx"}
+{"sec": "relations", "sym": "\\equiv", "rus": "тождественно", "eng": "equivalent", "scheme": "@ \\equiv @", "sense": "equiv"}
+{"sec": "relations", "sym": "\\propto", "rus": "пропорционально", "eng": "proportional", "scheme": "@ \\propto @", "sense": "prop"}
+{"sec": "relations", "sym": "\\sim", "rus": "подобно", "eng": "similar", "scheme": "@ \\sim @", "sense": "sim"}
+{"sec": "logic", "sym": "\\forall", "rus": "для любого", "eng": "for all", "scheme": "\\forall @", "sense": "forall"}
+{"sec": "logic", "sym": "\\exists", "rus": "существует", "eng": "exists", "scheme": "\\exists @", "sense": "exists"}
+{"sec": "logic", "sym": "\\nexists", "rus": "не существует", "eng": "does not exist", "scheme": "\\nexists @", "sense": "nexists"}
+{"sec": "logic", "sym": "\\neg", "rus": "отрицание", "eng": "negation", "scheme": "\\neg @", "sense": "not"}
+{"sec": "logic", "sym": "\\land", "rus": "логическое и", "eng": "and", "scheme": "@ \\land @", "sense": "and"}
+{"sec": "logic", "sym": "\\lor", "rus": "логическое или", "eng": "or", "scheme": "@ \\lor @", "sense": "or"}
+{"sec": "logic", "sym": "\\implies", "rus": "следовательно", "eng": "implies", "scheme": "@ \\implies @", "sense": "impl"}
+{"sec": "logic", "sym": "\\iff", "rus": "эквивалентно", "eng": "if and only if", "scheme": "@ \\iff @", "sense": "iff"}
+{"sec": "logic", "sym": "\\therefore", "rus": "следовательно", "eng": "therefore", "scheme": "\\therefore @", "sense": "therefore"}
+{"sec": "logic", "sym": "\\in", "rus": "принадлежит", "eng": "belongs to", "scheme": "@ \\in @", "sense": "in"}
+{"sec": "logic", "sym": "\\subset", "rus": "подмножество", "eng": "subset", "scheme": "@ \\subset @", "sense": "subset"}
+{"sec": "arrows", "sym": "\\to", "rus": "стремится к", "eng": "tends to", "scheme": "@ \\to @", "sense": "arrow"}
+{"sec": "arrows", "sym": "\\leftarrow", "rus": "стрелка влево", "eng": "left arrow", "scheme": "@ \\leftarrow @", "sense": "arrow"}
+{"sec": "arrows", "sym": "\\uparrow", "rus": "стрелка вверх", "eng": "up arrow", "scheme": "@ \\uparrow @", "sense": "arrow"}
+{"sec": "arrows", "sym": "\\downarrow", "rus": "стрелка вниз", "eng": "down arrow", "scheme": "@ \\downarrow @", "sense": "arrow"}
+{"sec": "arrows", "sym": "\\mapsto", "rus": "отображается в", "eng": "maps to", "scheme": "@ \\mapsto @", "sense": "mapsto"}
+{"sec": "physics_vectors", "sym": "\\nabla", "rus": "набла", "eng": "nabla", "scheme": "\\nabla @", "sense": "nabla"}
+{"sec": "physics_vectors", "sym": "\\nabla \\cdot", "rus": "дивергенция", "eng": "divergence", "scheme": "\\nabla \\cdot @", "sense": "div"}
+{"sec": "physics_vectors", "sym": "\\nabla \\times", "rus": "ротор", "eng": "curl", "scheme": "\\nabla \\times @", "sense": "curl"}
+{"sec": "physics_vectors", "sym": "\\Delta", "rus": "лапласиан", "eng": "laplacian", "scheme": "\\Delta @", "sense": "laplacian"}
+{"sec": "physics_vectors", "sym": "\\partial", "rus": "частная производная", "eng": "partial", "scheme": "\\frac{\\partial @}{\\partial @}", "sense": "partial"}
+{"sec": "physics_vectors", "sym": "\\infty", "rus": "бесконечность", "eng": "infinity", "scheme": "@ \\to \\infty", "sense": "inf"}
+{"sec": "physics_vectors", "sym": "\\hbar", "rus": "постоянная Дирака", "eng": "h-bar", "scheme": "E = \\hbar \\omega", "sense": "hbar"}
+{"sec": "matrices_tensors", "sym": "\\mathbf{A}", "rus": "матрица", "eng": "matrix", "scheme": "\\mathbf{@}", "sense": "matrix"}
+{"sec": "matrices_tensors", "sym": "A^T", "rus": "транспонирование", "eng": "transpose", "scheme": "@^T", "sense": "trans"}
+{"sec": "matrices_tensors", "sym": "\\det", "rus": "определитель", "eng": "determinant", "scheme": "\\det(@)", "sense": "det"}
+{"sec": "matrices_tensors", "sym": "\\operatorname{tr}", "rus": "след", "eng": "trace", "scheme": "\\operatorname{tr}(@)", "sense": "tr"}
+{"sec": "matrices_tensors", "sym": "\\delta_{ij}", "rus": "дельта Кронекера", "eng": "Kronecker delta", "scheme": "\\delta_{@ @}", "sense": "delta"}
+{"sec": "matrices_tensors", "sym": "\\epsilon_{ijk}", "rus": "символ Леви-Чивиты", "eng": "Levi-Civita", "scheme": "\\epsilon_{@ @ @}", "sense": "epsilon"}
+{"sec": "matrices_tensors", "sym": "\\vec{v}", "rus": "вектор", "eng": "vector", "scheme": "\\vec{@}", "sense": "vec"}
+{"sec": "matrices_tensors", "sym": "\\lambda", "rus": "собственное число", "eng": "eigenvalue", "scheme": "\\mathbf{A}v = \\lambda v", "sense": "eigen"}
+{"sec": "geometry", "sym": "\\angle", "rus": "угол", "eng": "angle", "scheme": "\\angle @", "sense": "angle"}
+{"sec": "geometry", "sym": "\\perp", "rus": "перпендикуляр", "eng": "perpendicular", "scheme": "@ \\perp @", "sense": "perp"}
+{"sec": "geometry", "sym": "\\parallel", "rus": "параллель", "eng": "parallel", "scheme": "@ \\parallel @", "sense": "par"}
+{"sec": "accents", "sym": "\\dot", "rus": "точка / производная", "eng": "dot", "scheme": "\\dot{@}", "sense": "dot"}
+{"sec": "accents", "sym": "\\ddot", "rus": "две точки", "eng": "double dot", "scheme": "\\ddot{@}", "sense": "ddot"}
+{"sec": "accents", "sym": "\\bar", "rus": "черта сверху", "eng": "bar", "scheme": "\\bar{@}", "sense": "bar"}
+{"sec": "accents", "sym": "\\hat", "rus": "крышка", "eng": "hat", "scheme": "\\hat{@}", "sense": "hat"}
+{"sec": "accents", "sym": "\\tilde", "rus": "тильда", "eng": "tilde", "scheme": "\\tilde{@}", "sense": "tilde"}
+{"sec": "misc", "sym": "!", "rus": "факториал", "eng": "factorial", "scheme": "@!", "sense": "fact"}
+{"sec": "misc", "sym": "\\ell", "rus": "эль", "eng": "ell", "scheme": "\\ell", "sense": "var"}
+{"sec": "misc", "sym": "\\Re", "rus": "действительная часть", "eng": "real part", "scheme": "\\Re(@)", "sense": "real"}
+{"sec": "misc", "sym": "\\Im", "rus": "мнимая часть", "eng": "imaginary part", "scheme": "\\Im(@)", "sense": "imag"}
+{"sec": "misc", "sym": "\\emptyset", "rus": "пустое множество", "eng": "empty set", "scheme": "\\emptyset", "sense": "empty"}
+{"sec": "misc", "sym": "\\dots", "rus": "многоточие", "eng": "dots", "scheme": "@ \\dots @", "sense": "dots"}
+{"sec": "misc", "sym": "\\cdots", "rus": "многоточие по центру", "eng": "center dots", "scheme": "@ + \\cdots + @", "sense": "dots"}
+{"sec": "misc", "sym": "\\nabla^2", "rus": "оператор Лапласа", "eng": "laplacian", "scheme": "\\nabla^2 @", "sense": "laplacian"}
+
+
+-- /home/michael/LLM/datasets_bhl/generate_both/config/greeks.jsonl:
+{"sym": "\\alpha", "rus": "альфа", "eng": "alpha"}
+{"sym": "\\beta", "rus": "бета", "eng": "beta"}
+{"sym": "\\gamma", "rus": "гамма", "eng": "gamma"}
+{"sym": "\\delta", "rus": "дельта", "eng": "delta"}
+{"sym": "\\epsilon", "rus": "эпсилон", "eng": "epsilon"}
+{"sym": "\\zeta", "rus": "дзета", "eng": "zeta"}
+{"sym": "\\eta", "rus": "эта", "eng": "eta"}
+{"sym": "\\theta", "rus": "тета", "eng": "theta"}
+{"sym": "\\iota", "rus": "йота", "eng": "iota"}
+{"sym": "\\kappa", "rus": "каппа", "eng": "kappa"}
+{"sym": "\\lambda", "rus": "лямбда", "eng": "lambda"}
+{"sym": "\\mu", "rus": "мю", "eng": "mu"}
+{"sym": "\\nu", "rus": "ню", "eng": "nu"}
+{"sym": "\\xi", "rus": "кси", "eng": "xi"}
+{"sym": "\\pi", "rus": "пи", "eng": "pi"}
+{"sym": "\\rho", "rus": "ро", "eng": "rho"}
+{"sym": "\\sigma", "rus": "сигма", "eng": "sigma"}
+{"sym": "\\tau", "rus": "тау", "eng": "tau"}
+{"sym": "\\upsilon", "rus": "ипсилон", "eng": "upsilon"}
+{"sym": "\\phi", "rus": "фи", "eng": "phi"}
+{"sym": "\\chi", "rus": "хи", "eng": "chi"}
+{"sym": "\\psi", "rus": "пси", "eng": "psi"}
+{"sym": "\\omega", "rus": "омега", "eng": "omega"}
+
+{"sym": "\\Gamma", "rus": "Гамма", "eng": "Gamma"}
+{"sym": "\\Delta", "rus": "Дельта", "eng": "Delta"}
+{"sym": "\\Theta", "rus": "Тета", "eng": "Theta"}
+{"sym": "\\Lambda", "rus": "Лямбда", "eng": "Lambda"}
+{"sym": "\\Xi", "rus": "Кси", "eng": "Xi"}
+{"sym": "\\Pi", "rus": "Пи", "eng": "Pi"}
+{"sym": "\\Sigma", "rus": "Сигма", "eng": "Sigma"}
+{"sym": "\\Upsilon", "rus": "Ипсилон", "eng": "Upsilon"}
+{"sym": "\\Phi", "rus": "Фи", "eng": "Phi"}
+{"sym": "\\Psi", "rus": "Пси", "eng": "Psi"}
+{"sym": "\\Omega", "rus": "Омега", "eng": "Omega"}
+
+
+
+-- /home/michael/LLM/datasets_bhl/generate_both/config/latins.jsonl:
+{"sym": "a", "rus": ["эй"], "eng": ["ay"]}
+{"sym": "b", "rus": ["би"], "eng": ["bee"]}
+{"sym": "c", "rus": ["си"], "eng": ["cee"]}
+{"sym": "d", "rus": ["ди"], "eng": ["dee"]}
+{"sym": "e", "rus": ["и"], "eng": ["ee"]}
+{"sym": "f", "rus": ["эф"], "eng": ["ef"]}
+{"sym": "g", "rus": ["джи"], "eng": ["gee"]}
+{"sym": "h", "rus": ["эйч", "хэйч"], "eng": ["aitch", "haitch"]}
+{"sym": "i", "rus": ["ай"], "eng": ["eye"]}
+{"sym": "j", "rus": ["джей"], "eng": ["jay"]}
+{"sym": "k", "rus": ["кей"], "eng": ["kay"]}
+{"sym": "l", "rus": ["эл"], "eng": ["el"]}
+{"sym": "m", "rus": ["эм"], "eng": ["em"]}
+{"sym": "n", "rus": ["эн"], "eng": ["en"]}
+{"sym": "o", "rus": ["оу"], "eng": ["oh"]}
+{"sym": "p", "rus": ["пи"], "eng": ["pee"]}
+{"sym": "q", "rus": ["кью"], "eng": ["cue"]}
+{"sym": "r", "rus": ["а", "ар"], "eng": ["ar"]}
+{"sym": "s", "rus": ["эс"], "eng": ["ess"]}
+{"sym": "t", "rus": ["ти"], "eng": ["tee"]}
+{"sym": "u", "rus": ["ю"], "eng": ["u"]}
+{"sym": "v", "rus": ["ви"], "eng": ["vee"]}
+{"sym": "w", "rus": ["дабл-ю"], "eng": ["double-u"]}
+{"sym": "x", "rus": ["икс", "экс"], "eng": ["ex"]}
+{"sym": "y", "rus": ["игрек", "уай"], "eng": ["wy"]}
+{"sym": "z", "rus": ["зет", "зи"], "eng": ["zed", "zee"]}
+{"sym": "@", "rus": ["эт"], "eng": ["at"]}
+
+{"sym": "A", "rus": ["эй заглавная", "а заглавная"], "eng": ["capital A", "big A"]}
+{"sym": "B", "rus": ["би заглавная", "бэ заглавная"], "eng": ["capital B", "big B"]}
+{"sym": "C", "rus": ["си заглавная", "цэ заглавная"], "eng": ["capital C", "big C"]}
+{"sym": "D", "rus": ["ди заглавная", "дэ заглавная"], "eng": ["capital D", "big D"]}
+{"sym": "E", "rus": ["и заглавная", "е заглавная"], "eng": ["capital E", "big E"]}
+{"sym": "F", "rus": ["эф заглавная"], "eng": ["capital F", "big F"]}
+{"sym": "G", "rus": ["джи заглавная", "гэ заглавная"], "eng": ["capital G", "big G"]}
+{"sym": "H", "rus": ["эйч заглавная", "хэйч заглавная"], "eng": ["capital H", "big H"]}
+{"sym": "I", "rus": ["ай заглавная", "и заглавная"], "eng": ["capital I", "big I"]}
+{"sym": "J", "rus": ["джей заглавная"], "eng": ["capital J", "big J"]}
+{"sym": "K", "rus": ["кей заглавная", "ка заглавная"], "eng": ["capital K", "big K"]}
+{"sym": "L", "rus": ["эль заглавная"], "eng": ["capital L", "big L"]}
+{"sym": "M", "rus": ["эм заглавная"], "eng": ["capital M", "big M"]}
+{"sym": "N", "rus": ["эн заглавная"], "eng": ["capital N", "big N"]}
+{"sym": "O", "rus": ["оу заглавная", "о заглавная"], "eng": ["capital O", "big O"]}
+{"sym": "P", "rus": ["пи заглавная", "пэ заглавная"], "eng": ["capital P", "big P"]}
+{"sym": "Q", "rus": ["кью заглавная"], "eng": ["capital Q", "big Q"]}
+{"sym": "R", "rus": ["ар заглавная", "эр заглавная"], "eng": ["capital R", "big R"]}
+{"sym": "S", "rus": ["эс заглавная"], "eng": ["capital S", "big S"]}
+{"sym": "T", "rus": ["ти заглавная", "тэ заглавная"], "eng": ["capital T", "big T"]}
+{"sym": "U", "rus": ["ю заглавная", "у заглавная"], "eng": ["capital U", "big U"]}
+{"sym": "V", "rus": ["ви заглавная", "вэ заглавная"], "eng": ["capital V", "big V"]}
+{"sym": "W", "rus": ["дабл-ю заглавная"], "eng": ["capital W", "big W"]}
+{"sym": "X", "rus": ["икс заглавная", "экс заглавная"], "eng": ["capital X", "big X"]}
+{"sym": "Y", "rus": ["игрек заглавная", "уай заглавная"], "eng": ["capital Y", "big Y"]}
+{"sym": "Z", "rus": ["зет заглавная", "зи заглавная"], "eng": ["capital Z", "big Z"]}
+
+
+
+-- /home/michael/LLM/datasets_bhl/generate_both/generator.py:
+
+
